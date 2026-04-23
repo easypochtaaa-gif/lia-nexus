@@ -13,8 +13,14 @@ if (!fs.existsSync(INPUT_FILE)) fs.writeFileSync(INPUT_FILE, JSON.stringify({ me
 
 const server = http.createServer((req, res) => {
     const parsedUrl = url.parse(req.url, true);
-    let filePath = '.' + parsedUrl.pathname;
-    if (filePath === './') filePath = './index.html';
+    let pathname = parsedUrl.pathname;
+    if (pathname === '/') pathname = '/index.html';
+
+    // Try dist folder (Render build) first, then root
+    let filePath = path.join(__dirname, 'dist', pathname);
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(__dirname, pathname);
+    }
 
     const extname = String(path.extname(filePath)).toLowerCase();
     const mimeTypes = {

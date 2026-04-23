@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const BRIDGE_FILE = path.join(__dirname, 'live_bridge.json');
 const INPUT_FILE = path.join(__dirname, 'user_input.json');
 

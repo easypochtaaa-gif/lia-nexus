@@ -16,10 +16,13 @@ const server = http.createServer((req, res) => {
     let pathname = parsedUrl.pathname;
     if (pathname === '/') pathname = '/index.html';
 
-    // Try dist folder (Render build) first, then root
-    let filePath = path.join(__dirname, 'dist', pathname);
+    // Remove leading slash for path.join
+    const relativePath = pathname.startsWith('/') ? pathname.substring(1) : pathname;
+
+    // Priority: dist folder -> root folder
+    let filePath = path.resolve(__dirname, 'dist', relativePath);
     if (!fs.existsSync(filePath)) {
-        filePath = path.join(__dirname, pathname);
+        filePath = path.resolve(__dirname, relativePath);
     }
 
     const extname = String(path.extname(filePath)).toLowerCase();

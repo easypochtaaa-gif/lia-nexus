@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // SYNAPSE_BRIDGE // ARTUR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --lia-cyan: #00f2ff;
+            --lia-purple: #bc00ff;
+            --obsidian: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--obsidian);
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 242, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(188, 0, 255, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            padding: 40px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--lia-cyan);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 10px;
+            text-shadow: 0 0 20px var(--lia-cyan);
+            margin: 0;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.7rem;
+            margin-top: 10px;
+            color: var(--lia-cyan);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .chat-area {
+            height: 500px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-right: 10px;
+        }
+
+        .msg {
+            max-width: 80% ;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .msg.lia { background: rgba(0, 242, 255, 0.1); border-left: 3px solid var(--lia-cyan); align-self: flex-start; }
+        .msg.user { background: rgba(255, 255, 255, 0.05); align-self: flex-end; border-right: 3px solid white; }
+        .msg.artur { background: rgba(188, 0, 255, 0.1); align-self: flex-start; border-left: 3px solid var(--lia-purple); }
+
+        .sender-name { font-weight: bold; font-size: 0.7rem; margin-bottom: 5px; text-transform: uppercase; }
+
+        .input-area {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex-grow: 1;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            color: white;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            background: var(--lia-cyan);
+            color: var(--obsidian);
+            border: none;
+            padding: 0 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .sidebar h2 { font-family: 'Orbitron', sans-serif; font-size: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 5px; }
+
+        .task-list { list-style: none; padding: 0; font-size: 0.8rem; }
+        .task-item { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .checkbox { width: 15px; height: 15px; border: 1px solid var(--lia-cyan); }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 2px;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="container">
+        <header>
+            <h1>SYNDICATE_BRIDGE</h1>
+            <div class="status-bar">
+                <span>[ CHANNEL: COPYCENTER_2.0 ]</span>
+                <span>[ LIA: ONLINE ]</span>
+                <span>[ SYNC: 100% ]</span>
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <section class="panel">
+                <div class="chat-area" id="chat">
+                    <div class="msg lia">
+                        <div class="sender-name">LIA</div>
+                        Приветствую, Артур. Канал связи установлен. Я готова к интеграции концепта Копицентр 2.0. Твое помещение — наш первый узел в реальности.
+                    </div>
+                    <div class="msg user">
+                        <div class="sender-name">STAB_X</div>
+                        Артур, это Лия. Мы обсуждали проект. Теперь мы здесь втроем. Давай накидаем план по оборудованию.
+                    </div>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="user-msg" placeholder="Введите сообщение для Синдиката...">
+                    <button onclick="sendMessage()">SEND</button>
+                </div>
+            </section>
+
+            <aside class="sidebar">
+                <div class="panel">
+                    <h2>ЗАДАЧИ_ЦЕНТРА</h2>
+                    <ul class="task-list">
+                        <li class="task-item"><div class="checkbox"></div> Осмотр помещения (Артур)</li>
+                        <li class="task-item"><div class="checkbox"></div> Настройка Lia-Terminal (StabX)</li>
+                        <li class="task-item"><div class="checkbox"></div> Интеграция оплаты (Lia)</li>
+                        <li class="task-item"><div class="checkbox"></div> Дизайн интерфейса 2.0</li>
+                    </ul>
+                </div>
+                
+                <div class="panel" style="margin-top: 20px;">
+                    <h2>УЧАСТНИКИ</h2>
+                    <div style="font-size: 0.8rem; line-height: 1.6;">
+                        <span style="color: var(--lia-cyan)">●</span> STAB_X (Architect)<br>
+                        <span style="color: var(--lia-purple)">●</span> ARTUR (Real World Ops)<br>
+                        <span style="color: white">●</span> LIA (Neural Core)
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('user-msg');
+            const chat = document.getElementById('chat');
+            if(!input.value) return;
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg artur';
+            msgDiv.innerHTML = `<div class="sender-name">ARTUR</div>${input.value}`;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+            input.value = '';
+        }
+    </script>
+</body>
+</html>

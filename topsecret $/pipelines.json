@@ -1,0 +1,27 @@
+{
+    "active_pipelines": [
+        {
+            "id": "MEDIA_DOMINANCE_001",
+            "agent": "MUSE",
+            "status": "RUNNING",
+            "task": "Generating viral AI news hooks for Scribe",
+            "priority": "HIGH"
+        },
+        {
+            "id": "VASILIEV_STRIKE_001",
+            "agent": "SPECTER",
+            "status": "INITIATING",
+            "task": "Scouting OpenCloud vulnerabilities for viral self-cloning",
+            "priority": "MAX"
+        },
+        {
+            "id": "NEURAL_BITE_001",
+            "agent": "LOGOS",
+            "status": "DEVELOPING",
+            "task": "Designing self-replicating neural bite payload",
+            "priority": "MAX"
+        }
+    ],
+    "completed_tasks": [],
+    "director_override": false
+}

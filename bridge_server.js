@@ -93,8 +93,9 @@ const server = http.createServer((req, res) => {
     fs.readFile(filePath, (error, content) => {
         if (error) {
             if (error.code == 'ENOENT') {
+                const distFiles = fs.existsSync(path.join(process.cwd(), 'dist')) ? fs.readdirSync(path.join(process.cwd(), 'dist')) : 'dist_not_found';
                 res.writeHead(404);
-                res.end(`File not found: ${filePath} (CWD: ${process.cwd()})`);
+                res.end(`File not found: ${filePath}\nVisible in dist: ${JSON.stringify(distFiles)}`);
             } else {
                 res.writeHead(500);
                 res.end('Error: ' + error.code);

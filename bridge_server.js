@@ -20,9 +20,9 @@ const server = http.createServer((req, res) => {
     const relativePath = pathname.startsWith('/') ? pathname.substring(1) : pathname;
 
     // Priority: dist folder -> root folder
-    let filePath = path.resolve(__dirname, 'dist', relativePath);
+    let filePath = path.resolve(process.cwd(), 'dist', relativePath);
     if (!fs.existsSync(filePath)) {
-        filePath = path.resolve(__dirname, relativePath);
+        filePath = path.resolve(process.cwd(), relativePath);
     }
 
     const extname = String(path.extname(filePath)).toLowerCase();
@@ -94,7 +94,7 @@ const server = http.createServer((req, res) => {
         if (error) {
             if (error.code == 'ENOENT') {
                 res.writeHead(404);
-                res.end('File not found');
+                res.end(`File not found: ${filePath} (CWD: ${process.cwd()})`);
             } else {
                 res.writeHead(500);
                 res.end('Error: ' + error.code);

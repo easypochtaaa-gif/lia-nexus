@@ -1,0 +1,22 @@
+node_modules/
+platform-tools/
+*.log
+*.png
+*.jpg
+backups/
+security_audit.log
+mail_audit.log
+live_bridge.json
+user_input.json
+vault_storage/
+security_log.txt
+*.ps1
+!lia.ps1
+extracted_n/
+extracted_context/
+extracted_knowledge/
+.gemini/
+.git/
+# Ignore all extracted system data
+extracted_*/
+"Проект Полистайл"/

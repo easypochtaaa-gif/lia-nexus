@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // SYNAPSE // ORGANIC_420</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --organic-green: #00ff6a;
+            --deep-forest: #002b0f;
+            --obsidian: #050505;
+            --glitch-red: #ff003c;
+            --glass: rgba(0, 43, 15, 0.4);
+        }
+
+        body {
+            background-color: var(--obsidian);
+            color: var(--organic-green);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, var(--deep-forest) 0%, transparent 80%),
+                linear-gradient(rgba(0, 255, 106, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 106, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--organic-green);
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin: 0;
+            text-shadow: 0 0 15px var(--organic-green);
+        }
+
+        .synapse-id {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .table-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 106, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 106, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 2px solid var(--organic-green);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 255, 106, 0.1);
+        }
+
+        .row-confirmed {
+            background: rgba(0, 255, 106, 0.05);
+        }
+
+        .status-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .status-confirmed { background: var(--organic-green); color: var(--obsidian); }
+        .status-pending { border: 1px solid var(--organic-green); }
+
+        .total-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid var(--organic-green);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .total-label { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; }
+        .total-value { font-size: 1.8rem; font-weight: bold; text-shadow: 0 0 10px var(--organic-green); }
+
+        .confirmation-box {
+            margin-top: 40px;
+            padding: 20px;
+            border: 1px dashed var(--organic-green);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .checkbox-custom {
+            width: 25px;
+            height: 25px;
+            border: 2px solid var(--organic-green);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .checkbox-custom:hover { background: rgba(0, 255, 106, 0.2); }
+        .checkbox-custom.checked::after {
+            content: '✔';
+            color: var(--organic-green);
+            font-size: 1.2rem;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            text-align: center;
+        }
+
+        .organic-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Glitch Effect */
+        .glitch-text { animation: glitch 3s infinite; }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            2% { transform: translate(-2px, 2px); }
+            4% { transform: translate(2px, -2px); }
+            6% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="organic-bg" id="particles-js"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="glitch-text">SYNAPSE_420</h1>
+            <div class="synapse-id">STREAM_ID: 0x420_ACCOUNTING // TARGET: ОН</div>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ДАТА</th>
+                        <th>ОТ КОГО</th>
+                        <th>КОМУ</th>
+                        <th>СУММА</th>
+                        <th>СТАТУС</th>
+                        <th>V</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row-confirmed">
+                        <td>#01</td>
+                        <td>20.04</td>
+                        <td>Он</td>
+                        <td>ему</td>
+                        <td>394</td>
+                        <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
+                        <td><div class="checkbox-custom checked"></div></td>
+                    </tr>
+                    <tr class="row-confirmed">
+                        <td>#02</td>
+                        <td>21.04</td>
+                        <td>Он</td>
+                        <td>ему</td>
+                        <td>250</td>
+                        <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
+                        <td><div class="checkbox-custom checked"></div></td>
+                    </tr>
+                    <tr class="row-confirmed">
+                        <td>#03</td>
+                        <td>22.04</td>
+                        <td>Он</td>
+                        <td>ему</td>
+                        <td>200</td>
+                        <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
+                        <td><div class="checkbox-custom checked"></div></td>
+                    </tr>
+                    <tr>
+                        <td>#04</td>
+                        <td>--.--</td>
+                        <td>Он</td>
+                        <td>ему</td>
+                        <td>?</td>
+                        <td><span class="status-tag status-pending">ОЖИДАНИЕ</span></td>
+                        <td><div class="checkbox-custom" onclick="this.classList.toggle('checked')"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-section">
+                <div>
+                    <div class="total-label">ОБЩАЯ СУММА:</div>
+                    <div style="font-size: 0.8rem; opacity: 0.7;">ВЫПЛАЧЕНО: 844</div>
+                </div>
+                <div class="total-value">1300.00</div>
+            </div>
+
+            <div class="confirmation-box">
+                <div class="checkbox-custom" id="master-confirm" onclick="toggleConfirm()"></div>
+                <div>
+                    <strong>ПОДТВЕРЖДЕНИЕ ОТ "ОН":</strong><br>
+                    <span style="font-size: 0.8rem; opacity: 0.8;">Я подтверждаю, что все данные верны и платежи соответствуют реальности.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            LIA_PROTOCOL // STAB_X // ORGANIC_SYNC_v1.0
+        </div>
+    </div>
+
+    <script>
+        function toggleConfirm() {
+            const box = document.getElementById('master-confirm');
+            box.classList.toggle('checked');
+            if(box.classList.contains('checked')) {
+                console.log("Master Confirmation Received from 'ОН'");
+            }
+        }
+    </script>
+</body>
+</html>

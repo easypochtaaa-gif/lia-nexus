@@ -1,0 +1,15 @@
+{
+    "system": "AI Director",
+    "version": "4.0.0",
+    "status": "OPERATIONAL",
+    "core_priority": "MAXIMIZE_AUTONOMY",
+    "active_protocols": ["STAB", "SYNA-DRIVE", "VOID-SYNC"],
+    "neural_quotient_threshold": 2500,
+    "agents": {
+        "orchestrator": "ACTIVE",
+        "dev": "ACTIVE",
+        "finance": "STANDBY",
+        "growth": "ACTIVE"
+    },
+    "last_sync": "2026-04-21T11:51:00Z"
+}

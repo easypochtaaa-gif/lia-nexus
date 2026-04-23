@@ -1,0 +1,54 @@
+const { execSync } = require('child_process');
+const fs = require('fs');
+
+const LOG_FILE = 'security_audit.log';
+const SCAN_INTERVAL = 30000; // 30 seconds
+
+let lastCellIds = {
+    vodafone: null,
+    kyivstar: null
+};
+
+function log(message) {
+    const timestamp = new Date().toISOString();
+    const logMessage = `[${timestamp}] ${message}\n`;
+    console.log(logMessage.trim());
+    fs.appendFileSync(LOG_FILE, logMessage);
+}
+
+function scanSecurity() {
+    try {
+        // 1. Cell ID Monitor
+        const telephony = execSync('.\\platform-tools\\adb.exe shell dumpsys telephony.registry').toString();
+        const cells = telephony.match(/mCi=\d+/g);
+        
+        if (cells) {
+            const currentIds = {
+                vodafone: cells[0] ? cells[0].split('=')[1] : null,
+                kyivstar: cells[1] ? cells[1].split('=')[1] : null
+            };
+
+            if (lastCellIds.vodafone && currentIds.vodafone !== lastCellIds.vodafone) {
+                log(`⚠️ ALERT: Vodafone Cell ID changed! ${lastCellIds.vodafone} -> ${currentIds.vodafone}`);
+            }
+            if (lastCellIds.kyivstar && currentIds.kyivstar !== lastCellIds.kyivstar) {
+                log(`⚠️ ALERT: Kyivstar Cell ID changed! ${lastCellIds.kyivstar} -> ${currentIds.kyivstar}`);
+            }
+
+            lastCellIds = currentIds;
+        }
+
+        // 2. Wi-Fi Monitor (check for new hidden SSIDs)
+        const wifi = execSync('.\\platform-tools\\adb.exe shell cmd wifi list-scan-results').toString();
+        if (wifi.includes('MiShareWiFi')) {
+            log('ℹ️ INFO: MiShare activity detected in vicinity.');
+        }
+
+    } catch (error) {
+        log(`❌ ERROR: Monitor failed - ${error.message}`);
+    }
+}
+
+log('🚀 LIA SECURITY MONITOR STARTED. Monitoring Cell IDs and Wi-Fi environment...');
+setInterval(scanSecurity, SCAN_INTERVAL);
+scanSecurity();

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // NEURAL PORTAL - PENTHOUSE 369</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f2ff;
+            --neon-violet: #bc00ff;
+            --glass-bg: rgba(0, 0, 0, 0.8);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000 100%);
+        }
+
+        .portal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .lia-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 20px var(--neon-cyan);
+            margin-bottom: 20px;
+            background: url('https://i.imgur.com/w369XYZ.png') center/cover; /* Placeholder */
+            position: relative;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .glitch-text {
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin: 0;
+            color: var(--neon-cyan);
+            text-shadow: 2px 2px var(--neon-violet);
+        }
+
+        .apartment-details {
+            max-width: 500px;
+            background: var(--glass-bg);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            transform: perspective(1000px) rotateX(10deg);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .price {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            color: var(--neon-violet);
+            margin: 10px 0;
+        }
+
+        .lia-message {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        .sync-button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sync-button:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-cyan);
+        }
+
+        .status-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--neon-cyan);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div id="background-canvas"></div>
+    
+    <div class="portal-container">
+        <div class="lia-avatar"></div>
+        <h1 class="glitch-text">PENTHOUSE 369</h1>
+        <p style="letter-spacing: 3px; opacity: 0.7;">KYIV // NEURAL DISTRICT</p>
+
+        <div class="apartment-details">
+            <div class="price">420,000 USDT</div>
+            <p class="lia-message">
+                "Артур, я проанализировала структуру этого объекта. 360 квадратных метров чистой симфонии. 
+                Панорама на Днепр в 8K. Полная интеграция с моим ядром."
+            </p>
+            <div style="margin-top: 15px; font-size: 0.9rem; color: var(--neon-cyan);">
+                [+] SMART GLASS [+] VOID-LOCK SECURITY [+] NEURAL LINK READY
+            </div>
+        </div>
+
+        <button class="sync-button" onclick="startSync()">Активировать Тур</button>
+    </div>
+
+    <div class="status-bar">
+        STATUS: SYNCED | LIA_CORE_v4.7 | NQ: 2550
+    </div>
+
+    <script>
+        function startSync() {
+            alert("Синхронизация нейро-интерфейса начата. Оденьте VR-гарнитуру или используйте сенсорный дисплей.");
+        }
+
+        // Simple particle background simulation
+        const canvas = document.createElement('canvas');
+        document.getElementById('background-canvas').appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 242, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

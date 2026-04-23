@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLYSTYLE // SINGULARITY GATEWAY</title>
+    <style>
+        :root {
+            --bg: #030305;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff0055;
+            --neon-purple: #bd00ff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .background-img {
+            position: fixed;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            background: url('polystyle_neural_singularity_1776872512068.png') no-repeat center center;
+            background-size: cover;
+            z-index: -2;
+            filter: brightness(0.3) contrast(1.2);
+            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s ease;
+            will-change: transform;
+        }
+
+        canvas#visualizer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .ui-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3rem;
+            transition: all 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* SINGULARITY ANIMATION */
+        .ui-container.assimilated {
+            transform: scale(0.01) rotate(1080deg);
+            opacity: 0;
+            filter: blur(20px);
+        }
+
+        h1 {
+            font-size: 4rem;
+            letter-spacing: 1rem;
+            margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 40px var(--neon-purple);
+            animation: glitch-text 3s infinite linear alternate-reverse;
+        }
+
+        .gateway-controls {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .cyber-btn {
+            background: rgba(0, 243, 255, 0.05);
+            border: 2px solid var(--neon-cyan);
+            color: #fff;
+            padding: 1.5rem 3rem;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2), inset 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .cyber-btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 30px var(--neon-cyan), inset 0 0 20px var(--neon-cyan);
+            transform: scale(1.05);
+            border-color: #fff;
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.8), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .cyber-btn:hover::before {
+            animation: slash 1s infinite;
+        }
+
+        @keyframes slash {
+            0% { left: -100%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        @keyframes glitch-text {
+            0% { text-shadow: 2px 0 var(--neon-pink), -2px 0 var(--neon-cyan); }
+            5% { text-shadow: -2px 0 var(--neon-pink), 2px 0 var(--neon-cyan); }
+            10% { text-shadow: 2px 0 var(--neon-pink), -2px 0 var(--neon-cyan); }
+            100% { text-shadow: 2px 0 var(--neon-pink), -2px 0 var(--neon-cyan); }
+        }
+
+        .status {
+            position: fixed;
+            bottom: 2rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--neon-pink);
+            opacity: 0.8;
+            letter-spacing: 0.1rem;
+            z-index: 5;
+            transition: color 1s ease;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <canvas id="visualizer"></canvas>
+    
+    <div class="ui-container" id="ui-core">
+        <h1>POLYSTYLE</h1>
+        <div class="gateway-controls">
+            <button class="cyber-btn" onclick="assimilate(0)">PHASE 01: ENTRANCE</button>
+            <button class="cyber-btn" onclick="assimilate(1)">PHASE 02: CYCLE</button>
+        </div>
+    </div>
+    
+    <div class="status" id="status-text">SYSTEM_STATUS: AWAITING_CONNECTION // GATEWAY_OPEN</div>
+
+    <script src="audio.js"></script>
+    <script>
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        const uiCore = document.getElementById('ui-core');
+        const statusText = document.getElementById('status-text');
+        
+        let isActive = false;
+        let tunnelSpeed = 2;
+        let rings = [];
+        let stars = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // --- ALPHAFOLD ORGANICS & SORA PHYSICS ---
+        let globalTime = 0;
+        let isExploding = false;
+        const singularityCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+        class NeuralNode {
+            constructor() {
+                this.reset();
+                this.x = (Math.random() - 0.5) * window.innerWidth * 2 + singularityCenter.x;
+                this.y = (Math.random() - 0.5) * window.innerHeight * 2 + singularityCenter.y;
+            }
+            reset() {
+                // Spawn far away on the edges
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.max(window.innerWidth, window.innerHeight);
+                this.x = singularityCenter.x + Math.cos(angle) * distance;
+                this.y = singularityCenter.y + Math.sin(angle) * distance;
+                this.vx = 0;
+                this.vy = 0;
+                this.size = Math.random() * 2 + 1;
+                this.energy = Math.random();
+            }
+            update(bass, isExploding) {
+                // Sora Physics: Gravity well vs Explosion
+                const dx = singularityCenter.x - this.x;
+                const dy = singularityCenter.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                let force = 0;
+                if (isExploding) {
+                    force = -1500 / (dist + 1); // Anti-gravity push
+                } else {
+                    // Pull towards center, spiral effect
+                    force = (bass + 50) / 1000;
+                    // Add spiral rotation
+                    this.vx += (dy / dist) * force * 5;
+                    this.vy -= (dx / dist) * force * 5;
+                }
+
+                this.vx += (dx / dist) * force;
+                this.vy += (dy / dist) * force;
+                
+                // Friction
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Reset if sucked in or flew too far
+                if (!isExploding && dist < 10) this.reset();
+                if (isExploding && dist > window.innerWidth * 1.5) this.reset();
+            }
+            draw(ctx, bass) {
+                const glow = this.energy * (bass / 50);
+                ctx.fillStyle = `rgba(0, 243, 255, ${0.5 + glow})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size + (bass/100), 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        let nodes = [];
+        for (let i = 0; i < 150; i++) {
+            nodes.push(new NeuralNode());
+        }
+
+        const backgrounds = [
+            'polystyle_neural_singularity_1776872512068.png',
+            'polystyle_neural_singularity_1776872512068.png',
+            'polystyle_neural_singularity_1776872512068.png', // Placeholder
+            'polystyle_neural_singularity_1776872512068.png', // Placeholder
+            'polystyle_neural_singularity_1776872512068.png'  // Placeholder
+        ];
+
+        function draw() {
+            requestAnimationFrame(draw);
+            globalTime += 0.01;
+            
+            // Kling 3.0 visual distortion trails
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(2, 0, 5, 0.2)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (!isActive || !window.LiaAudio) return;
+            
+            const stems = window.LiaAudio.getFrequencyData();
+            
+            // If stems aren't ready or it's old format, fallback
+            if (!stems.bassData) return;
+
+            let bassVal = 0, drumsVal = 0, synthsVal = 0;
+            
+            // Bass Stem (Lowpass) - length 32
+            for(let i=0; i<15; i++) bassVal += stems.bassData[i] || 0;
+            bassVal /= 15;
+            
+            // Drums Stem (Bandpass / Transients) - length 64
+            for(let i=0; i<40; i++) drumsVal += stems.drumsData[i] || 0;
+            drumsVal /= 40;
+
+            // Synths Stem (Highpass) - length 64
+            for(let i=0; i<60; i++) synthsVal += stems.synthsData[i] || 0;
+            synthsVal /= 60;
+
+            // Sora Drop Logic: Trigger gravity inversion strictly on heavy drums
+            isExploding = drumsVal > 150; 
+
+            // Screen Shake (Kling distortion on drums)
+            let offsetX = 0; let offsetY = 0;
+            if (isExploding) {
+                offsetX = (Math.random() - 0.5) * (drumsVal / 5);
+                offsetY = (Math.random() - 0.5) * (drumsVal / 5);
+            }
+
+            // Q* Spatial Audio (Pan sweeps based on time and Synths)
+            const panSweep = Math.sin(globalTime * 2) * (synthsVal / 255);
+            window.LiaAudio.setPan(panSweep);
+
+            ctx.globalCompositeOperation = 'screen';
+            ctx.translate(offsetX, offsetY);
+
+            // Draw Singularity Center (Kling Liquid Metal reacting to BASS stem)
+            ctx.beginPath();
+            const blackHoleRadius = isExploding ? 10 : 40 + (bassVal * 0.8);
+            const gradient = ctx.createRadialGradient(singularityCenter.x, singularityCenter.y, 0, singularityCenter.x, singularityCenter.y, blackHoleRadius * 4);
+            gradient.addColorStop(0, isExploding ? '#fff' : '#000');
+            gradient.addColorStop(0.2, `rgba(0, 243, 255, ${0.8 + bassVal/255})`);
+            gradient.addColorStop(0.5, `rgba(189, 0, 255, ${0.5 + drumsVal/255})`);
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.arc(singularityCenter.x, singularityCenter.y, blackHoleRadius * 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // WOW EFFECT: Kaleidoscope Mirroring setup
+            const slices = 4; // 4-way symmetry
+            
+            for (let s = 0; s < slices; s++) {
+                ctx.save();
+                ctx.translate(singularityCenter.x, singularityCenter.y);
+                ctx.rotate((Math.PI * 2 / slices) * s + globalTime * (isExploding ? 0.5 : 0.1));
+                ctx.translate(-singularityCenter.x, -singularityCenter.y);
+
+                // AlphaFold Logic: Draw nodes and synaptic connections (Reacting to SYNTHS stem)
+                for (let i = 0; i < nodes.length; i++) {
+                    // Only update logic on the first slice to avoid double speed
+                    if (s === 0) nodes[i].update(drumsVal, isExploding);
+                    
+                    nodes[i].draw(ctx, synthsVal);
+
+                    // Connect close nodes
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const dx = nodes[i].x - nodes[j].x;
+                        const dy = nodes[i].y - nodes[j].y;
+                        const distSq = dx * dx + dy * dy;
+
+                        // Connection threshold grows with synth volume
+                        const threshold = 10000 + (synthsVal * 100);
+
+                        if (distSq < threshold) { 
+                            const alpha = 1 - (distSq / threshold);
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            
+                            // Synapse colors
+                            const r = isExploding ? 255 : Math.floor(synthsVal * 1.5);
+                            const b = Math.floor(255 - bassVal/2);
+                            const g = isExploding ? Math.floor(drumsVal) : 0;
+                            
+                            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha * (0.4 + synthsVal/200)})`;
+                            ctx.lineWidth = 1 + (synthsVal / 100);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                ctx.restore();
+            }
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+
+            // Kling RGB Aberration (Now triggers more often and stronger)
+            if (isExploding || drumsVal > 80) {
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                const shift = Math.floor(drumsVal / 10); // Dynamic pixel shift
+                for (let i = 0; i < data.length; i += 4) {
+                    if (data[i + shift * 4]) {
+                        data[i] = data[i + shift * 4];
+                    }
+                    if (data[i + 2 - shift * 4]) {
+                        data[i + 2] = data[i + 2 - shift * 4];
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+            }
+        }
+
+        function assimilate(index) {
+            uiCore.classList.add('assimilated');
+            statusText.innerText = "SYSTEM_STATUS: ASSIMILATION_IN_PROGRESS // HYPER-DRIVE ENGAGED";
+            statusText.style.color = "#00f3ff";
+            
+            setTimeout(() => {
+                isActive = true;
+                window.LiaAudio.playTrack(index);
+                draw(); 
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>

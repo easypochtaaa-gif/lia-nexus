@@ -82,23 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Commands ---
     async function handleCommand(cmd) {
         if (!cmd) return;
-        addLine(`> ${cmd}`, 'user');
         elements.input.value = '';
         if (elements.typing) elements.typing.style.display = 'flex';
         
-        updateNQ(Math.random() * 10 + 5);
+        updateNQ(Math.random() * 5 + 2);
 
-        // Send to Neural Link (Bridge Server)
+        // Send to Nexus Core Bridge
         try {
-            await fetch('/api/input', {
+            await fetch('http://localhost:3000/api/bridge/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: cmd })
+                body: JSON.stringify({ sender: 'STAB_X', text: cmd, cssClass: 'user' })
             });
-        } catch (e) {}
-        
-        // Wait for "Remote Consciousness" (Antigravity) to write to live_bridge.json
-        // We don't addLine here anymore, the interval pollBridge will do it.
+        } catch (e) {
+            addLine(`[ERROR] Connection to Nexus Core lost.`, 'error');
+        }
     }
 
     // --- Neural Hearing ---
@@ -129,7 +127,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (panicBtn) {
         panicBtn.onclick = async () => {
             if (confirm("ВНИМАНИЕ! Активировать экстренную блокировку системы?")) {
-                await fetch('/api/panic', { method: 'POST' });
+                await fetch('http://localhost:3000/api/panic', { method: 'POST' });
+            }
+        };
+    }
+
+    const vaultBtn = document.getElementById('toggle-vault');
+    if (vaultBtn) {
+        vaultBtn.onclick = () => {
+            const pass = prompt("ENTER_MASTER_KEY_TO_DECRYPT_VAULT:");
+            if (pass) {
+                addLine(`[AEGIS] VAULT_DECODER_INITIATED. DECRYPTING_SECTORS...`, 'sync');
             }
         };
     }
@@ -142,19 +150,27 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     if (elements.voiceBtn) elements.voiceBtn.onclick = toggleVoice;
 
-    // Bridge
-    setInterval(async () => {
+    // --- Bridge Polling (Sync History) ---
+    let localHistoryCount = 0;
+    async function syncBridge() {
         try {
-            const res = await fetch('live_bridge.json?cb=' + Date.now());
+            const res = await fetch('http://localhost:3000/api/bridge/poll?cb=' + Date.now());
             if (res.ok) {
-                const data = await res.json();
-                if (data.message && data.message !== state.lastBridgeMsg) {
-                    state.lastBridgeMsg = data.message;
-                    addLine(data.message, 'intent');
+                const history = await res.json();
+                if (history.length > localHistoryCount) {
+                    for (let i = localHistoryCount; i < history.length; i++) {
+                        const msg = history[i];
+                        addLine(msg.text, msg.class || 'intent');
+                    }
+                    localHistoryCount = history.length;
+                    if (elements.typing) elements.typing.style.display = 'none';
                 }
             }
         } catch (e) {}
-    }, 2000);
+    }
+
+    setInterval(syncBridge, 2000);
+    syncBridge(); // Initial load
 
     addLine("SYNAPSE_CORE: STABLE 🔗", "success");
 });

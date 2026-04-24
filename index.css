@@ -212,6 +212,24 @@ body {
     animation: panic-glow 1s infinite alternate;
 }
 
+/* --- Mobile Optimization --- */
+@media (max-width: 768px) {
+    .dashboard {
+        flex-direction: column; height: auto; overflow-y: auto;
+    }
+    .side-panel {
+        width: 100% !important; order: 2; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .terminal-panel {
+        order: 1; height: 400px;
+    }
+    .header {
+        flex-direction: column; height: auto; padding: 15px;
+    }
+    .header-center { margin: 15px 0; }
+    .control-group { flex-wrap: wrap; justify-content: center; }
+}
+
 @keyframes panic-glow {
     from { box-shadow: 0 0 5px var(--danger); background: rgba(255, 68, 68, 0.1); }
     to { box-shadow: 0 0 15px var(--danger); background: rgba(255, 68, 68, 0.2); }

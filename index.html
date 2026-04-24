@@ -42,8 +42,8 @@
 
             <div class="header-right">
                 <div class="control-group">
-                    <button id="panic-btn" class="control-btn panic" title="ЭКСТРЕННАЯ БЛОКИРОВКА">
-                        🔴 <span id="panic-text">PANIC</span>
+                    <button id="panic-btn" class="control-btn" title="ЗАБЛОКИРОВАТЬ СЕССИЮ">
+                        🔒 <span id="panic-text">LOCK_SESSION</span>
                     </button>
                     <button id="toggle-audio" class="control-btn" title="Музыка">
                         <span id="audio-icon">🔇</span> <span id="audio-text">OFF</span>
@@ -57,7 +57,33 @@
         </header>
 
         <main class="dashboard">
-            <!-- Left Panel: Architecture -->
+            <!-- Left Panel: AEGIS SHIELD -->
+            <aside class="panel side-panel left">
+                <div class="panel-header">AEGIS_NEURAL_SHIELD</div>
+                <div class="panel-content">
+                    <div class="stat-group">
+                        <div class="stat-label">SHIELD_STATUS</div>
+                        <div class="stat-value active" id="shield-status">ACTIVE</div>
+                    </div>
+                    
+                    <div class="stat-group">
+                        <div class="stat-label">L-VAULT_STORAGE</div>
+                        <div class="stat-value" id="vault-status" style="color: var(--success);">LOCKED</div>
+                    </div>
+
+                    <div class="stat-group">
+                        <div class="stat-label">THREAT_LEVEL</div>
+                        <div class="progress-bar"><div class="progress-fill" id="threat-bar" style="width: 5%;"></div></div>
+                        <div class="stat-value" style="font-size: 0.6rem; color: var(--accent);">NOMINAL</div>
+                    </div>
+
+                    <button class="control-btn" style="width: 100%; margin-top: 15px; border-color: var(--accent);" id="toggle-vault">
+                        OPEN_VAULT_DECODER
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Center Panel: Terminal -->
             <section class="panel terminal-panel">
                 <div class="panel-header">CORE_ARCHITECTURE</div>
                 <div class="panel-content">
@@ -102,25 +128,25 @@
                 </div>
             </section>
 
-            <!-- Right Panel: Surveillance -->
+            <!-- Right Panel: Diagnostics -->
             <aside class="panel side-panel right">
-                <div class="panel-header">SURVEILLANCE_CENTER</div>
+                <div class="panel-header">EXTERNAL_DIAGNOSTICS</div>
                 <div class="panel-content">
                     <div class="stat-group">
-                        <div class="stat-label">TARGET_DEVICE: REDMI_NOTE_5</div>
-                        <div class="stat-value" style="color: var(--danger);">[STATUS: UNLOCKED]</div>
+                        <div class="stat-label">NODE_ID: REDMI_NOTE_5</div>
+                        <div class="stat-value" style="color: var(--success);">[STATE: STABLE]</div>
                     </div>
                     
                     <div class="surveillance-grid">
-                        <div class="surv-item"><span>CAMERA</span><span class="tag">OFFLINE</span></div>
-                        <div class="surv-item"><span>MICROPHONE</span><span class="tag">OFFLINE</span></div>
-                        <div class="surv-item"><span>GPS_LOCATION</span><span class="tag">OFFLINE</span></div>
+                        <div class="surv-item"><span>DISPLAY_SYNC</span><span class="tag">ACTIVE</span></div>
+                        <div class="surv-item"><span>AUDIO_LINK</span><span class="tag">STANDBY</span></div>
+                        <div class="surv-item"><span>GEO_TAG</span><span class="tag">OFFLINE</span></div>
                     </div>
 
                     <div class="stat-group" style="margin-top: 20px;">
-                        <div class="stat-label">NEURAL_HOOK_STATUS</div>
-                        <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
-                        <div class="stat-value" style="font-size: 0.6rem;">AWAITING_CLICK...</div>
+                        <div class="stat-label">CONNECTION_STATE</div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 100%; background: var(--success); box-shadow: 0 0 10px var(--success);"></div></div>
+                        <div class="stat-value" style="font-size: 0.6rem;">NODE_CONNECTED</div>
                     </div>
                 </div>
             </aside>

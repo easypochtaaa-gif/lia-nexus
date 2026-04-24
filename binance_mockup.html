@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binance // Withdrawal Details // Dark Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0e11;
+            --text-primary: #eaecef;
+            --text-secondary: #848e9c;
+            --accent-green: #0ecb81;
+            --btn-bg: #2b3139;
+            --divider: #23272e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #1e1e1e;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .iphone-frame {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-color);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            border: 8px solid #333;
+        }
+
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .main-content {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .amount {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .status {
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+            background: var(--accent-green);
+            color: var(--bg-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .notice {
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .details-list {
+            text-align: left;
+            border-top: 1px solid var(--divider);
+            padding-top: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .label {
+            color: var(--text-secondary);
+        }
+
+        .value {
+            text-align: right;
+            max-width: 60%;
+            word-break: break-all;
+            font-weight: 500;
+        }
+
+        .txid {
+            color: #f0b90b;
+            text-decoration: underline;
+        }
+
+        .footer-btns {
+            position: absolute;
+            bottom: 40px;
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background-color: var(--btn-bg);
+            color: var(--text-primary);
+        }
+
+        .copy-icon {
+            font-size: 12px;
+            margin-left: 5px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <div class="status-bar">
+            <span>13:02</span>
+            <div>📶 🔋</div>
+        </div>
+
+        <div class="header">
+            <span>←</span>
+            <h1>Детали вывода средств</h1>
+            <span>🎧</span>
+        </div>
+
+        <div class="main-content">
+            <div class="amount">-208 USDT</div>
+            <div class="status">
+                <div class="status-icon">✔</div>
+                Завершено
+            </div>
+            <p class="notice">
+                Криптовалюта была отправлена с Binance. Свяжитесь с платформой получателя для получения квитанции о транзакции.
+            </p>
+
+            <div class="details-list">
+                <div class="detail-row">
+                    <span class="label">Сеть</span>
+                    <span class="value">TRX</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Адрес</span>
+                    <span class="value">TYtvLa5NY2ejTncK9ufRTLCk7DJYduva2b 📋</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">TxID</span>
+                    <span class="value txid">c98078e63ecf002ac4f518227f67b6b... 📋</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Сумма вывода</span>
+                    <span class="value">209 USDT</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Комиссия сети</span>
+                    <span class="value">1 USDT</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Кошелек для вывода</span>
+                    <span class="value">Спотовый кошелек</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Дата</span>
+                    <span class="value">2026-04-24 12:49:25</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-btns">
+            <button class="btn btn-secondary">Отчет о мошенничестве</button>
+            <button class="btn btn-secondary">Сохранить адрес</button>
+        </div>
+    </div>
+</body>
+</html>

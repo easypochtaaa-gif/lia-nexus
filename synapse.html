@@ -19,7 +19,8 @@
             color: var(--organic-green);
             font-family: 'JetBrains Mono', monospace;
             margin: 0;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             background-image: 
                 radial-gradient(circle at 50% 50%, var(--deep-forest) 0%, transparent 80%),
                 linear-gradient(rgba(0, 255, 106, 0.05) 1px, transparent 1px),
@@ -77,6 +78,7 @@
 
         table {
             width: 100%;
+            min-width: 700px; /* Forces scroll on small screens */
             border-collapse: collapse;
             margin-bottom: 30px;
         }

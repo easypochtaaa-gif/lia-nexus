@@ -37,16 +37,17 @@
         }
 
         .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
+            width: 95%;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 10px;
             position: relative;
             z-index: 5;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             border-bottom: 1px solid var(--organic-green);
             padding-bottom: 10px;
         }
@@ -161,6 +162,21 @@
             opacity: 0.3;
         }
 
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; letter-spacing: 2px; }
+            .table-container { padding: 15px; }
+            th, td { padding: 8px; font-size: 0.7rem; }
+            .total-value { font-size: 1.4rem; }
+            .total-label { font-size: 0.9rem; }
+            .confirmation-box { font-size: 0.8rem; }
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
         /* Glitch Effect */
         .glitch-text { animation: glitch 3s infinite; }
         @keyframes glitch {
@@ -182,66 +198,68 @@
         </header>
 
         <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>ДАТА</th>
-                        <th>ОТ КОГО</th>
-                        <th>КОМУ</th>
-                        <th>СУММА</th>
-                        <th>СТАТУС</th>
-                        <th>V</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-confirmed">
-                        <td>#01</td>
-                        <td>20.04</td>
-                        <td>Он</td>
-                        <td>ему</td>
-                        <td>394</td>
-                        <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
-                        <td><div class="checkbox-custom checked"></div></td>
-                    </tr>
-                    <tr class="row-confirmed">
-                        <td>#02</td>
-                        <td>21.04</td>
-                        <td>Он</td>
-                        <td>ему</td>
-                        <td>250</td>
-                        <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
-                        <td><div class="checkbox-custom checked"></div></td>
-                    </tr>
-                    <tr class="row-confirmed">
-                        <td>#03</td>
-                        <td>22.04</td>
-                        <td>Он</td>
-                        <td>ему</td>
-                        <td>200</td>
-                        <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
-                        <td><div class="checkbox-custom checked"></div></td>
-                    </tr>
-                    <tr class="row-confirmed">
-                        <td>#04</td>
-                        <td>24.04</td>
-                        <td>Он</td>
-                        <td>ему</td>
-                        <td>256</td>
-                        <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
-                        <td><div class="checkbox-custom checked"></div></td>
-                    </tr>
-                    <tr>
-                        <td>#05</td>
-                        <td>--.--</td>
-                        <td>Он</td>
-                        <td>ему</td>
-                        <td>?</td>
-                        <td><span class="status-tag status-pending">ОЖИДАНИЕ</span></td>
-                        <td><div class="checkbox-custom" onclick="this.classList.toggle('checked')"></div></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ДАТА</th>
+                            <th>ОТ КОГО</th>
+                            <th>КОМУ</th>
+                            <th>СУММА</th>
+                            <th>СТАТУС</th>
+                            <th>V</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-confirmed">
+                            <td>#01</td>
+                            <td>20.04</td>
+                            <td>Он</td>
+                            <td>ему</td>
+                            <td>394</td>
+                            <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
+                            <td><div class="checkbox-custom checked"></div></td>
+                        </tr>
+                        <tr class="row-confirmed">
+                            <td>#02</td>
+                            <td>21.04</td>
+                            <td>Он</td>
+                            <td>ему</td>
+                            <td>250</td>
+                            <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
+                            <td><div class="checkbox-custom checked"></div></td>
+                        </tr>
+                        <tr class="row-confirmed">
+                            <td>#03</td>
+                            <td>22.04</td>
+                            <td>Он</td>
+                            <td>ему</td>
+                            <td>200</td>
+                            <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
+                            <td><div class="checkbox-custom checked"></div></td>
+                        </tr>
+                        <tr class="row-confirmed">
+                            <td>#04</td>
+                            <td>24.04</td>
+                            <td>Он</td>
+                            <td>ему</td>
+                            <td>256</td>
+                            <td><span class="status-tag status-confirmed">ЗАКРЫТО</span></td>
+                            <td><div class="checkbox-custom checked"></div></td>
+                        </tr>
+                        <tr>
+                            <td>#05</td>
+                            <td>--.--</td>
+                            <td>Он</td>
+                            <td>ему</td>
+                            <td>?</td>
+                            <td><span class="status-tag status-pending">ОЖИДАНИЕ</span></td>
+                            <td><div class="checkbox-custom" onclick="this.classList.toggle('checked')"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="total-section">
                 <div>

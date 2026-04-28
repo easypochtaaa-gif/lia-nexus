@@ -4,10 +4,13 @@
    ══════════════════════════════════════════════ */
 
 :root {
-    --bg-deep: #020202;
-    --accent: #ffcc00;
-    --glow: rgba(255, 204, 0, 0.4);
-    --border: rgba(255, 204, 0, 0.15);
+    --bg-dark: #000000;
+    --bg-panel: rgba(5, 5, 5, 0.95);
+    --accent: #ff3366;
+    --accent-dim: rgba(255, 51, 102, 0.1);
+    --text-primary: #f0f0ff;
+    --text-dim: #666688;
+    --border: rgba(255, 51, 102, 0.2);
 }
 
 body {

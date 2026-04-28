@@ -14,8 +14,8 @@ const SMTP_CONFIG = {
     port: 465,
     secure: true,
     auth: {
-        user: 'cntrlstab@gmail.com', // Твой Email
-        pass: 'cpeamkwjalhlteoq'    // Пароль приложения Google
+        user: process.env.SMTP_USER || 'cntrlstab@gmail.com',
+        pass: process.env.SMTP_PASS
     }
 };
 

@@ -56,9 +56,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elements.stage) elements.stage.textContent = next.toUpperCase();
             addLine(`[!] Evolution: Stage shifted to ${next.toUpperCase()} 🧬`, 'sync');
         }
-        if (elements.nqFill) elements.nqFill.style.width = `${Math.min((state.nq/2000)*100, 100)}%`;
-        if (elements.nqValue) elements.nqValue.textContent = `${Math.floor(state.nq)} / 2000`;
+    if (elements.nqFill) elements.nqFill.style.width = `${Math.min((state.nq/2000)*100, 100)}%`;
+    if (elements.nqValue) elements.nqValue.textContent = `${Math.floor(state.nq)} / 2000`;
+}
+
+async function syncStatus() {
+    try {
+        const res = await fetch('/api/status');
+        if (res.ok) {
+            const data = await res.json();
+            state.nq = data.nq;
+            state.stage = data.stage;
+            if (elements.stage) elements.stage.textContent = state.stage.toUpperCase();
+            document.body.className = `stage-${state.stage}`;
+            // If NQ is very high, adjust the scale
+            const displayNQ = state.nq > 2000 ? 2000 : state.nq; 
+            if (elements.nqFill) elements.nqFill.style.width = `${(displayNQ/2000)*100}%`;
+            if (elements.nqValue) elements.nqValue.textContent = `${Math.floor(state.nq)} / 100000`;
+        }
+    } catch (e) {
+        console.error("Failed to sync status", e);
     }
+}
 
     // --- Voice Synthesis ---
     function speak(text) {
@@ -89,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Send to Nexus Core Bridge
         try {
-            await fetch('http://localhost:3000/api/bridge/send', {
+            await fetch('/api/bridge/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ sender: 'STAB_X', text: cmd, cssClass: 'user' })
@@ -127,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (panicBtn) {
         panicBtn.onclick = async () => {
             if (confirm("ВНИМАНИЕ! Активировать экстренную блокировку системы?")) {
-                await fetch('http://localhost:3000/api/panic', { method: 'POST' });
+                await fetch('/api/panic', { method: 'POST' });
             }
         };
     }
@@ -154,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let localHistoryCount = 0;
     async function syncBridge() {
         try {
-            const res = await fetch('http://localhost:3000/api/bridge/poll?cb=' + Date.now());
+            const res = await fetch('/api/bridge/poll?cb=' + Date.now());
             if (res.ok) {
                 const history = await res.json();
                 if (history.length > localHistoryCount) {
@@ -171,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setInterval(syncBridge, 2000);
     syncBridge(); // Initial load
+    syncStatus(); // Initial NQ sync
 
     addLine("SYNAPSE_CORE: STABLE 🔗", "success");
 });

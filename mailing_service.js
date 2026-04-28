@@ -6,14 +6,15 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 
-// --- CONFIGURATION ---
+require('dotenv').config();
+
 const SMTP_CONFIG = {
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
     auth: {
-        user: 'cntrlstab@gmail.com', // Твой адрес
-        pass: 'YOUR_APP_PASSWORD'    // Твой пароль приложения (нужно создать в Google)
+        user: process.env.SMTP_USER, 
+        pass: process.env.SMTP_PASS    
     }
 };
 

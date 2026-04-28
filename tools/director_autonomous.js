@@ -77,7 +77,7 @@ class AutonomousDirector {
 
         // 4. Persist NQ to server if available (Throttle server requests)
         if (Math.random() > 0.7) { // Only 30% chance to ping server per cycle
-            fetch('http://localhost:3000/api/nq-update', {
+            fetch('/api/nq-update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ amount: growth, source: `AUTO_${agentObj.name}` })

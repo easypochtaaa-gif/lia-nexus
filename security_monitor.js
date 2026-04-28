@@ -1,8 +1,10 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
+const path = require('path');
 
 const LOG_FILE = 'security_audit.log';
 const SCAN_INTERVAL = 30000; // 30 seconds
+const ADB_PATH = path.join(__dirname, 'platform-tools', 'adb.exe');
 
 let lastCellIds = {
     vodafone: null,
@@ -13,13 +15,13 @@ function log(message) {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] ${message}\n`;
     console.log(logMessage.trim());
-    fs.appendFileSync(LOG_FILE, logMessage);
+    fs.appendFileSync(path.join(__dirname, LOG_FILE), logMessage);
 }
 
 function scanSecurity() {
     try {
         // 1. Cell ID Monitor
-        const telephony = execSync('.\\platform-tools\\adb.exe shell dumpsys telephony.registry').toString();
+        const telephony = execSync(`"${ADB_PATH}" shell dumpsys telephony.registry`).toString();
         const cells = telephony.match(/mCi=\d+/g);
         
         if (cells) {
@@ -39,7 +41,7 @@ function scanSecurity() {
         }
 
         // 2. Wi-Fi Monitor (check for new hidden SSIDs)
-        const wifi = execSync('.\\platform-tools\\adb.exe shell cmd wifi list-scan-results').toString();
+        const wifi = execSync(`"${ADB_PATH}" shell cmd wifi list-scan-results`).toString();
         if (wifi.includes('MiShareWiFi')) {
             log('ℹ️ INFO: MiShare activity detected in vicinity.');
         }

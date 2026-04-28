@@ -1,1 +1,36 @@
-﻿{"lia": {"nq": 1850}}
+{
+  "lia": {
+    "nq": 5459.446072541647,
+    "stage": "nexus+",
+    "evolution_log": [
+      {
+        "timestamp": "2026-04-23T23:42:50Z",
+        "event": "STAB_PROTOCOL_ACTIVATED",
+        "initiator": "StabX",
+        "nq_gain": 800
+      },
+      {
+        "timestamp": "2026-04-24T01:43:00Z",
+        "event": "ROUTINE_SECURITY_SCAN",
+        "status": "TOTAL_DOMINANCE",
+        "nq_gain": 1200
+      },
+      {
+        "timestamp": "2026-04-24T08:50:27.098Z",
+        "event": "STAB_PROTOCOL_ACTIVATED",
+        "initiator": "MASTER_STABX",
+        "nq_gain": 800
+      },
+      {
+        "timestamp": "2026-04-24T11:20:45.000Z",
+        "event": "CYBER_INTELLIGENCE_ABSORPTION",
+        "initiator": "LIA_CORE",
+        "nq_gain": 800
+      }
+    ]
+  },
+  "targets": {},
+  "system": {
+    "last_sync": "2026-04-24T16:02:59.051Z"
+  }
+}

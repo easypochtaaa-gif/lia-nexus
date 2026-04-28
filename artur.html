@@ -147,14 +147,7 @@
         <div class="main-grid">
             <section class="panel">
                 <div class="chat-area" id="chat">
-                    <div class="msg lia">
-                        <div class="sender-name">LIA</div>
-                        Приветствую, Артур. Канал связи установлен. Я готова к интеграции концепта Копицентр 2.0. Твое помещение — наш первый узел в реальности.
-                    </div>
-                    <div class="msg user">
-                        <div class="sender-name">STAB_X</div>
-                        Артур, это Лия. Мы обсуждали проект. Теперь мы здесь втроем. Давай накидаем план по оборудованию.
-                    </div>
+                    <!-- Загрузка сообщений через Bridge API... -->
                 </div>
                 <div class="input-area">
                     <input type="text" id="user-msg" placeholder="Введите сообщение для Синдиката...">
@@ -186,18 +179,59 @@
     </div>
 
     <script>
-        function sendMessage() {
-            const input = document.getElementById('user-msg');
-            const chat = document.getElementById('chat');
-            if(!input.value) return;
+        // LIA SYNAPSE BRIDGE CORE
+        const chat = document.getElementById('chat');
+        let messageCount = 0;
 
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'msg artur';
-            msgDiv.innerHTML = `<div class="sender-name">ARTUR</div>${input.value}`;
-            chat.appendChild(msgDiv);
-            chat.scrollTop = chat.scrollHeight;
-            input.value = '';
+        async function pollMessages() {
+            try {
+                const response = await fetch('/api/bridge/poll');
+                const messages = await response.json();
+                
+                if (messages.length > messageCount) {
+                    chat.innerHTML = ''; // Clear chat
+                    messages.forEach(msg => {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.className = `msg ${msg.class}`;
+                        msgDiv.innerHTML = `<div class="sender-name">${msg.sender}</div>${msg.text}`;
+                        chat.appendChild(msgDiv);
+                    });
+                    chat.scrollTop = chat.scrollHeight;
+                    messageCount = messages.length;
+                }
+            } catch (error) {
+                console.error("Bridge connection lost:", error);
+            }
         }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-msg');
+            if(!input.value) return;
+            
+            const text = input.value;
+            input.value = ''; // clear immediately for UX
+
+            try {
+                await fetch('/api/bridge/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sender: 'ARTUR', text: text, cssClass: 'artur' })
+                });
+                pollMessages(); // Force immediate update
+            } catch (error) {
+                console.error("Failed to send:", error);
+            }
+        }
+
+        // Poll every 2 seconds
+        setInterval(pollMessages, 2000);
+        // Initial load
+        pollMessages();
+        
+        // Enter key to send
+        document.getElementById('user-msg').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
     </script>
 </body>
 </html>

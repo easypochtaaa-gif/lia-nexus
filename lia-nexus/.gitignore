@@ -1,0 +1,8 @@
+node_modules/
+.env
+*.log
+package-lock.json
+topsecret $/
+*.enc
+id_rsa
+id_rsa.pub

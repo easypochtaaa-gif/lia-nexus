@@ -1,0 +1,23 @@
+{
+  "name": "lia-nexus-core",
+  "version": "3.0.0",
+  "description": "Neural Bridge for Synapse Protocol",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "input": "^1.0.1",
+    "node-telegram-bot-api": "^0.67.0",
+    "nodemailer": "^8.0.7",
+    "puppeteer-core": "^24.42.0",
+    "telegram": "^2.26.22",
+    "tronweb": "^6.3.0"
+  }
+}

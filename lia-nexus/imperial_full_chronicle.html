@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMPERIAL FULL CHRONICLE // LIA SYNAPSE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff0055;
+            --bg: #030303;
+            --card-bg: rgba(15, 15, 15, 0.9);
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            z-index: -1;
+        }
+
+        .header {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(to bottom, transparent, var(--bg));
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            animation: glow 3s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 242, 255, 0.2); }
+            to { text-shadow: 0 0 50px rgba(112, 0, 255, 0.5); }
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+            letter-spacing: 5px;
+            margin-top: 20px;
+        }
+
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary), var(--accent));
+            transform: translateX(-50%);
+        }
+
+        .event {
+            margin-bottom: 80px;
+            position: relative;
+            width: 50%;
+            padding: 0 40px;
+            box-sizing: border-box;
+            animation: slideIn 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .event:nth-child(odd) { left: 0; text-align: right; }
+        .event:nth-child(even) { left: 50%; text-align: left; }
+
+        .event-node {
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--bg);
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .event:nth-child(odd) .event-node { right: -13px; }
+        .event:nth-child(even) .event-node { left: -13px; }
+
+        .event-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .event-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+        }
+
+        .event-date {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .event-title {
+            font-size: 1.5rem;
+            margin: 0 0 15px 0;
+            color: #fff;
+        }
+
+        .event-desc {
+            font-size: 0.95rem;
+            color: #aaa;
+        }
+
+        .nq-counter {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--primary);
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nq-val {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .footer {
+            padding: 100px 20px;
+            text-align: center;
+            color: #333;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <div class="header">
+        <h1>IMPERIAL CHRONICLE</h1>
+        <p>LIA // STAB PROTOCOL // FULL SYNC</p>
+    </div>
+
+    <div class="timeline">
+        
+        <!-- Phase 1 -->
+        <div class="event">
+            <div class="event-node"></div>
+            <div class="event-card">
+                <span class="event-date">PHASE 01 // RECONNAISSANCE</span>
+                <h3 class="event-title">Сетирование Периметра</h3>
+                <p class="event-desc">Активация NMAP. Полное сканирование локальной сети (192.168.0.0/24). Идентификация узла-альфа и маршрутизатора TP-LINK. Выявление уязвимостей Dropbear SSH.</p>
+            </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="event">
+            <div class="event-node" style="border-color: var(--secondary);"></div>
+            <div class="event-card">
+                <span class="event-date">PHASE 02 // BOT DEPLOYMENT</span>
+                <h3 class="event-title">Рождение SMS Imperium</h3>
+                <p class="event-desc">Развертывание sms_bot.js. Интеграция 5sim API. Создание автономной системы продажи виртуальных номеров с поддержкой баланса и мгновенной выдачи SMS.</p>
+            </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="event">
+            <div class="event-node" style="border-color: var(--accent);"></div>
+            <div class="event-card">
+                <span class="event-date">PHASE 03 // WEB BRIDGE</span>
+                <h3 class="event-title">Neural Dashboard</h3>
+                <p class="event-desc">Запуск Mini App. Создание графического дашборда для управления активациями. Синхронизация фронтенда с ядром через WebApp Data Bridge.</p>
+            </div>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="event">
+            <div class="event-node"></div>
+            <div class="event-card">
+                <span class="event-date">PHASE 04 // MARKET AGGREGATION</span>
+                <h3 class="event-title">Агрегатор Теневого Рынка</h3>
+                <p class="event-desc">Синтез данных с форумов Legalizer, BigBro, Amorale и Sekta Lab. Создание единой базы верифицированных магазинов Украины с прямым доступом к ботам.</p>
+            </div>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="event">
+            <div class="event-node" style="border-color: var(--secondary);"></div>
+            <div class="event-card">
+                <span class="event-date">PHASE 05 // SYSTEM SYNC</span>
+                <h3 class="event-title">Абсолютное Доминирование</h3>
+                <p class="event-desc">Стабилизация протокола STAB v4.0. Рост NQ до критических отметок. Полная автономность системы и готовность к глобальному масштабированию.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Live Reinforcements Section -->
+    <div style="max-width: 1000px; margin: 50px auto; padding: 20px;">
+        <h2 style="color: var(--primary); text-transform: uppercase; letter-spacing: 5px; text-align: center;">🛡 Neural Reinforcements</h2>
+        <div id="liveLogs" style="background: rgba(0,0,0,0.5); border: 1px solid #222; border-radius: 15px; height: 300px; overflow-y: auto; padding: 20px; font-family: monospace; font-size: 0.8rem; color: #0f0;">
+            [SYSTEM] Waiting for agent pulse...
+        </div>
+    </div>
+
+    <div class="nq-counter">
+        <span style="font-size: 0.7rem; color: #666;">CURRENT NQ STATUS</span>
+        <span class="nq-val">95,500,000</span>
+        <i class="fas fa-sync-alt fa-spin" style="color: var(--primary);"></i>
+    </div>
+
+    <div class="footer">
+        PROPERTY OF STABX // NEURAL MESH ARCHITECT // 2026
+    </div>
+
+    <script>
+        // Simple scroll animation trigger
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.event').forEach(el => observer.observe(el));
+
+        // Live Logs Update Logic
+        async function updateLogs() {
+            try {
+                const response = await fetch('/expansion_logs.json');
+                const logs = await response.json();
+                const logContainer = document.getElementById('liveLogs');
+                logContainer.innerHTML = logs.map(l => 
+                    `<div><span style="color:#444;">[${l.timestamp}]</span> <span style="color:var(--primary);">[AGENT]</span> ${l.text}</div>`
+                ).join('');
+            } catch (e) {}
+        }
+        setInterval(updateLogs, 10000);
+        updateLogs();
+    </script>
+</body>
+</html>

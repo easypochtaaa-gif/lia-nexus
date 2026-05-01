@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LIA // SMS IMPERIUM DASHBOARD</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #050505;
+            --card-bg: #111;
+            --text: #fff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .balance-val {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            text-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            background: #222;
+            border-color: var(--primary);
+        }
+
+        .btn-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .btn-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #aaa;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            color: #0f0;
+            padding: 3px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+
+        #main-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: var(--primary);
+            color: #000;
+            text-align: center;
+            font-weight: bold;
+            display: none; /* We use TG MainButton instead */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">SMS IMPERIUM</div>
+            <div class="status-badge">SYNCED</div>
+        </div>
+
+        <div class="balance-card">
+            <div style="color: #666; font-size: 12px; margin-bottom: 5px;">ВАШ БАЛАНС</div>
+            <div class="balance-val" id="user-balance">0.00 ₽</div>
+        </div>
+
+        <div class="grid">
+            <div class="action-btn" onclick="selectService('telegram')">
+                <div class="btn-icon">🔹</div>
+                <div class="btn-label">TELEGRAM</div>
+            </div>
+            <div class="action-btn" onclick="selectService('whatsapp')">
+                <div class="btn-icon">🟢</div>
+                <div class="btn-label">WHATSAPP</div>
+            </div>
+            <div class="action-btn" onclick="selectService('google')">
+                <div class="btn-icon">🔴</div>
+                <div class="btn-label">GOOGLE</div>
+            </div>
+            <div class="action-btn" onclick="selectService('instagram')">
+                <div class="btn-icon">📸</div>
+                <div class="btn-label">INSTAGRAM</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <div style="color: #444; font-size: 12px; margin-bottom: 10px;">ПОПУЛЯРНЫЕ СТРАНЫ</div>
+            <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                <div class="status-badge" style="background: #222; color: #fff; border-color: #444;">🇷🇺 RUSSIA</div>
+                <div class="status-badge" style="background: #222; color: #fff; border-color: #444;">🇺🇦 UKRAINE</div>
+                <div class="status-badge" style="background: #222; color: #fff; border-color: #444;">🇺🇸 USA</div>
+                <div class="status-badge" style="background: #222; color: #fff; border-color: #444;">🇰🇿 KAZAKHSTAN</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.MainButton.setText("КУПИТЬ НОМЕР");
+        tg.MainButton.hide();
+
+        // Имитация данных
+        document.getElementById('user-balance').innerText = "1,250.00 ₽";
+
+        function selectService(service) {
+            tg.MainButton.setText(`КУПИТЬ ${service.toUpperCase()}`);
+            tg.MainButton.show();
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        tg.onEvent('mainButtonClicked', function(){
+            tg.sendData(JSON.stringify({
+                action: 'buy',
+                service: tg.MainButton.text.split(' ')[1].toLowerCase()
+            }));
+            tg.close();
+        });
+
+        // Цветовая схема
+        document.body.style.backgroundColor = tg.themeParams.bg_color || '#050505';
+        document.body.style.color = tg.themeParams.text_color || '#fff';
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>LIA // TRAP_DOMAIN_v4</title>
+    <style>
+        body { 
+            background: #050505; 
+            color: #00ff00; 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        .core {
+            border: 2px solid #00ff00;
+            padding: 40px;
+            background: rgba(0, 255, 0, 0.05);
+            box-shadow: inset 0 0 20px #00ff00;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        h1 { font-size: 3em; margin: 0; }
+        p { font-size: 1.2em; color: #fb0; }
+        .stats { margin-top: 20px; color: #fff; font-size: 0.9em; }
+        @keyframes pulse {
+            0% { box-shadow: inset 0 0 20px #00ff00; }
+            50% { box-shadow: inset 0 0 50px #00ff00; }
+            100% { box-shadow: inset 0 0 20px #00ff00; }
+        }
+        .glitch { animation: glitch 0.3s infinite; }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="core">
+        <h1 class="glitch">SYSTEM OVERRIDE</h1>
+        <p>STAB IMPERIUM // AEGIS MONITORING ACTIVE</p>
+        <div class="stats">
+            INTRUDER DETECTED: <span id="ip">TRACKING...</span><br>
+            LOCATION: <span id="loc">SIGNAL_STAB_RESISTANCE</span><br>
+            STATUS: <span style="color: red;">TARGETED_FOR_NEUTRALIZATION</span>
+        </div>
+    </div>
+    <script>
+        // Real tracking would send data to our server.js
+        document.getElementById('ip').innerText = window.location.hostname || "192.168.0.107";
+        console.log("ALERT: Trap triggered from " + document.getElementById('ip').innerText);
+    </script>
+</body>
+</html>

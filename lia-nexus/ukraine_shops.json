@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Amigo",
+        "bot": "https://t.me/Amigo_Support",
+        "site": "https://amigo.cc",
+        "status": "Verified Seller (Legalizer)"
+    },
+    {
+        "name": "Benetton",
+        "bot": "https://t.me/Ben_Operator",
+        "site": "https://benetton.top",
+        "status": "Elite Network (All Forums)"
+    },
+    {
+        "name": "VisaWhite",
+        "bot": "https://t.me/VisaWhite_Support",
+        "site": "https://visa.white",
+        "status": "Pure Quality (Sekta Lab)"
+    },
+    {
+        "name": "Pink Panther",
+        "bot": "https://t.me/Pink_Support",
+        "site": "https://pinkpanther.cc",
+        "status": "Market Giant (BigBro)"
+    },
+    {
+        "name": "KFC Shop",
+        "bot": "https://t.me/KFC_Support",
+        "site": "https://kfc.best",
+        "status": "Fast Delivery (Sekta Lab)"
+    },
+    {
+        "name": "Pirat Salim",
+        "bot": "https://t.me/Salim_Support",
+        "site": "https://pirat.salim",
+        "status": "Legend (BigBro/Sekta)"
+    },
+    {
+        "name": "RC Cartel",
+        "bot": "https://t.me/Cartel_Bot",
+        "site": "https://cartel.bz",
+        "status": "Top Tier (RC Amorale)"
+    },
+    {
+        "name": "White Widow",
+        "bot": "https://t.me/WW_Support",
+        "site": "https://widow.biz",
+        "status": "Premium (Sekta Lab)"
+    },
+    {
+        "name": "Utopia",
+        "bot": "https://t.me/Utopia_Bot",
+        "site": "https://utopia.cc",
+        "status": "Verified (BigBro)"
+    },
+    {
+        "name": "Fight Club",
+        "bot": "https://t.me/FC_Support",
+        "site": "https://fclub.bz",
+        "status": "Active (RC Amorale)"
+    }
+]

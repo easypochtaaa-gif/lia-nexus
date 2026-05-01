@@ -20,6 +20,7 @@ app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard
 app.get('/ukraine-shops', (req, res) => res.sendFile(path.join(__dirname, 'ukraine_shops.html')));
 app.get('/ukraine-shop', (req, res) => res.sendFile(path.join(__dirname, 'ukraine_shops.html')));
 app.get('/chronicle', (req, res) => res.sendFile(path.join(__dirname, 'imperial_full_chronicle.html')));
+app.get('/yura', (req, res) => res.sendFile(path.join(__dirname, 'yura_return.html')));
 
 // TG User API removed from main server context
 

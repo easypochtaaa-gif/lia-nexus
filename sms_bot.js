@@ -194,7 +194,7 @@ bot.on('callback_query', async (query) => {
         const balance = getBalance(chatId);
         const menu = {
             inline_keyboard: [
-                [{ text: '💎 ОТКРЫТЬ DASHBOARD', web_app: { url: 'https://lia-nexus.render.com/dashboard' } }],
+                [{ text: '💎 ОТКРЫТЬ DASHBOARD', web_app: { url: 'https://lia-nexus.onrender.com/dashboard' } }],
                 [{ text: '📱 КУПИТЬ НОМЕР', callback_data: 'menu_buy' }, { text: '🏪 МАГАЗИНЫ', callback_data: 'menu_shops' }],
                 [{ text: '💰 БАЛАНС', callback_data: 'menu_balance' }, { text: '📜 ИСТОРИЯ', callback_data: 'menu_history' }],
                 [{ text: '⚙️ НАСТРОЙКИ', callback_data: 'menu_settings' }]

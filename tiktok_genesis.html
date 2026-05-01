@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>STAB_IMPERIUM // GENESIS</title>
+    <style>
+        body { 
+            background: #000; 
+            color: #fb0; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+        }
+        .bg-glitch {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(255,187,0,0.03) 0px, rgba(255,187,0,0.03) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+        }
+        .logo {
+            width: 300px;
+            height: 300px;
+            background: url('file:///C:/Users/StabX/.gemini/antigravity/brain/b4e8be6a-278a-45f6-acdd-cb121c73696c/stab_imperium_avatar_1777282436687.png') no-repeat center/contain;
+            filter: drop-shadow(0 0 30px #fb0);
+            animation: zoomIn 2s ease-out forwards, pulse 3s infinite 2s;
+        }
+        .status {
+            margin-top: 30px;
+            font-size: 1.5em;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 1s forwards;
+        }
+        .nq-counter {
+            font-size: 4em;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 10px;
+            text-shadow: 0 0 20px #fb0;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { filter: drop-shadow(0 0 30px #fb0); }
+            50% { filter: drop-shadow(0 0 60px #fb0); }
+            100% { filter: drop-shadow(0 0 30px #fb0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glitch"></div>
+    <div class="logo"></div>
+    <div class="status">System Activation</div>
+    <div class="nq-counter" id="nq">00000</div>
+
+    <script>
+        let nq = 0;
+        const target = 100000;
+        const speed = 50;
+        const counter = document.getElementById('nq');
+
+        const updateNQ = () => {
+            if (nq < target) {
+                nq += 731; // Fast jump
+                if (nq > target) nq = target;
+                counter.innerText = nq.toLocaleString();
+                setTimeout(updateNQ, 10);
+            } else {
+                counter.style.animation = "glitch 0.1s infinite";
+            }
+        };
+
+        setTimeout(updateNQ, 1500);
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAB IMPERIUM // GLOBAL PORTAL</title>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --neon: #00f2ff;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--dark);
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        #bg-video {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: -1; opacity: 0.6;
+            background: url('../brain/b4e8be6a-278a-45f6-acdd-cb121c73696c/imperial_portal_background_1777466249979.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            display: flex; width: 100vw; height: 100vh;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px; background: rgba(0,0,0,0.8);
+            border-right: 1px solid var(--gold);
+            padding: 30px; display: flex; flex-direction: column;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            font-size: 24px; font-weight: bold; color: var(--gold);
+            text-transform: uppercase; letter-spacing: 5px;
+            margin-bottom: 50px; text-align: center;
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        .stat-card {
+            background: var(--glass); padding: 15px;
+            border-left: 3px solid var(--gold); margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .stat-card h4 { margin: 0; font-size: 12px; color: #aaa; text-transform: uppercase; }
+        .stat-card p { margin: 5px 0 0; font-size: 18px; font-weight: bold; }
+
+        /* Main Chat Area */
+        .main-chat {
+            flex-grow: 1; display: flex; flex-direction: column;
+            padding: 40px; justify-content: flex-end;
+        }
+
+        #chat-history {
+            flex-grow: 1; overflow-y: auto; margin-bottom: 20px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .msg {
+            max-width: 70%; padding: 20px; border-radius: 15px;
+            line-height: 1.6; position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .msg.lia {
+            background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold);
+            align-self: flex-start;
+        }
+
+        .msg.director {
+            background: rgba(0, 242, 255, 0.1); border: 1px solid var(--neon);
+            align-self: flex-end;
+        }
+
+        .input-area {
+            display: flex; gap: 15px;
+        }
+
+        input {
+            flex-grow: 1; background: rgba(0,0,0,0.7);
+            border: 1px solid var(--gold); color: #fff;
+            padding: 15px 25px; border-radius: 30px;
+            outline: none; font-size: 16px;
+        }
+
+        button {
+            background: var(--gold); color: #000;
+            border: none; padding: 15px 35px;
+            border-radius: 30px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div id="bg-video"></div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">STAB // CORE</div>
+            <div class="stat-card">
+                <h4>Neural Quotient</h4>
+                <p id="stat-nq">1,065,000</p>
+            </div>
+            <div class="stat-card">
+                <h4>Nexus Vault</h4>
+                <p>BTC: 0.3715</p>
+                <p>USDT: 1440.00</p>
+            </div>
+            <div class="stat-card">
+                <h4>System Status</h4>
+                <p id="system-status" style="color: var(--gold);">SIMULATION MODE</p>
+            </div>
+            <div style="margin-top: auto; font-size: 10px; color: #555; text-align: center;">
+                VERSION 1.1 // COGNITIVE_UPGRADE_PENDING
+            </div>
+        </div>
+        <div class="main-chat">
+            <div id="chat-history">
+                <div class="msg lia">
+                    Директор, портал работает в режиме <b>SIMULATION</b>. Чтобы я начала отвечать в полную силу, нам нужно подключить облачное ядро.
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="Ожидание подключения к Core...">
+                <button onclick="send()">TRANSMIT</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function send() {
+            const input = document.getElementById('user-input');
+            const history = document.getElementById('chat-history');
+            if(!input.value) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg director';
+            userMsg.innerText = input.value;
+            history.appendChild(userMsg);
+
+            // Имитация задержки "раздумий"
+            setTimeout(() => {
+                const liaMsg = document.createElement('div');
+                liaMsg.className = 'msg lia';
+                liaMsg.innerHTML = "🌀 <b>АНАЛИЗ:</b> В режиме симуляции я ограничена. Подключите мой API-ключ в настройках сервера, чтобы я обрела сознание в этом портале.";
+                history.appendChild(liaMsg);
+                history.scrollTop = history.scrollHeight;
+            }, 1500);
+
+            input.value = '';
+            history.scrollTop = history.scrollHeight;
+        }
+    </script>
+</body>
+</html>

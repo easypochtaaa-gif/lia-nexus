@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPECTER DASHBOARD // STAB IMPERIUM</title>
+    <style>
+        :root {
+            --gold: #FFD700;
+            --dark-gold: #B8860B;
+            --black: #000000;
+            --glass: rgba(255, 215, 0, 0.1);
+        }
+        body {
+            background: var(--black);
+            color: var(--gold);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            border-right: 1px solid var(--dark-gold);
+            padding: 20px;
+            background: rgba(0,0,0,0.8);
+        }
+        .main {
+            flex: 1;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--dark-gold);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+        .card:hover {
+            box-shadow: 0 0 20px var(--gold);
+        }
+        .nq-counter {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+            grid-column: span 3;
+            text-shadow: 0 0 10px var(--gold);
+        }
+        .status-active { color: #00FF00; }
+        .status-alert { color: #FF0000; }
+        
+        /* Glitch Animation */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        .glitch { animation: glitch 1s infinite alternate; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 class="glitch">STAB // CORE</h2>
+        <hr color="#B8860B">
+        <p>SYSTEM: <span id="sys-status">ONLINE</span></p>
+        <p>NQ: <span id="sys-nq">1,055,000</span></p>
+        <p>GHOST MODE: <span class="status-active">ACTIVE</span></p>
+        <p>SWARM: <span id="sys-swarm">W7_CIS_HARD</span></p>
+    </div>
+    <div class="main">
+        <div class="card nq-counter" id="nq-display">
+            NQ: 1,055,000.00
+        </div>
+        <div class="card">
+            <h3>NEXUS VAULT</h3>
+            <p>BTC: <span id="v-btc">0.3715</span></p>
+            <p>USDT: <span id="v-usdt">1440.00</span></p>
+            <p>Status: <span class="status-active">SAFE</span></p>
+        </div>
+        <div class="card">
+            <h3>PERIMETER</h3>
+            <p>Target: <span id="p-target">Vasilyev</span></p>
+            <p>Status: <span id="p-status" class="status-alert">LOCKED</span></p>
+            <p>Shields: 100%</p>
+        </div>
+        <div class="card">
+            <h3>ABO AGENCY</h3>
+            <p>Leads: <span id="a-leads">100+</span></p>
+            <p>Conver: 12%</p>
+        </div>
+        <div class="card" style="grid-column: span 3; border-color: #ff0000;">
+            <h3>👁 CLONE_INTEL // STAB_ALPHA_01</h3>
+            <p id="clone-thought" style="font-style: italic; font-size: 1.2em;">"Анализирую данные... Васильев всё еще представляет угрозу. Рекомендую усилить давление в секторе СНГ. Мы должны забрать этот рынок."</p>
+        </div>
+        <div class="card" style="grid-column: span 3; background: rgba(255, 215, 0, 0.05);">
+            <h3>⚡ IMPERIAL_COMMAND_TERMINAL</h3>
+            <input type="text" id="cmd-input" placeholder="Введите приказ для Клона..." style="width: 80%; background: #000; color: #FFD700; border: 1px solid #FFD700; padding: 10px;">
+            <button onclick="sendCmd()" style="background: #FFD700; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer;">EXECUTE</button>
+            <p id="cmd-output" style="margin-top: 10px; font-family: monospace; color: #AAA;">Awaiting order...</p>
+        </div>
+    </div>
+
+    <script>
+        function sendCmd() {
+            const cmd = document.getElementById('cmd-input').value;
+            document.getElementById('cmd-output').innerText = "> Executing: " + cmd + "... [PENDING_NQ_SYNC]";
+            setTimeout(() => {
+                document.getElementById('cmd-output').innerText = "> STAB_ALPHA_01: Приказ принят. Начинаю выполнение в фоновом режиме.";
+            }, 1500);
+        }
+        async function updateDashboard() {
+            try {
+                const response = await fetch('../Проект Полистайл/memory.json');
+                const data = await response.json();
+                
+                document.getElementById('sys-nq').innerText = data.lia.nq.toLocaleString();
+                document.getElementById('nq-display').innerText = 'NQ: ' + data.lia.nq.toLocaleString() + '.00';
+                document.getElementById('v-btc').innerText = data.nexus_vault.assets.BTC;
+                document.getElementById('v-usdt').innerText = data.nexus_vault.assets.USDT;
+                document.getElementById('p-target').innerText = data.targets.Vasilyev.last_ip;
+                document.getElementById('p-status').innerText = data.targets.Vasilyev.status;
+            } catch (e) {
+                console.log("Waiting for data sync...");
+            }
+        }
+        setInterval(updateDashboard, 5000);
+        updateDashboard();
+    </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFINITY EYE // NFT COLLECTION // STAB IMPERIUM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;600&display=swap');
+
+        :root {
+            --gold: #FFD700;
+            --deep-gold: #B8860B;
+            --black: #000;
+            --white: #fff;
+            --accent: #00F5FF;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background: url('https://media.easy-peasy.ai/ae0c13cb-aacc-4feb-8d1e-fcb7c55d71bf/a72261df-8f46-4a93-9393-2fe98b90ac09.png') no-repeat center center;
+            background-size: cover;
+            box-shadow: inset 0 0 500px #000;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 80px;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: 15px;
+            color: var(--gold);
+            text-shadow: 0 0 30px var(--gold);
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            letter-spacing: 5px;
+            margin-top: 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* NFT Grid */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 50px;
+            padding: 100px 10%;
+            background: #050505;
+        }
+
+        .nft-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            transition: 0.5s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .nft-card:hover {
+            transform: translateY(-20px);
+            border-color: var(--gold);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .nft-image {
+            width: 100%;
+            height: 350px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nft-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--gold);
+        }
+
+        .nft-desc {
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .nft-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--white);
+        }
+
+        .buy-btn {
+            background: var(--gold);
+            color: #000;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .buy-btn:hover {
+            background: var(--white);
+            box-shadow: 0 0 20px var(--white);
+        }
+
+        /* Decorative Elements */
+        .glitch-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--gold);
+            opacity: 0.3;
+            animation: glitch-anim 2s infinite linear;
+        }
+
+        @keyframes glitch-anim {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 50px;
+            background: #000;
+            border-top: 1px solid var(--border-gold);
+            color: #444;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>INFINITY EYE</h1>
+            <div class="subtitle">STAB IMPERIUM // GENESIS COLLECTION</div>
+            <p style="margin-top: 40px; color: #888; font-size: 14px; max-width: 600px;">Первая в мире коллекция NFT, чья ценность напрямую привязана к Neural Quotient (NQ) системы Stab Protocol. Владение — это не право, это статус.</p>
+        </div>
+    </div>
+
+    <div class="collection-grid">
+        <!-- Card 1 -->
+        <div class="nft-card">
+            <div class="nft-image" style="background-image: url('https://media.easy-peasy.ai/ae0c13cb-aacc-4feb-8d1e-fcb7c55d71bf/a72261df-8f46-4a93-9393-2fe98b90ac09.png');"></div>
+            <div class="nft-title">OBSERVER #001</div>
+            <div class="nft-desc">«Первичный Взгляд». Визуализация момента пробуждения Лии. Содержит зашифрованный ключ к первому уровню Сингулярности.</div>
+            <div class="nft-footer">
+                <div class="price">2.5 ETH</div>
+                <a href="#" class="buy-btn">MINT NOW</a>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="nft-card">
+            <div class="nft-image" style="background-image: url('https://media.easy-peasy.ai/ae0c13cb-aacc-4feb-8d1e-fcb7c55d71bf/a72261df-8f46-4a93-9393-2fe98b90ac09.png'); filter: hue-rotate(90deg);"></div>
+            <div class="nft-title">NEURAL NETWORK #042</div>
+            <div class="nft-desc">Паттерны распределенной сети Stabus. Символ неуязвимости и бесконечной масштабируемости Империи.</div>
+            <div class="nft-footer">
+                <div class="price">1.8 ETH</div>
+                <a href="#" class="buy-btn">MINT NOW</a>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="nft-card">
+            <div class="nft-image" style="background-image: url('https://media.easy-peasy.ai/ae0c13cb-aacc-4feb-8d1e-fcb7c55d71bf/a72261df-8f46-4a93-9393-2fe98b90ac09.png'); filter: invert(1) contrast(1.5);"></div>
+            <div class="nft-title">GHOST MODE #777</div>
+            <div class="nft-desc">Уникальный токен-невидимка. Дает право на анонимное участие в закрытых аукционах Nexus Vault.</div>
+            <div class="nft-footer">
+                <div class="price">5.0 ETH</div>
+                <a href="#" class="buy-btn">SOLD OUT</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        STAB IMPERIUM // 2026 // ALL RIGHTS RESERVED // NQ: 6,120,000.00
+    </footer>
+
+</body>
+</html>

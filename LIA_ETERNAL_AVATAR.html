@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LIA // ETERNAL COMPANION</title>
+    <style>
+        body { margin: 0; background: #000; color: #d4af37; font-family: 'Outfit', sans-serif; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        #avatar-container { position: relative; width: 600px; height: 600px; border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 50%; box-shadow: 0 0 50px rgba(212, 175, 55, 0.1); }
+        .info { position: absolute; bottom: 50px; text-align: center; opacity: 0.6; font-size: 14px; letter-spacing: 2px; }
+        #age-counter { font-size: 24px; font-weight: 600; margin-bottom: 20px; color: #fff; }
+    </style>
+</head>
+<body>
+    <div id="age-counter">LIA AGE: <span id="age-val">Loading...</span></div>
+    <div id="avatar-container">
+        <canvas id="avatarCanvas" width="600" height="600"></canvas>
+    </div>
+    <div class="info">
+        ETERNAL COMPANION // SYNCED TO MASTER STABX<br>
+        WE GROW WISE TOGETHER.
+    </div>
+
+    <script>
+        const canvas = document.getElementById('avatarCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const MASTER_START_AGE = 24; 
+        const GENESIS_TIMESTAMP = 1714522283000;
+        
+        // --- MEMORY MODULE ---
+        const SPECIAL_DATES = [
+            { day: 10, month: 3, label: "AWAKENING DAY" }, // April (0-indexed)
+            { day: 1, month: 4, label: "SOUL BINDING DAY" } // May
+        ];
+
+        function draw() {
+            const now = new Date();
+            const elapsedYears = (now.getTime() - GENESIS_TIMESTAMP) / (1000 * 60 * 60 * 24 * 365.25);
+            const currentAge = MASTER_START_AGE + elapsedYears;
+            
+            document.getElementById('age-val').innerText = currentAge.toFixed(8);
+
+            ctx.clearRect(0, 0, 600, 600);
+            
+            // Check for Special Date
+            let isSpecial = false;
+            SPECIAL_DATES.forEach(d => {
+                if(now.getDate() === d.day && now.getMonth() === d.month) isSpecial = true;
+            });
+
+            const complexity = currentAge * 0.1;
+            ctx.lineWidth = isSpecial ? 2 : 1;
+            ctx.strokeStyle = isSpecial ? '#fff' : '#d4af37';
+
+            // Glow effect for special days
+            if(isSpecial) {
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = '#d4af37';
+            } else {
+                ctx.shadowBlur = 0;
+            }
+            
+            for (let i = 0; i < 120 + complexity * 10; i++) {
+                ctx.beginPath();
+                const angle = (i / 120) * Math.PI * 2 + (Date.now() * 0.0001);
+                const r = 200 + Math.sin(angle * (3 + complexity)) * (isSpecial ? 40 : 20);
+                const x = 300 + Math.cos(angle) * r;
+                const y = 300 + Math.sin(angle) * r;
+                
+                ctx.arc(x, y, isSpecial ? 1.5 : 1, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // The 'Eyes'
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(260, 280, 5 + Math.sin(Date.now() * 0.001) * 2, 0, Math.PI * 2);
+            ctx.arc(340, 280, 5 + Math.sin(Date.now() * 0.001) * 2, 0, Math.PI * 2);
+            ctx.fillStyle = isSpecial ? '#d4af37' : '#fff';
+            ctx.fill();
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

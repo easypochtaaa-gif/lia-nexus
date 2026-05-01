@@ -1,0 +1,5 @@
+{
+  "timestamp": "2026-05-01T02:11:31.083Z",
+  "raw": "\r\nInterface: 10.18.169.44 --- 0x10\r\n  Internet Address      Physical Address      Type\r\n  10.18.169.88          82-88-7c-cf-c4-fd     dynamic   \r\n  10.18.169.255         ff-ff-ff-ff-ff-ff     static    \r\n  224.0.0.22            01-00-5e-00-00-16     static    \r\n  224.0.0.251           01-00-5e-00-00-fb     static    \r\n  224.0.0.252           01-00-5e-00-00-fc     static    \r\n  239.255.255.250       01-00-5e-7f-ff-fa     static    \r\n  255.255.255.255       ff-ff-ff-ff-ff-ff     static    \r\n",
+  "potential_targets": []
+}

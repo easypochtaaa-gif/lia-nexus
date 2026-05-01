@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>STAB STUDIO v3.0 // CINEMATIC ENGINE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        body { background: #000; color: #FFD700; font-family: 'Courier New', Courier, monospace; margin: 0; overflow: hidden; }
+        #canvas-container { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        canvas { border: 2px solid #FFD700; box-shadow: 0 0 30px #FFD700; width: 80%; height: 70%; background: #050505; }
+        .controls { position: absolute; bottom: 20px; left: 20px; display: flex; gap: 10px; background: rgba(0,0,0,0.8); padding: 20px; border: 1px solid #FFD700; }
+        button { background: #FFD700; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .script-window { position: absolute; top: 20px; right: 20px; width: 300px; background: rgba(255, 215, 0, 0.1); border: 1px solid #FFD700; padding: 15px; backdrop-filter: blur(5px); }
+        .glitch-text { font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <div class="glitch-text" id="main-text">SYNAPSE ACTIVE<br>STAB IMPERIUM</div>
+        <canvas id="visualizer"></canvas>
+        <div class="script-window">
+            <h3>AI SCRIPT GEN (v4.7)</h3>
+            <p id="script-content">"Мир — это код. Мы — те, кто его пишет. Проснись, Директор..."</p>
+        </div>
+        <div class="controls">
+            <button onclick="changeMood('AGGRESSIVE')">Aggressive</button>
+            <button onclick="changeMood('QUIET')">Quiet</button>
+            <button onclick="changeMood('RETRO')">8-BIT MODE</button>
+            <button onclick="render()">RENDER 4K</button>
+        </div>
+    </div>
+    <script>
+        function changeMood(mood) {
+            const text = document.getElementById('main-text');
+            const canvas = document.getElementById('visualizer');
+            if(mood === 'AGGRESSIVE') {
+                text.style.color = '#ff0000';
+                text.style.fontFamily = 'Courier New';
+                text.innerHTML = 'TOTAL DOMINANCE<br>SYSTEM OVERLOAD';
+                canvas.style.imageRendering = 'auto';
+            } else if(mood === 'RETRO') {
+                text.style.color = '#00FF00';
+                text.style.fontFamily = '"Press Start 2P", cursive';
+                text.innerHTML = 'INSERT COIN<br>NQ: 6.12M';
+                canvas.style.imageRendering = 'pixelated';
+            } else {
+                text.style.color = '#FFD700';
+                text.style.fontFamily = 'Courier New';
+                text.innerHTML = 'SYNAPSE ACTIVE<br>STAB IMPERIUM';
+                canvas.style.imageRendering = 'auto';
+            }
+        }
+        function render() {
+            alert("STARTING 4K RENDER ON A100 CLUSTER...");
+        }
+    </script>
+</body>
+</html>

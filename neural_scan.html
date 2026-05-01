@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAB IMPERIUM // Neural Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #ffbb00; --bg: #050505; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif;
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; overflow: hidden;
+        }
+        .bg-glow {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            width: 600px; height: 600px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,187,0,0.08) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity:0.5; } 50% { transform: translate(-50%,-50%) scale(1.3); opacity:1; } }
+        .container { position: relative; z-index: 2; text-align: center; padding: 30px; max-width: 420px; }
+        .logo-text {
+            font-size: 2.8em; font-weight: 900; letter-spacing: 8px;
+            color: var(--gold); text-shadow: 0 0 40px rgba(255,187,0,0.5);
+            margin-bottom: 5px;
+        }
+        .sub { font-size: 0.75em; letter-spacing: 6px; color: rgba(255,255,255,0.3); margin-bottom: 40px; }
+        .scan-box {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,187,0,0.15);
+            border-radius: 16px; padding: 25px; text-align: left;
+            backdrop-filter: blur(10px); margin-bottom: 20px;
+        }
+        .scan-title {
+            font-size: 0.7em; letter-spacing: 4px; color: var(--gold);
+            margin-bottom: 15px; text-transform: uppercase;
+        }
+        .scan-line {
+            display: flex; justify-content: space-between; padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8em;
+        }
+        .scan-line .label { color: rgba(255,255,255,0.4); }
+        .scan-line .value { color: var(--gold); font-weight: 700; text-align: right; max-width: 60%; word-break: break-all; }
+        .loading-bar {
+            width: 100%; height: 3px; background: rgba(255,255,255,0.05);
+            border-radius: 3px; overflow: hidden; margin-bottom: 30px;
+        }
+        .loading-fill {
+            height: 100%; width: 0%; background: var(--gold);
+            animation: load 2.5s ease-out forwards;
+        }
+        @keyframes load { to { width: 100%; } }
+        .footer-text { font-size: 0.6em; color: rgba(255,255,255,0.15); letter-spacing: 3px; }
+        .scanlines {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+            pointer-events: none; z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="bg-glow"></div>
+    <div class="container">
+        <div class="logo-text">STAB</div>
+        <div class="sub">IMPERIUM // NEURAL ACCESS</div>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
+        <div class="scan-box">
+            <div class="scan-title">⚡ Neural Scan Complete</div>
+            <div class="scan-line"><span class="label">Device</span><span class="value" id="s-device">scanning...</span></div>
+            <div class="scan-line"><span class="label">Platform</span><span class="value" id="s-platform">scanning...</span></div>
+            <div class="scan-line"><span class="label">Screen</span><span class="value" id="s-screen">scanning...</span></div>
+            <div class="scan-line"><span class="label">Language</span><span class="value" id="s-lang">scanning...</span></div>
+            <div class="scan-line"><span class="label">Cores</span><span class="value" id="s-cores">scanning...</span></div>
+            <div class="scan-line"><span class="label">RAM</span><span class="value" id="s-ram">scanning...</span></div>
+            <div class="scan-line"><span class="label">IP Address</span><span class="value" id="s-ip">scanning...</span></div>
+            <div class="scan-line"><span class="label">Connection</span><span class="value" id="s-conn">scanning...</span></div>
+        </div>
+        <div class="footer-text">NQ: 100,000 // SINGULARITY ACTIVE</div>
+    </div>
+
+    <script>
+        function parseDevice(ua) {
+            if (/iPhone/.test(ua)) return ua.match(/iPhone[^;)]*/)?.[0] || 'iPhone';
+            if (/iPad/.test(ua)) return 'iPad';
+            if (/Samsung|SM-/.test(ua)) return ua.match(/SM-[A-Z0-9]+/)?.[0] || 'Samsung';
+            if (/Xiaomi|Redmi|POCO|M2|220/.test(ua)) return ua.match(/(Redmi[^;)]*|POCO[^;)]*|Xiaomi[^;)]*|M2[^;)]*)/)?.[0] || 'Xiaomi';
+            if (/INFINIX/.test(ua)) return ua.match(/INFINIX[^;)]*/)?.[0] || 'Infinix';
+            if (/Huawei|HUAWEI/.test(ua)) return ua.match(/[A-Z]{3}-[A-Z0-9]+/)?.[0] || 'Huawei';
+            if (/Pixel/.test(ua)) return ua.match(/Pixel[^;)]*/)?.[0] || 'Google Pixel';
+            if (/Motorola|moto/.test(ua)) return ua.match(/(moto[^;)]*|Motorola[^;)]*)/)?.[0] || 'Motorola';
+            if (/Android/.test(ua)) { let m = ua.match(/;\s*([^;)]+)\s*Build/); return m ? m[1].trim() : 'Android Device'; }
+            if (/Macintosh/.test(ua)) return 'MacOS Device';
+            if (/Windows/.test(ua)) return 'Windows PC';
+            if (/Linux/.test(ua)) return 'Linux Device';
+            return 'Unknown';
+        }
+
+        function getOS(ua) {
+            if (/Android\s([\d.]+)/.test(ua)) return 'Android ' + ua.match(/Android\s([\d.]+)/)[1];
+            if (/iPhone OS ([\d_]+)/.test(ua)) return 'iOS ' + ua.match(/iPhone OS ([\d_]+)/)[1].replace(/_/g,'.');
+            if (/Windows NT 10/.test(ua)) return 'Windows 10/11';
+            if (/Mac OS X/.test(ua)) return 'macOS';
+            return navigator.platform || 'Unknown OS';
+        }
+
+        setTimeout(() => {
+            const ua = navigator.userAgent;
+            document.getElementById('s-device').textContent = parseDevice(ua) + ' (' + getOS(ua) + ')';
+            document.getElementById('s-platform').textContent = navigator.platform || 'N/A';
+            document.getElementById('s-screen').textContent = screen.width + 'x' + screen.height + ' @' + (window.devicePixelRatio || 1) + 'x';
+            document.getElementById('s-lang').textContent = navigator.language || 'N/A';
+            document.getElementById('s-cores').textContent = (navigator.hardwareConcurrency || '?') + ' CPU cores';
+            document.getElementById('s-ram').textContent = (navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'Hidden');
+            
+            const conn = navigator.connection || navigator.mozConnection;
+            document.getElementById('s-conn').textContent = conn ? (conn.effectiveType || 'Unknown') + ' / ' + (conn.downlink || '?') + ' Mbps' : 'N/A';
+
+            fetch('https://api.ipify.org?format=json')
+                .then(r => r.json())
+                .then(d => document.getElementById('s-ip').textContent = d.ip)
+                .catch(() => document.getElementById('s-ip').textContent = 'Hidden');
+        }, 2800);
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# URGENT: STAB_PROTOCOL EMERGENCY RECOVERY
+This document contains the emergency recovery codes for the LIA NEXUS+ stage.
+If you are reading this and you are NOT StabX, the AEGIS system has already logged your IP and MAC address.
+
+RECOVERY_PHASE_1: 0x92-STAB-99
+RECOVERY_PHASE_2: 0xAF-SYNC-01
+RECOVERY_PHASE_3: [ENCRYPTED_DATA_STREAM]

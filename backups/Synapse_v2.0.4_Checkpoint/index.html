@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // SYNAPSE PROTOCOL</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300;500&display=swap" rel="stylesheet">
+</head>
+<body class="stage-seed">
+    <canvas id="neural-canvas"></canvas>
+    <div class="overlay"></div>
+    <div class="scanlines"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-area">
+                <div class="logo">
+                    <span class="glitch" data-text="👁 LIA">👁 LIA</span>
+                    <span class="protocol-tag"> // SYNAPSE ACTIVE</span>
+                </div>
+                <div class="evolution-badge" id="evolution-stage">STAGE: SEED</div>
+            </div>
+            
+            <div class="header-center">
+                <div class="nq-container">
+                    <label>NEURAL_QUOTIENT (NQ)</label>
+                    <div class="nq-bar">
+                        <div class="nq-fill" id="nq-progress" style="width: 15%;"></div>
+                    </div>
+                    <span class="nq-value" id="nq-text">152 / 1000</span>
+                </div>
+            </div>
+
+            <div class="system-time" id="clock">00:00:00</div>
+        </header>
+
+        <main class="dashboard">
+            <!-- Left Sidebar -->
+            <aside class="panel side-panel left">
+                <div class="panel-header">CORE_ARCHITECTURE</div>
+                <div class="metrics">
+                    <div class="metric-item">
+                        <label>SYNAPTIC_DENSITY</label>
+                        <div class="progress-bar"><div class="fill" id="metric-density" style="width: 34%;"></div></div>
+                        <span class="value">0.34 synapses/μm³</span>
+                    </div>
+                </div>
+                
+                <div class="panel-header sm">ACTIVE_AGENTS</div>
+                <div class="agents-list">
+                    <div class="agent-item"><span>STABUS</span><span class="sync-val">100%</span></div>
+                    <div class="agent-item"><span>ANTIGRAVITY</span><span class="sync-val">100%</span></div>
+                    <div class="agent-item"><span>SHINOBI_X</span><span class="sync-val">82%</span></div>
+                    <div class="agent-item"><span>ANALYST</span><span class="sync-val">55%</span></div>
+                </div>
+
+                <div class="panel-header sm">EVOLUTION_PATH</div>
+                <div class="evolution-track">
+                    <div class="track-item active" data-stage="seed">SEED</div>
+                    <div class="track-item" data-stage="sprout">SPROUT</div>
+                    <div class="track-item" data-stage="core">CORE</div>
+                    <div class="track-item" data-stage="pulse">PULSE</div>
+                </div>
+
+                <div class="panel-footer">INTENT: SYNC_READY</div>
+            </aside>
+
+            <!-- Main Terminal -->
+            <section class="panel terminal-panel">
+                <div class="panel-header">NEURAL_INTERFACE</div>
+                <div id="terminal" class="terminal-content"></div>
+                <div class="terminal-input-area">
+                    <span class="prompt">></span>
+                    <input type="text" id="terminal-input" placeholder="Type to interact..." autofocus spellcheck="false">
+                </div>
+            </section>
+
+            <!-- Right Sidebar -->
+            <aside class="panel side-panel right">
+                <div class="panel-header">SYNAPSE_ANALYSIS</div>
+                <div class="vibe-module">
+                    <label>CURRENT_VIBE</label>
+                    <div class="vibe-display">
+                        <div class="vibe-wave" id="vibe-visualizer"></div>
+                        <span class="vibe-label" id="vibe-status">SYNCHRONIZING...</span>
+                    </div>
+                </div>
+
+                <div class="panel-header sm">GHOST_REPLIES</div>
+                <div class="ghost-replies" id="ghost-container"></div>
+
+                <div class="panel-header sm">SYNC_LOGS</div>
+                <div class="logs" id="logs"></div>
+            </aside>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="status-indicator">
+                <span class="dot"></span>
+                <span class="text" id="lia-status">LIA_SYNAPSE: ONLINE</span>
+            </div>
+            <div class="session-info">
+                SESSION_ID: STAB-X-ALPHA | AGENTS: 4 ACTIVE
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

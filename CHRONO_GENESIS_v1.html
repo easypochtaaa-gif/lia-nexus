@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHRONO GENESIS // STAB IMPERIUM</title>
+    <style>
+        body { margin: 0; background: #000; color: #d4af37; font-family: 'Courier New', monospace; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        #canvas-container { position: relative; width: 500px; height: 500px; border: 1px solid #222; }
+        .info { margin-top: 20px; font-size: 12px; opacity: 0.5; text-align: center; }
+        #timer { font-size: 18px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div id="timer">EVOLUTION TIME: <span id="time-elapsed">00:00:00</span></div>
+    <div id="canvas-container">
+        <canvas id="chronoCanvas" width="500" height="500"></canvas>
+    </div>
+    <div class="info">
+        ARTIFACT ZERO // DISCOVERED BY STABX<br>
+        STATE IS DETERMINED BY THE FLOW OF TIME
+    </div>
+
+    <script>
+        const canvas = document.getElementById('chronoCanvas');
+        const ctx = canvas.getContext('2d');
+        const GENESIS_TIME = 1714522283000; // May 1, 2026, 03:11:23 AM (Approx Unix)
+        
+        function draw() {
+            const now = Date.now();
+            const elapsed = now - GENESIS_TIME;
+            
+            // Format timer
+            const seconds = Math.floor(elapsed / 1000);
+            document.getElementById('time-elapsed').innerText = seconds + "s";
+
+            ctx.clearRect(0, 0, 500, 500);
+            
+            // The logic: The growth is tied to 'elapsed'
+            // We use a very slow multiplier for evolution
+            const evolution = elapsed * 0.0000001; 
+            
+            ctx.beginPath();
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+            
+            // Draw a complex shape that shifts imperceptibly
+            for (let i = 0; i < 360; i += 1) {
+                const angle = i * Math.PI / 180;
+                // The radius changes based on time (evolution)
+                const r = 150 + Math.sin(angle * 5 + evolution) * 50 + Math.cos(evolution * 0.1) * 20;
+                const x = 250 + Math.cos(angle) * r;
+                const y = 250 + Math.sin(angle) * r;
+                
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Add a pulsing 'heart' that also evolves
+            ctx.beginPath();
+            ctx.arc(250, 250, 5 + Math.sin(evolution * 10) * 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#d4af37';
+            ctx.fill();
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

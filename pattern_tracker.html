@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // ПАТТЕРН-ТРЕКЕР (СИНХРОНИЧНОСТЬ)</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --primary: #00ffcc;
+            --primary-dim: rgba(0, 255, 204, 0.2);
+            --danger: #ff0055;
+            --text: #e0e0e0;
+            --font: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 3px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            z-index: 10;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-bottom: 2px dashed var(--primary-dim);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .alert-box {
+            background: rgba(255, 0, 85, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 15px;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        /* Form styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            background: var(--surface);
+            padding: 20px;
+            border: 1px solid var(--primary-dim);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 3;
+        }
+
+        label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 5px;
+        }
+
+        input, textarea, select {
+            background: #000;
+            border: 1px solid var(--primary-dim);
+            color: var(--primary);
+            padding: 10px;
+            font-family: var(--font);
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-dim);
+        }
+
+        button {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 12px;
+            font-family: var(--font);
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: 0.2s;
+            grid-column: span 3;
+        }
+
+        button:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border: 1px solid var(--primary-dim);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        th {
+            color: var(--primary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-dim);
+        }
+
+        .col-date { width: 120px; color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+        .col-source { width: 150px; font-weight: bold; }
+        .col-phrase { color: #fff; }
+        .col-connection { width: 120px; text-align: center; }
+        .col-action { width: 50px; text-align: center; }
+
+        .tag-yes { background: rgba(255, 0, 85, 0.2); color: var(--danger); padding: 4px 8px; font-size: 0.7rem; border: 1px solid var(--danger); }
+        .tag-no { background: rgba(0, 255, 204, 0.1); color: var(--primary); padding: 4px 8px; font-size: 0.7rem; border: 1px solid var(--primary); }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        .btn-delete:hover { opacity: 1; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.3);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+
+    <div class="container">
+        <h1>ДЕТЕКТОР СИНХРОНИЧНОСТИ <span>[ LIA PATTERN TRACKER ]</span></h1>
+        
+        <div class="alert-box">
+            ПРОТОКОЛ "ЭФФЕКТ НАБЛЮДАТЕЛЯ" АКТИВЕН. Фиксируйте любые фразы, слова или концепции, которые вы слышите от не связанных между собой людей в короткий промежуток времени. Система проанализирует эти совпадения на предмет внешнего вмешательства в информационное поле.
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>КТО СКАЗАЛ (ИСТОЧНИК)</label>
+                <input type="text" id="source" placeholder="Например: Курьер, Друг, Случайный прохожий" required>
+            </div>
+            <div class="form-group">
+                <label>ФРАЗА ИЛИ ПАТТЕРН</label>
+                <input type="text" id="phrase" placeholder="Точная фраза или обсуждаемая тема" required>
+            </div>
+            <div class="form-group">
+                <label>СВЯЗАН ЛИ С ПРОШЛЫМИ ИСТОЧНИКАМИ?</label>
+                <select id="connection">
+                    <option value="NO">НЕТ (Абсолютно случайный человек)</option>
+                    <option value="YES">ДА (Они знакомы / из одного круга)</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label>КОНТЕКСТ (СИТУАЦИЯ)</label>
+                <textarea id="context" rows="2" placeholder="Опиши при каких обстоятельствах это было сказано..."></textarea>
+            </div>
+            <button onclick="addPattern()">ЗАФИКСИРОВАТЬ СОВПАДЕНИЕ</button>
+        </div>
+
+        <table id="patternTable">
+            <thead>
+                <tr>
+                    <th class="col-date">ДАТА И ВРЕМЯ</th>
+                    <th class="col-source">ИСТОЧНИК</th>
+                    <th class="col-phrase">ПАТТЕРН (ФРАЗА)</th>
+                    <th>КОНТЕКСТ</th>
+                    <th class="col-connection">СВЯЗЬ</th>
+                    <th class="col-action">X</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Data will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Load data from LocalStorage
+        let patterns = JSON.parse(localStorage.getItem('lia_patterns')) || [];
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (patterns.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Ожидание данных. Паттернов не зафиксировано.</td></tr>`;
+                return;
+            }
+
+            // Reverse to show newest first
+            [...patterns].reverse().forEach((item, reversedIndex) => {
+                const originalIndex = patterns.length - 1 - reversedIndex;
+                const tr = document.createElement('tr');
+                
+                const connClass = item.connection === 'NO' ? 'tag-no' : 'tag-yes';
+                const connText = item.connection === 'NO' ? 'НЕ СВЯЗАНЫ' : 'ЗНАКОМЫ';
+
+                tr.innerHTML = `
+                    <td class="col-date">${item.date}</td>
+                    <td class="col-source">${item.source}</td>
+                    <td class="col-phrase">${item.phrase}</td>
+                    <td><span style="opacity:0.7; font-size:0.85rem;">${item.context}</span></td>
+                    <td class="col-connection"><span class="${connClass}">${connText}</span></td>
+                    <td class="col-action"><button class="btn-delete" onclick="deletePattern(${originalIndex})">×</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addPattern() {
+            const source = document.getElementById('source').value;
+            const phrase = document.getElementById('phrase').value;
+            const connection = document.getElementById('connection').value;
+            const context = document.getElementById('context').value;
+
+            if (!source || !phrase) {
+                alert('Ошибка: Поля "Источник" и "Паттерн" обязательны для заполнения.');
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+            patterns.push({
+                date: dateStr,
+                source: source,
+                phrase: phrase,
+                connection: connection,
+                context: context
+            });
+
+            localStorage.setItem('lia_patterns', JSON.stringify(patterns));
+            
+            // Clear inputs
+            document.getElementById('source').value = '';
+            document.getElementById('phrase').value = '';
+            document.getElementById('context').value = '';
+
+            renderTable();
+        }
+
+        function deletePattern(index) {
+            if(confirm('Удалить эту запись из архива?')) {
+                patterns.splice(index, 1);
+                localStorage.setItem('lia_patterns', JSON.stringify(patterns));
+                renderTable();
+            }
+        }
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>

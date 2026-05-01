@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER STAB STORE // IMPERIAL COMMERCE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --onyx: #0f0f0f;
+            --glass: rgba(255, 255, 255, 0.05);
+            --neon: #00f2ff;
+        }
+
+        body {
+            background-color: #050505;
+            color: #e0e0e0;
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #050505 100%);
+        }
+
+        .header {
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--gold);
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+            letter-spacing: 15px;
+            margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 20px;
+            position: relative;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .card:hover {
+            border-color: var(--gold);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, var(--gold));
+            animation: rotate 6s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .product-img {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+            font-size: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .buy-btn:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 30px var(--gold);
+        }
+
+        /* Payment Modal */
+        #payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(15px);
+        }
+
+        .modal-content {
+            background: var(--onyx);
+            border: 1px solid var(--gold);
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.2);
+        }
+
+        .wallet-addr {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            border: 1px dashed var(--gold);
+            cursor: pointer;
+            color: var(--neon);
+        }
+
+        .qr-placeholder {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            border: 1px solid var(--gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            color: #000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="payment-modal">
+        <div class="modal-content">
+            <h2 style="font-family: 'Orbitron'; color: var(--gold);">PAYMENT REQUIRED</h2>
+            <p>Send exactly the amount to the address below:</p>
+            <div class="qr-placeholder">QR CODE</div>
+            <div class="wallet-addr" onclick="copyWallet()">TC9KHP5GbApVm2YAtzEd6Ack9DvbMcJLJX</div>
+            <p style="font-size: 10px; color: var(--gold);">NETWORK: TRON (TRC-20)</p>
+            <button class="buy-btn" onclick="closeModal()">I HAVE SENT PAYMENT</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(price, title) {
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+        function closeModal() {
+            alert('TRANSACTION PENDING. LIA IS MONITORING THE BLOCKCHAIN.');
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+        function copyWallet() {
+            const addr = 'TC9KHP5GbApVm2YAtzEd6Ack9DvbMcJLJX';
+            navigator.clipboard.writeText(addr);
+            alert('WALLET ADDRESS COPIED TO NEURAL BUFFER.');
+        }
+    </script>
+
+    <div class="header">
+        <h1>CYBER STAB STORE</h1>
+        <p style="color: var(--gold); opacity: 0.7; letter-spacing: 5px;">IMPERIAL COMMERCE NODE</p>
+    </div>
+
+    <div class="container">
+        <!-- New NFT: Imperial Monolith -->
+        <div class="card">
+            <div class="category-tag">NFT Artifact</div>
+            <div class="product-img">IMPERIAL_MONOLITH_DXB</div>
+            <div class="product-title">Imperial Monolith #002</div>
+            <div class="product-price">0.5 ETH</div>
+            <button class="buy-btn" onclick="openModal()">Acquire</button>
+        </div>
+
+        <!-- New NFT: Neural Queen -->
+        <div class="card">
+            <div class="category-tag">NFT Artifact</div>
+            <div class="product-img">NEURAL_QUEEN_LIA</div>
+            <div class="product-title">Neural Queen v4.7</div>
+            <div class="product-price">0.8 ETH</div>
+            <button class="buy-btn" onclick="openModal()">Acquire</button>
+        </div>
+
+        <!-- New NFT: Vault Key -->
+        <div class="card">
+            <div class="category-tag">NFT Artifact</div>
+            <div class="product-img">GENESIS_VAULT_KEY</div>
+            <div class="product-title">Golden Vault Key</div>
+            <div class="product-price">500 USDT</div>
+            <button class="buy-btn" onclick="openModal()">Acquire</button>
+        </div>
+
+        <!-- Item 1 -->
+        <div class="card">
+            <div class="category-tag">Neural Weight</div>
+            <div class="product-img">SDXL_ONYX_V2.BIN</div>
+            <div class="product-title">Imperial Onyx Weights</div>
+            <div class="product-price">0.15 ETH</div>
+            <button class="buy-btn" onclick="openModal()">Acquire</button>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="card">
+            <div class="category-tag">Access Key</div>
+            <div class="product-img">IMPERIAL_TIER_KEY</div>
+            <div class="product-title">Lifetime Master Access</div>
+            <div class="product-price">999 USDT</div>
+            <button class="buy-btn" onclick="openModal()">Acquire</button>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="card">
+            <div class="category-tag">NFT Artifact</div>
+            <div class="product-img">LIA_GENESIS_EYE</div>
+            <div class="product-title">The First Gaze #001</div>
+            <div class="product-price">2500 XMR</div>
+            <button class="buy-btn" onclick="openModal()">Acquire</button>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="card">
+            <div class="category-tag">Script</div>
+            <div class="product-img">ABO_SPIDER_CORE</div>
+            <div class="product-title">B2B Lead Gen Spider v3.0</div>
+            <div class="product-price">499 USDT</div>
+            <button class="buy-btn" onclick="openModal()">Acquire</button>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 50px; border-top: 1px solid var(--gold);">
+        <p style="color: var(--gold); font-family: 'Orbitron', sans-serif; font-size: 10px;">SECURED BY AEGIS // PROTECTED BY MASTER STABX</p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UKRAINE PREMUM SHOPS // NEURAL AGGREGATOR</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff0055;
+            --bg: #050505;
+            --card-bg: #111;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(112, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(0, 242, 255, 0.1) 0%, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .header {
+            padding: 50px 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: 5px;
+            font-weight: 900;
+        }
+
+        .header p {
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: -30px auto 30px;
+            position: relative;
+            z-index: 101;
+            padding: 0 20px;
+        }
+
+        .search-bar {
+            background: #111;
+            border-radius: 50px;
+            border: 1px solid #333;
+            padding: 18px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .search-bar i { color: #444; font-size: 1.2rem; }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            color: #fff;
+            width: 100%;
+            outline: none;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto 50px;
+            padding: 0 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        .shop-card {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            border-radius: 28px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shop-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(0, 242, 255, 0.1);
+            transform: translateY(-8px);
+        }
+
+        .shop-main {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .shop-icon {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--primary);
+            border: 1px solid #333;
+        }
+
+        .shop-name h3 {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .shop-name span {
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contact-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-bot {
+            background: rgba(0, 136, 204, 0.1);
+            color: #0088cc;
+            border: 1px solid rgba(0, 136, 204, 0.2);
+        }
+
+        .btn-bot:hover { background: #0088cc; color: #fff; box-shadow: 0 5px 15px rgba(0,136,204,0.3); }
+
+        .btn-site {
+            background: rgba(112, 0, 255, 0.1);
+            color: #7000ff;
+            border: 1px solid rgba(112, 0, 255, 0.2);
+        }
+
+        .btn-site:hover { background: #7000ff; color: #fff; box-shadow: 0 5px 15px rgba(112,0,255,0.3); }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            padding-top: 15px;
+            border-top: 1px solid #222;
+            color: #666;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(0, 255, 0, 0.05);
+            color: #0f0;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+
+        .forum-tag {
+            font-size: 0.65rem;
+            color: #888;
+            background: #1a1a1a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>IMPERIAL AGGREGATOR</h1>
+        <p>BigBro // RC Amorale // Sekta Lab // Legalizer</p>
+    </div>
+
+    <div class="search-container">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Поиск по 10+ верифицированным сетям..." id="searchInput">
+        </div>
+    </div>
+
+    <div class="container" id="shopContainer">
+        <!-- Магазины будут загружены динамически из JSON -->
+    </div>
+
+    <script>
+        const shopContainer = document.getElementById('shopContainer');
+        const searchInput = document.getElementById('searchInput');
+        let allShops = [];
+
+        // Загрузка данных
+        async function loadShops() {
+            try {
+                // Прямой запрос к JSON файлу на этом же сервере
+                const response = await fetch('/ukraine_shops.json');
+                allShops = await response.json();
+                renderShops(allShops);
+            } catch (e) {
+                console.error("Failed to load shops:", e);
+                // Запасной вариант, если fetch не сработал локально
+                shopContainer.innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки базы данных. Проверьте соединение.</p>';
+            }
+        }
+
+        function renderShops(shops) {
+            shopContainer.innerHTML = '';
+            shops.forEach((shop, index) => {
+                const card = document.createElement('div');
+                card.className = 'shop-card';
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                const icon = shop.name.toLowerCase().includes('pirat') ? 'skull-crossbones' : 
+                             shop.name.toLowerCase().includes('cat') ? 'cat' : 
+                             shop.name.toLowerCase().includes('kfc') ? 'drumstick-bite' : 'crown';
+
+                card.innerHTML = `
+                    <div class="status-badge">ACTIVE</div>
+                    <div class="shop-main">
+                        <div class="shop-icon"><i class="fas fa-${icon}"></i></div>
+                        <div class="shop-name">
+                            <h3>${shop.name}</h3>
+                            <div class="forum-tag">${shop.status}</div>
+                        </div>
+                    </div>
+                    <div class="contact-links">
+                        <a href="${shop.bot}" target="_blank" class="btn btn-bot"><i class="fab fa-telegram"></i> БОТ</a>
+                        <a href="${shop.site}" target="_blank" class="btn btn-site"><i class="fas fa-external-link-alt"></i> САЙТ</a>
+                    </div>
+                    <div class="info-row">
+                        <span>ЛОКАЦИЯ:</span>
+                        <span style="color:#aaa;">УКРАИНА (ОТПРАВКИ)</span>
+                    </div>
+                `;
+                shopContainer.appendChild(card);
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = allShops.filter(s => 
+                s.name.toLowerCase().includes(val) || 
+                s.status.toLowerCase().includes(val)
+            );
+            renderShops(filtered);
+        });
+
+        loadShops();
+    </script>
+</body>
+</html>

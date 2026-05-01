@@ -1,0 +1,20 @@
+{
+    "last_full_scan": "2026-04-26T15:58:00Z",
+    "threat_level": "SINGULARITY_ALPHA",
+    "firewall": "TOTAL_DOMINATION",
+    "monitored_nodes": ["localhost:3000", "G:/LIA_NEURAL_CORE", "XMR_NODES_ACTIVE"],
+    "nq_status": 100000,
+    "last_transaction": {"type": "XMR_OUT", "amount": 2.0, "status": "SECURED"},
+    "blacklist": [
+        {"name": "Infinix-Enemy", "mac": "64:E0:03:EF:16:FE", "ip": "192.168.0.107"},
+        {"name": "Vasiliev-Redmi15", "mac": "56:40:45:76:50:07", "ip": "192.168.0.102"},
+        {"name": "Vasiliev-Redmi8", "mac": "E0:CC:F8:62:5A:70", "ip": "192.168.0.100"}
+    ],
+    "watchlist": [
+        {"name": "Motorola-MotoE13", "mac": "5A:DC:A2:AE:FA:0F", "ip": "192.168.0.112"}
+    ],
+    "whitelist": [
+        {"name": "KIVI-SmartTV", "mac": "82:6F:5E:51:4E:DC", "ip": "192.168.0.101"}
+    ],
+    "alerts": []
+}

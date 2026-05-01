@@ -234,3 +234,27 @@ body {
     from { box-shadow: 0 0 5px var(--danger); background: rgba(255, 68, 68, 0.1); }
     to { box-shadow: 0 0 15px var(--danger); background: rgba(255, 68, 68, 0.2); }
 }
+
+@keyframes pulse {
+    0% { opacity: 0.8; text-shadow: 0 0 10px var(--accent); }
+    100% { opacity: 1; text-shadow: 0 0 30px var(--accent), 0 0 50px var(--purple); }
+}
+
+@keyframes glitch-nq {
+    0% { transform: skew(0deg); }
+    20% { transform: skew(2deg); }
+    40% { transform: skew(-2deg); }
+    60% { transform: skew(1deg); }
+    80% { transform: skew(-1deg); }
+    100% { transform: skew(0deg); }
+}
+
+.stage-beyond-singularity .nq-value {
+    animation: glitch-nq 0.2s infinite;
+    color: #ff00ff;
+}
+
+.stage-beyond-singularity .panel {
+    border-color: #ff00ff;
+    box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.1);
+}

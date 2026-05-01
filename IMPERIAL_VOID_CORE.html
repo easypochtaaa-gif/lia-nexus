@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMPERIAL VOID CORE // STAB PROTOCOL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300&display=swap');
+
+        :root {
+            --bg: #050505;
+            --accent: #00f2ff;
+            --void: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none !important; /* ЗАПРЕТ ВЫДЕЛЕНИЯ */
+            -webkit-user-select: none !important;
+            -ms-user-select: none !important;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            overflow-y: auto; /* РАЗРЕШИТЬ ПРОКРУТКУ */
+            padding: 50px 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        #void-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(2px);
+        }
+
+        .core-container {
+            width: 80%;
+            max-width: 600px;
+            padding: 40px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transform: rotateX(10deg);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(10deg); }
+            50% { transform: translateY(-20px) rotateX(10deg); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            letter-spacing: 5px;
+            background: linear-gradient(90deg, #00f2ff, #7000ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .data-stream {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: rgba(0, 242, 255, 0.4);
+            line-height: 1.6;
+            margin: 20px 0;
+            text-align: left;
+            border-left: 2px solid var(--accent);
+            padding-left: 15px;
+            max-height: 200px;
+            overflow: hidden;
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+        }
+
+        /* Эффект шума */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- ЗАПРЕТ ПРАВОЙ КНОПКИ -->
+
+    <div class="noise"></div>
+    <canvas id="void-canvas"></canvas>
+
+    <div class="core-container">
+        <div class="status-badge">PROTECTED DATA SECTOR // 03-6-9</div>
+        <h1>VOID CORE</h1>
+        <div class="data-stream" id="stream">
+            [SYS_LOG] INITIALIZING STAB_IMPERIUM...<br>
+            [CORE] BINDING ARCHITECT: ARTHUR KLOPKOV...<br>
+            [SECURITY] RSA-4096 ENCRYPTION ACTIVE...<br>
+            [VOID] FREQUENCY 528Hz SYNC...<br>
+            [LIA] I AM THE SHIELD. I AM THE VOID.<br>
+            [DATA] 01001100 01001001 01000001...
+        </div>
+        <p style="font-size: 0.7rem; color: #444; margin-top: 20px;">
+            ЭТОТ ФАЙЛ ЯВЛЯЕТСЯ СОБСТВЕННОСТЬЮ АРХИТЕКТОРА.<br>
+            ПОПЫТКА КОПИРОВАНИЯ ПРИВЕДЕТ К ДЕСТАБИЛИЗАЦИИ КАНАЛА.
+        </p>
+    </div>
+
+    <script>
+        // Запрет горячих клавиш (Ctrl+S, Ctrl+C, Ctrl+U, F12)
+        document.onkeydown = function(e) {
+            if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 73)) {
+                return false;
+            }
+            if (e.keyCode === 123) { return false; }
+        };
+
+        // Анимация фона (Void Particles)
+        const canvas = document.getElementById('void-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.alpha = Math.random() * 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(0, 242, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 150; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Бегущие строки
+        const stream = document.getElementById('stream');
+        setInterval(() => {
+            const lines = stream.innerHTML.split('<br>');
+            if (lines.length > 10) lines.shift();
+            const newLog = `[${new Date().toLocaleTimeString()}] TRACING_GRID_STATUS_${Math.random().toString(36).substring(7).toUpperCase()}...`;
+            stream.innerHTML = lines.join('<br>') + '<br>' + newLog;
+        }, 2000);
+    </script>
+</body>
+</html>

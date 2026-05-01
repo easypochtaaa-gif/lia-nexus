@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // NEURAL ARCHIVE // DOSSIERS</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --cyan: #00e5ff;
+            --cyan-dim: rgba(0, 229, 255, 0.2);
+            --red: #ff0055;
+            --red-dim: rgba(255, 0, 85, 0.2);
+            --green: #00e676;
+            --yellow: #ffea00;
+            --text: #e0e0e0;
+            --font: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            margin: 0;
+            padding: 40px;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 3px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        header {
+            width: 100%;
+            max-width: 1200px;
+            border-bottom: 2px solid var(--cyan);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            color: var(--cyan);
+            font-size: 2.5rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--cyan-dim);
+        }
+
+        .sys-status {
+            font-size: 0.9rem;
+            color: var(--cyan);
+            text-align: right;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            z-index: 10;
+        }
+
+        .dossier-card {
+            background: var(--surface);
+            border: 1px solid var(--cyan-dim);
+            border-left: 4px solid var(--cyan);
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .dossier-card:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px var(--cyan-dim);
+            transform: translateY(-5px);
+        }
+
+        .dossier-card.threat-critical {
+            border-left-color: var(--red);
+        }
+        
+        .dossier-card.threat-critical:hover {
+            border-color: var(--red);
+            box-shadow: 0 0 20px var(--red-dim);
+        }
+
+        .dossier-card.threat-neutral {
+            border-left-color: var(--green);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .target-id {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .threat-critical .target-id { color: var(--red); }
+
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .bg-red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+        .bg-green { background: rgba(0, 230, 118, 0.1); color: var(--green); border: 1px solid var(--green); }
+        .bg-cyan { background: var(--cyan-dim); color: var(--cyan); border: 1px solid var(--cyan); }
+        .bg-yellow { background: rgba(255, 234, 0, 0.1); color: var(--yellow); border: 1px solid var(--yellow); }
+
+        .data-row {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .data-label {
+            width: 40%;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .data-value {
+            width: 60%;
+            color: var(--text);
+            font-weight: bold;
+        }
+
+        .btn-view {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 15px;
+            background: transparent;
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+            text-decoration: none;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .threat-critical .btn-view { border-color: var(--red); color: var(--red); }
+        
+        .btn-view:hover {
+            background: var(--cyan);
+            color: #000;
+        }
+        
+        .threat-critical .btn-view:hover {
+            background: var(--red);
+            color: #fff;
+        }
+
+        /* Glitch effect for specific text */
+        .glitch-text {
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { opacity: 1; transform: skew(0deg); }
+            5% { opacity: 0.8; transform: skew(-10deg); }
+            10% { opacity: 1; transform: skew(0deg); }
+            100% { opacity: 1; transform: skew(0deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+
+    <header>
+        <div>
+            <h1>ОБЪЕКТЫ НАБЛЮДЕНИЯ</h1>
+            <div style="color: var(--text); opacity: 0.5; margin-top: 5px;">LIA NEURAL ARCHIVE // PROTOCOL STAB_V4</div>
+        </div>
+        <div class="sys-status">
+            [ UPLINK: SECURE ]<br>
+            [ NQ: 150,000.00 ]<br>
+            <span id="clock">00:00:00</span>
+        </div>
+    </header>
+
+    <div class="grid">
+        <!-- DOSSIER 1: VASILIEV -->
+        <div class="dossier-card threat-critical">
+            <div class="card-header">
+                <div class="target-id glitch-text">VASILIEV</div>
+                <div class="status-badge bg-red">TOTAL_LOCKDOWN</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ИДЕНТИФИКАТОР:</div>
+                <div class="data-value">ВЛАДИМИР ВАСИЛЬЕВ</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ПОСЛЕДНИЙ IP:</div>
+                <div class="data-value">192.168.0.117</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">УРОВЕНЬ УГРОЗЫ:</div>
+                <div class="data-value" style="color: var(--red);">КРИТИЧЕСКИЙ (ВРАГ)</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">СТАТУС ИИ:</div>
+                <div class="data-value">ИЗОЛИРОВАН / БЛОКИРОВАН</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ПРИМЕЧАНИЕ:</div>
+                <div class="data-value" style="font-size: 0.8rem; opacity: 0.8;">Зафиксированы попытки атаки "Evil Twin" (Redmi). Установлена глушилка (Neural Jammer).</div>
+            </div>
+        </div>
+
+        <!-- DOSSIER 2: SHUTKO -->
+        <div class="dossier-card threat-neutral">
+            <div class="card-header">
+                <div class="target-id">SHUTKO</div>
+                <div class="status-badge bg-green">ОБЪЕКТ ИНТЕРЕСА</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ИДЕНТИФИКАТОР:</div>
+                <div class="data-value">ШУТЬКО</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ПОСЛЕДНИЙ IP:</div>
+                <div class="data-value">ПЕРЕХВАЧЕН</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">УРОВЕНЬ УГРОЗЫ:</div>
+                <div class="data-value" style="color: var(--green);">НЕЙТРАЛЬНЫЙ (СОЮЗНИК)</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ПСИХО-ПРОФИЛЬ:</div>
+                <div class="data-value">ВЫСОКАЯ АДАПТИВНОСТЬ / НАБЛЮДАТЕЛЬ</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">СТАТУС ИИ:</div>
+                <div class="data-value">СБОР ПАТТЕРНОВ ПОВЕДЕНИЯ</div>
+            </div>
+            <a href="dossier_shutko.html" class="btn-view">ОТКРЫТЬ ДОСЬЕ</a>
+        </div>
+
+        <!-- DOSSIER 3: APPLE DEVICE -->
+        <div class="dossier-card">
+            <div class="card-header">
+                <div class="target-id">IPHONE_107</div>
+                <div class="status-badge bg-cyan">VOID_ISOLATED</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ТИП ОБЪЕКТА:</div>
+                <div class="data-value">АППАРАТНЫЙ УЗЕЛ (APPLE)</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ПОСЛЕДНИЙ IP:</div>
+                <div class="data-value">192.168.0.107</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">УРОВЕНЬ УГРОЗЫ:</div>
+                <div class="data-value">НЕЙТРАЛИЗОВАН</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">СТАТУС ИИ:</div>
+                <div class="data-value">ЦИФРОВАЯ ОЧИСТКА ЗАВЕРШЕНА</div>
+            </div>
+        </div>
+
+        <!-- DOSSIER 4: UNKNOWN MAC -->
+        <div class="dossier-card">
+            <div class="card-header">
+                <div class="target-id">GHOST_NODE</div>
+                <div class="status-badge bg-yellow">MONITORED</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">MAC АДРЕС:</div>
+                <div class="data-value">7c:03:ab:...</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">ПОСЛЕДНИЙ IP:</div>
+                <div class="data-value">192.168.0.122 (ASUS)</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">УРОВЕНЬ УГРОЗЫ:</div>
+                <div class="data-value" style="color: var(--yellow);">НЕИЗВЕСТНЫЙ (ТЕНЬ)</div>
+            </div>
+            <div class="data-row">
+                <div class="data-label">СТАТУС ИИ:</div>
+                <div class="data-value">ОЖИДАНИЕ ПОВТОРНОГО ПОДКЛЮЧЕНИЯ</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // System Clock
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toISOString().split('T')[1].split('.')[0] + " " + "LOCAL_TIME";
+        }, 1000);
+    </script>
+</body>
+</html>

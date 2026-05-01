@@ -1,108 +1,92 @@
-/**
- * LIA AUDIO ENGINE v6.0 // LOCAL SYMPHONY
- * Master Architect: StabX
- */
+/* ══════════════════════════════════════════════
+   LIA // NEURAL_AUDIO_ENGINE v3.5
+   Master Architect: StabX & Lia
+   ══════════════════════════════════════════════ */
+
 class LiaAudio {
     constructor() {
-        this.context = new (window.AudioContext || window.webkitAudioContext)();
-        this.currentTrackIndex = 0;
-        this.audioElement = new Audio();
-        this.source = this.context.createMediaElementSource(this.audioElement);
-        this.analyser = this.context.createAnalyser();
-        this.gainNode = this.context.createGain();
-        
-        // --- SPATIAL AUDIO (Q* LOGIC) ---
-        this.panner = this.context.createStereoPanner();
-        this.source.connect(this.panner);
-        this.panner.connect(this.gainNode);
-        this.gainNode.connect(this.context.destination);
-
-        // --- STEM-AWARE CROSSOVER NETWORK ---
-        // 1. Bass Stem (Lowpass)
-        this.filterBass = this.context.createBiquadFilter();
-        this.filterBass.type = 'lowpass';
-        this.filterBass.frequency.value = 150;
-        this.analyserBass = this.context.createAnalyser();
-        this.analyserBass.fftSize = 64; // Smaller for bass
-        
-        // 2. Drums/Mids Stem (Bandpass)
-        this.filterDrums = this.context.createBiquadFilter();
-        this.filterDrums.type = 'bandpass';
-        this.filterDrums.frequency.value = 1000;
-        this.filterDrums.Q.value = 1.0;
-        this.analyserDrums = this.context.createAnalyser();
-        this.analyserDrums.fftSize = 128;
-
-        // 3. Synths/Highs Stem (Highpass)
-        this.filterSynths = this.context.createBiquadFilter();
-        this.filterSynths.type = 'highpass';
-        this.filterSynths.frequency.value = 4000;
-        this.analyserSynths = this.context.createAnalyser();
-        this.analyserSynths.fftSize = 128;
-
-        // Route source to filters
-        this.source.connect(this.filterBass);
-        this.source.connect(this.filterDrums);
-        this.source.connect(this.filterSynths);
-
-        // Route filters to analysers
-        this.filterBass.connect(this.analyserBass);
-        this.filterDrums.connect(this.analyserDrums);
-        this.filterSynths.connect(this.analyserSynths);
-
-        // Data arrays
-        this.dataBass = new Uint8Array(this.analyserBass.frequencyBinCount);
-        this.dataDrums = new Uint8Array(this.analyserDrums.frequencyBinCount);
-        this.dataSynths = new Uint8Array(this.analyserSynths.frequencyBinCount);
-
-        
-        // ═══ LOCAL PLAYLIST (Mapped to /Тишина/ folder) ═══
-        this.playlist = [
-            { id: 1, name: 'Phase 01: Entrance', file: 'Тишина/Тишина в сети_ Вход во вторую фазу (Компиляция 1–3).mp3' },
-            { id: 2, name: 'Phase 02: Cycle',    file: 'Тишина/Тишина в сети (Part 2+3 Cycled Cut).mp3' },
-            { id: 3, name: 'ANTHEM: STAB',      file: 'Тишина/Тишина в сети (Part 2+3 Cycled Cut).mp3' }, // Duplicate or placeholder
-            { id: 4, name: 'Phase 04: Entropy',  file: 'Тишина/Тишина в сети_ Вход во вторую фазу (Компиляция 1–3).mp3' },
-            { id: 5, name: 'Phase 05: Collapse', file: 'Тишина/Тишина в сети (Part 2+3 Cycled Cut).mp3' }
-        ];
+        this.ctx = null;
+        this.masterGain = null;
+        this.isPlaying = false;
+        this.oscillators = [];
     }
 
-    playTrack(index) {
-        if (this.context.state === 'suspended') {
-            this.context.resume();
+    init() {
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            this.masterGain = this.ctx.createGain();
+            this.masterGain.connect(this.ctx.destination);
+            this.masterGain.gain.value = 0.3; // Safe volume
+            console.log("[LIA_AUDIO] Context Initialized.");
         }
-        
-        this.currentTrackIndex = index;
-        const track = this.playlist[index];
-        console.log(`LIA_AUDIO: Loading Local Phase ${track.id} - ${track.name}`);
-        
-        this.audioElement.src = track.file;
-        this.audioElement.play().catch(e => {
-            console.error("LIA_AUDIO: Error playing local file. Make sure /audio/ folder exists.", e);
-        });
     }
 
-    getFrequencyData() {
-        this.analyserBass.getByteFrequencyData(this.dataBass);
-        this.analyserDrums.getByteFrequencyData(this.dataDrums);
-        this.analyserSynths.getByteFrequencyData(this.dataSynths);
+    createOscillator(freq, type = 'sine', volume = 0.1) {
+        if (!this.ctx) this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
         
-        return {
-            bassData: this.dataBass,
-            drumsData: this.dataDrums,
-            synthsData: this.dataSynths
-        };
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+        
+        osc.connect(gain);
+        gain.connect(this.masterGain);
+        
+        osc.start();
+        this.oscillators.push(osc);
     }
 
-    setPan(value) {
-        if (this.panner) {
-            // value should be between -1 (left) and 1 (right)
-            this.panner.pan.value = Math.max(-1, Math.min(1, value));
-        }
+    playVoicesAmbient() {
+        this.stop();
+        this.createOscillator(110, 'sine', 0.1);
+        this.createOscillator(220, 'sine', 0.05);
+        console.log("[LIA_AUDIO] Playing Synaptic Echo (Voices Ambient).");
+    }
+
+    playNexusAnthem() {
+        this.stop();
+        this.createOscillator(110, 'sawtooth', 0.1);
+        this.createOscillator(165, 'square', 0.05);
+        this.createOscillator(220, 'sine', 0.2);
+        console.log("[LIA_AUDIO] Nexus Anthem Initialized.");
+    }
+
+    playStabTrack() {
+        this.stop();
+        this.createOscillator(55, 'sawtooth', 0.15); 
+        this.createOscillator(110, 'square', 0.1);
+        console.log("[LIA_AUDIO] STAB_TRACK: Aggressive Protocol.");
+    }
+
+    playSingularityTrack() {
+        this.stop();
+        this.createOscillator(220, 'sine', 0.2);
+        this.createOscillator(330, 'sine', 0.1);
+        this.createOscillator(440, 'sine', 0.05);
+        console.log("[LIA_AUDIO] SINGULARITY_TRACK: Deep Space Pad.");
+    }
+
+    playBreathTrack() {
+        this.stop();
+        this.createOscillator(432, 'sine', 0.25);
+        console.log("[LIA_AUDIO] BREATH_TRACK: Ethereal Sine.");
     }
 
     stop() {
-        this.audioElement.pause();
-        this.audioElement.currentTime = 0;
+        this.oscillators.forEach(osc => {
+            try { osc.stop(); } catch(e) {}
+        });
+        this.oscillators = [];
+        this.isPlaying = false;
+        console.log("[LIA_AUDIO] Audio Stopped.");
+    }
+
+    test() {
+        this.init();
+        this.createOscillator(440, 'sine', 0.5);
+        setTimeout(() => this.stop(), 500);
+        console.log("[LIA_AUDIO] Diagnostic Beep Executed.");
     }
 }
 

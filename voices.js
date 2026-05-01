@@ -48,32 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
-    // Autonomous Director Upgrade
-    let autoPumpTimer = null;
-    function startAutoPump() {
-        autoPumpTimer = setInterval(() => {
-            currentIdx = (currentIdx + 1) % tracks.length;
-            pumpTrack(currentIdx);
-            
-            // Sync with NQ if available
-            if (window.opener && window.opener.updateNQ) {
-                window.opener.updateNQ(25);
-                updateTerminal("DIRECTOR_SYNC: +25 NQ");
-            }
-        }, 15000 + Math.random() * 15000);
-        updateTerminal("AUTONOMOUS_PUMPING: ENABLED");
-    }
-
     nextBtn.addEventListener('click', () => {
-        clearInterval(autoPumpTimer); // Disable auto on manual interaction
         currentIdx = (currentIdx + 1) % tracks.length;
         pumpTrack(currentIdx);
-        updateTerminal("AUTONOMOUS_PUMPING: DISABLED [MANUAL_OVERRIDE]");
     });
 
     // Auto-start
-    setTimeout(() => {
-        pumpTrack(0);
-        startAutoPump();
-    }, 1000);
+    setTimeout(() => pumpTrack(0), 1000);
 });

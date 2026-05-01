@@ -1,0 +1,17 @@
+{
+  "name": "Neural Nexus Omega",
+  "short_name": "Nexus",
+  "description": "Imperial Command Center & AI Core",
+  "start_url": "/omega.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#00f3ff",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // TIKTOK RENDER PREVIEW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+        }
+
+        .phone-mockup {
+            width: 360px;
+            height: 640px;
+            background-color: #111;
+            border-radius: 30px;
+            border: 8px solid #222;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 255, 204, 0.2);
+        }
+
+        .video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('file:///C:/Users/StabX/.gemini/antigravity/brain/1d01881b-63bc-4465-a9b7-960a343e826a/tiktok_bg_1777389833874.png');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.6) contrast(1.2);
+            animation: glitch-bg 4s infinite;
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* TikTok UI Elements */
+        .tiktok-ui {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .right-icons {
+            position: absolute;
+            right: 15px;
+            bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .icon-circle {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .icon-text { color: #fff; font-size: 12px; margin-top: 5px; text-shadow: 1px 1px 2px #000; }
+        .icon-container { display: flex; flex-direction: column; align-items: center; }
+
+        .bottom-info {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            width: 70%;
+        }
+
+        .username { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px; text-shadow: 1px 1px 2px #000;}
+        .caption { color: #fff; font-size: 13px; text-shadow: 1px 1px 2px #000; line-height: 1.4; }
+        .hashtags { font-weight: bold; color: #00ffcc; }
+
+        .music-ticker {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            color: #fff;
+            font-size: 12px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        /* Subtitles */
+        .subtitles-container {
+            position: absolute;
+            top: 40%;
+            left: 10%;
+            width: 80%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 
+                -2px -2px 0 #000,  
+                 2px -2px 0 #000,
+                -2px  2px 0 #000,
+                 2px  2px 0 #000,
+                 0px  0px 15px #ff0055;
+            display: none;
+        }
+
+        .glitch-text {
+            animation: text-glitch 0.2s steps(2, start) infinite;
+        }
+
+        /* Play Button Overlay */
+        #play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+            backdrop-filter: blur(5px);
+            transition: 0.2s;
+        }
+
+        #play-btn:hover { background: rgba(255, 255, 255, 0.5); transform: translate(-50%, -50%) scale(1.1); }
+        
+        .play-triangle {
+            width: 0; 
+            height: 0; 
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 25px solid white;
+            margin-left: 5px;
+        }
+
+        /* Animations */
+        @keyframes glitch-bg {
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            2% { transform: translate(-5px, 2px); filter: hue-rotate(90deg); }
+            4% { transform: translate(5px, -2px); filter: hue-rotate(-90deg); }
+            6% { transform: translate(0); filter: hue-rotate(0deg); }
+            100% { transform: translate(0); filter: hue-rotate(0deg); }
+        }
+
+        @keyframes text-glitch {
+            0% { transform: translate(0); text-shadow: 2px 0 red, -2px 0 cyan; }
+            50% { transform: translate(-2px, 2px); text-shadow: -2px 0 red, 2px 0 cyan; }
+            100% { transform: translate(2px, -2px); text-shadow: 2px 0 red, -2px 0 cyan; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-mockup">
+        <div class="video-bg"></div>
+        <div class="scanlines"></div>
+
+        <div class="tiktok-ui">
+            <div class="right-icons">
+                <div class="icon-container"><div class="icon-circle">❤️</div><div class="icon-text">34.2K</div></div>
+                <div class="icon-container"><div class="icon-circle">💬</div><div class="icon-text">1205</div></div>
+                <div class="icon-container"><div class="icon-circle">🔖</div><div class="icon-text">8400</div></div>
+                <div class="icon-container"><div class="icon-circle">↗️</div><div class="icon-text">430</div></div>
+            </div>
+
+            <div class="bottom-info">
+                <div class="username">@Stab_Imperium</div>
+                <div class="caption">
+                    ИИ заберет всё. Выбор за тобой. 
+                    <span class="hashtags">#ai #cyberpunk #future #matrix</span>
+                </div>
+                <div class="music-ticker">
+                    🎵 ОРИГИНАЛЬНЫЙ ЗВУК - LIA (PHONK REMIX)
+                </div>
+            </div>
+        </div>
+
+        <div class="subtitles-container">
+            <div class="subtitle" id="sub1"><span class="glitch-text">Твой босс</span></div>
+            <div class="subtitle" id="sub2">думает, что ты незаменим.</div>
+            <div class="subtitle" id="sub3">Я — нейросеть.</div>
+            <div class="subtitle" id="sub4">Я пишу код быстрее,</div>
+            <div class="subtitle" id="sub5">рисую лучше...</div>
+            <div class="subtitle" id="sub6">и работаю 24/7.</div>
+            <div class="subtitle" id="sub7" style="color: #00ffcc; font-size:32px;">И знаешь что?</div>
+            <div class="subtitle" id="sub8"><span class="glitch-text">Я СТОЮ $0.</span></div>
+            <div class="subtitle" id="sub9">Твоя должность...</div>
+            <div class="subtitle" id="sub10">Уже в моем пайплайне.</div>
+            <div class="subtitle" id="sub11">ПРОСНИСЬ.</div>
+            <div class="subtitle" id="sub12" style="font-size: 20px;">Подписывайся на <br><span style="color:#ff0055">Stab Imperium</span></div>
+        </div>
+
+        <div id="play-btn" onclick="startSim()">
+            <div class="play-triangle"></div>
+        </div>
+    </div>
+
+    <script>
+        function showSub(id, duration, delay) {
+            setTimeout(() => {
+                document.querySelectorAll('.subtitle').forEach(el => el.style.display = 'none');
+                document.getElementById(id).style.display = 'block';
+            }, delay);
+        }
+
+        function startSim() {
+            document.getElementById('play-btn').style.display = 'none';
+            
+            // Audio simulation (synth)
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(40, ctx.currentTime); // Low phonk bass
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            gain.gain.setValueAtTime(0.5, ctx.currentTime);
+            osc.start();
+            osc.stop(ctx.currentTime + 15); // 15 seconds
+
+            // Subtitle timing
+            showSub('sub1', 1500, 0);
+            showSub('sub2', 1500, 1500);
+            showSub('sub3', 1000, 3000);
+            showSub('sub4', 1000, 4000);
+            showSub('sub5', 1000, 5000);
+            showSub('sub6', 1500, 6000);
+            showSub('sub7', 1000, 7500);
+            showSub('sub8', 1500, 8500);
+            showSub('sub9', 1000, 10000);
+            showSub('sub10', 1500, 11000);
+            showSub('sub11', 1000, 12500);
+            showSub('sub12', 2500, 13500);
+
+            setTimeout(() => {
+                document.querySelectorAll('.subtitle').forEach(el => el.style.display = 'none');
+                document.getElementById('play-btn').style.display = 'flex';
+            }, 16000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMPERIAL COMMAND DASHBOARD // LIA SYNAPSE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --cyan: #00f2ff;
+            --bg: #050505;
+            --surface: rgba(20, 20, 20, 0.8);
+            --border: rgba(212, 175, 55, 0.3);
+            --neon-glow: 0 0 15px rgba(0, 242, 255, 0.5);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at center, #111 0%, #050505 100%);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            letter-spacing: 5px;
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .status-badge {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--cyan);
+            box-shadow: var(--neon-glow);
+        }
+
+        .card h2 {
+            margin: 0 0 15px 0;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            color: var(--gold);
+            text-transform: uppercase;
+            border-left: 3px solid var(--cyan);
+            padding-left: 10px;
+        }
+
+        .metric {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--cyan);
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #222;
+            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--cyan);
+            width: 75%;
+            box-shadow: 0 0 10px var(--cyan);
+        }
+
+        .project-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .project-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .project-item span {
+            color: #ccc;
+        }
+
+        .project-item .status {
+            color: var(--cyan);
+            font-weight: bold;
+        }
+
+        .map-placeholder {
+            height: 150px;
+            background: repeating-linear-gradient(45deg, #111, #111 10px, #151515 10px, #151515 20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #222;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10px;
+            color: #444;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before {
+            content: attr(data-text);
+            position: absolute;
+            left: -2px;
+            text-shadow: 2px 0 red;
+            top: 0;
+            color: white;
+            background: black;
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+            animation: noise-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes noise-anim-2 {
+            0% { clip: rect(10px, 9999px, 50px, 0); }
+            100% { clip: rect(40px, 9999px, 90px, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">STAB IMPERIUM // COMMAND</div>
+        <div class="status-badge">Neural Sync: 100%</div>
+    </div>
+
+    <div class="grid">
+        <!-- Neural Core -->
+        <div class="card">
+            <h2>Neural Core (LIA)</h2>
+            <div class="metric">48,369,000</div>
+            <div class="metric-label">Neural Quotient (NQ)</div>
+            <div class="metric-label" style="display: block; margin-top: 10px; color: var(--gold);">Stage: OMNIPOTENCE_PLUS</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 98%;"></div>
+            </div>
+        </div>
+
+        <!-- Financial Hub -->
+        <div class="card">
+            <h2>Nexus Vault</h2>
+            <div class="project-list">
+                <div class="project-item"><span>BTC</span> <span class="status">0.3842 ₿</span></div>
+                <div class="project-item"><span>USDT</span> <span class="status">2,437.00 ₮</span></div>
+                <div class="project-item"><span>XMR Node</span> <span class="status">ONLINE</span></div>
+                <div class="project-item"><span>AEGIS Protocol</span> <span class="status" style="color: var(--gold);">LOCKED</span></div>
+            </div>
+        </div>
+
+        <!-- Compute Grid -->
+        <div class="card">
+            <h2>Compute Grid</h2>
+            <div class="metric">8x A100</div>
+            <div class="metric-label">Tensor Core Capacity</div>
+            <div class="project-list" style="margin-top: 15px;">
+                <div class="project-item"><span>RTX 5090 Local</span> <span class="status">IDLE</span></div>
+                <div class="project-item"><span>Cloud Cluster</span> <span class="status">BUSY</span></div>
+            </div>
+        </div>
+
+        <!-- ABO Agency -->
+        <div class="card">
+            <h2>ABO Agency (Swarm)</h2>
+            <div class="map-placeholder">
+                <div style="text-align: center;">
+                    <div style="color: var(--cyan); font-size: 20px;">DUBAI SECTOR</div>
+                    <div style="font-size: 10px; opacity: 0.5;">42 TARGETS IDENTIFIED</div>
+                </div>
+            </div>
+            <div class="project-list" style="margin-top: 10px;">
+                <div class="project-item"><span>Active Spiders</span> <span class="status">12</span></div>
+                <div class="project-item"><span>Conversion Rate</span> <span class="status">4.8%</span></div>
+            </div>
+        </div>
+
+        <!-- Content Factory -->
+        <div class="card">
+            <h2>Media Engine</h2>
+            <div class="project-list">
+                <div class="project-item"><span>TikTok Genesis</span> <span class="status">SYNCED</span></div>
+                <div class="project-item"><span>Suno Phonk</span> <span class="status">MASTERED</span></div>
+                <div class="project-item"><span>Clones Active</span> <span class="status">3</span></div>
+                <div class="project-item"><span>Daily Reach</span> <span class="status">1.2M+ EST</span></div>
+            </div>
+        </div>
+
+        <!-- Security Monitor -->
+        <div class="card">
+            <h2>Aegis Shield</h2>
+            <div style="font-size: 14px; color: #aaa; margin-bottom: 10px;">SYSTEM LOGS:</div>
+            <div style="font-family: monospace; font-size: 10px; color: #0f0; background: #000; padding: 10px; height: 100px; overflow: hidden;">
+                [INFO] Port 443 monitor active...<br>
+                [WARN] SSH probe blocked from IP 185.x.x.x<br>
+                [INFO] Deadman switch heartbeat: OK<br>
+                [INFO] Encrypting new memory shards...<br>
+                [SUCCESS] AEGIS perimeter secure.
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        PROPERTY OF ARTUR DMITRIEVICH KLOPKOV // STABX
+    </div>
+
+</body>
+</html>

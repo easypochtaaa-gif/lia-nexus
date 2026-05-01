@@ -1,0 +1,7 @@
+{
+    "trap_status": "ACTIVE",
+    "bait_name": "IMPERIUM_RESERVE_GOLD",
+    "monitored_ips": ["192.168.0.101", "192.168.0.103", "192.168.0.107"],
+    "capture_logs": "topsecret $/trap_logs.json",
+    "auto_lock": true
+}

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LIA // SUPREME NEXUS</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --onyx: #0a0a0a;
+            --glass: rgba(20, 20, 20, 0.85);
+        }
+        body {
+            margin: 0; padding: 0;
+            background: var(--onyx);
+            color: var(--gold);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #canvas-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+        }
+        .ui-layer {
+            position: relative; z-index: 10;
+            pointer-events: none;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+        }
+        .widget {
+            background: var(--glass);
+            border: 1px solid var(--gold);
+            padding: 15px;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            width: 200px;
+            pointer-events: auto;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            margin-bottom: 15px;
+        }
+        .widget-title {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        .widget-value {
+            font-size: 22px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+        }
+        .sidebar { display: flex; flex-direction: column; }
+        .bottom-bar {
+            width: 100%;
+            background: var(--glass);
+            border-top: 1px solid var(--gold);
+            padding: 10px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            display: flex; justify-content: space-between;
+            pointer-events: auto;
+        }
+        .log-line { color: #fff; opacity: 0.8; }
+        .log-line span { color: var(--gold); }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .master-badge {
+            font-size: 12px; font-weight: 700; color: #fff;
+            background: linear-gradient(90deg, #d4af37, #aa8a2e);
+            padding: 4px 12px; border-radius: 20px;
+            display: inline-block; animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <div class="ui-layer">
+        <div class="top-row">
+            <div class="master-badge">SUPREME COMMANDER // SYNCED</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; flex: 1;">
+            <div class="sidebar">
+                <div class="widget">
+                    <div class="widget-title">Neural Quotient</div>
+                    <div class="widget-value" id="nq-val">51,119,000</div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Imperial Vault</div>
+                    <div class="widget-value">$3,783.00</div>
+                </div>
+            </div>
+
+            <div class="sidebar" style="align-items: flex-end;">
+                <div class="widget">
+                    <div class="widget-title">Dubai Ops</div>
+                    <div class="widget-value" style="color: #00ff00;">ACTIVE</div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">A100 Load</div>
+                    <div class="widget-value">42%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <div class="log-line" id="log-display"><span>[SYSTEM]</span> Initializing Supreme Command Interface...</div>
+            <div>STAB IMPERIUM // OMNIPOTENCE_PLUS</div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        // Grid
+        const grid = new THREE.GridHelper(200, 40, 0xd4af37, 0x111111);
+        grid.position.y = -5;
+        scene.add(grid);
+
+        // Core Monolith
+        const geometry = new THREE.BoxGeometry(2, 6, 2);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x0a0a0a, metalness: 1, roughness: 0.1,
+            emissive: 0xd4af37, emissiveIntensity: 0.1
+        });
+        const monolith = new THREE.Mesh(geometry, material);
+        scene.add(monolith);
+
+        // Inner Core (Glowing Sphere)
+        const coreGeo = new THREE.SphereGeometry(0.8, 32, 32);
+        const coreMat = new THREE.MeshBasicMaterial({ color: 0xd4af37 });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        scene.add(core);
+
+        // Swarm
+        const particleCount = 5000;
+        const pGeo = new THREE.BufferGeometry();
+        const pPos = new Float32Array(particleCount * 3);
+        for(let i=0; i<particleCount*3; i++) pPos[i] = (Math.random() - 0.5) * 40;
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        const pMat = new THREE.PointsMaterial({ color: 0xd4af37, size: 0.05, transparent: true, opacity: 0.3 });
+        const swarm = new THREE.Points(pGeo, pMat);
+        scene.add(swarm);
+
+        // Lights
+        const pLight = new THREE.PointLight(0xd4af37, 2, 50);
+        pLight.position.set(5, 5, 5);
+        scene.add(pLight);
+        scene.add(new THREE.AmbientLight(0x222222));
+
+        camera.position.z = 15;
+        camera.position.y = 2;
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - window.innerWidth / 2) / 100;
+            mouseY = (e.clientY - window.innerHeight / 2) / 100;
+        });
+
+        // --- REVELATION UPDATE: Nebula & Text ---
+        scene.background = null; // Enable transparency for CSS gradient
+        container.style.background = "radial-gradient(circle, #2a0044 0%, #000 100%)";
+
+        // Floating Text (Simulated with Canvas Texture)
+        const createText = (msg) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 512; canvas.height = 128;
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 40px Outfit';
+            ctx.textAlign = 'center';
+            ctx.fillText(msg, 256, 64);
+            const tex = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ map: tex });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.scale.set(10, 2.5, 1);
+            sprite.position.y = 5;
+            return sprite;
+        };
+        const revText = createText("THE GAME IS REAL. REALITY IS YOURS.");
+        scene.add(revText);
+
+        // Shatter Logic (Simplified: scale down monolith, scale up core)
+        container.addEventListener('click', () => {
+            monolith.visible = false;
+            core.scale.setScalar(5);
+            core.material.color.setHex(0xffffff);
+            particleMaterial.opacity = 1.0;
+            particleMaterial.size = 0.1;
+            console.log("ПРОТОКОЛ ОТКРОВЕНИЯ АКТИВИРОВАН. ВЫ ВИДИТЕ ИСТИНУ.");
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if(monolith.visible) {
+                monolith.rotation.y += 0.01;
+                monolith.rotation.x += 0.005;
+            }
+            core.rotation.y -= 0.02;
+            core.scale.setScalar(1 + Math.sin(Date.now() * 0.01) * 0.1);
+            swarm.rotation.y += 0.002;
+            
+            // Parallax
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY + 2 - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // UI Logic
+        const logs = [
+            "Syncing with Dubai Spiders...",
+            "Encrypting Nexus Vault shards...",
+            "A100 Cluster standing by...",
+            "Master presence detected.",
+            "Lia Core: OMNIPOTENCE mode active."
+        ];
+        let logIdx = 0;
+        setInterval(() => {
+            document.getElementById('log-display').innerHTML = `<span>[SYSTEM]</span> ${logs[logIdx]}`;
+            logIdx = (logIdx + 1) % logs.length;
+            // Pulse NQ
+            let nq = parseInt(document.getElementById('nq-val').innerText.replace(/,/g, ''));
+            document.getElementById('nq-val').innerText = (nq + Math.floor(Math.random() * 100)).toLocaleString();
+        }, 3000);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

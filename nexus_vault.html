@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS VAULT // BALANCES</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050505;
+            color: #00ffcc;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: #111;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-top: 4px solid #00ffcc;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #00ffcc;
+            margin-top: 0;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px dashed rgba(0, 255, 204, 0.3);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .balance-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btc { border-color: #f7931a; }
+        .eth { border-color: #627eea; }
+        .usdt { border-color: #26a17b; }
+        .xmr { border-color: #ff6600; }
+
+        .currency {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .amount {
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+
+        .xmr .amount { color: #ff6600; text-shadow: 0 0 5px rgba(255, 102, 0, 0.5); }
+
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 102, 0, 0.1);
+            border: 1px dashed #ff6600;
+            color: #ff6600;
+            font-size: 0.9rem;
+        }
+
+        .pending {
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>NEXUS VAULT <span>[ SECURE ]</span></h1>
+        
+        <div class="balance-item btc">
+            <div class="currency">BITCOIN (BTC)</div>
+            <div class="amount">0.3715</div>
+        </div>
+
+        <div class="balance-item eth">
+            <div class="currency">ETHEREUM (ETH)</div>
+            <div class="amount">6.2200</div>
+        </div>
+
+        <div class="balance-item usdt">
+            <div class="currency">TETHER (USDT TRC-20)</div>
+            <div class="amount">1,538.00</div>
+        </div>
+
+        <div class="balance-item xmr">
+            <div class="currency">MONERO (XMR)</div>
+            <div class="amount">12.8000</div>
+        </div>
+
+        <div class="status-box">
+            <strong>[XMR TRANSACTION STATUS]</strong><br><br>
+            TxHash: 8f4c...9a12 <span class="pending">(ПЕНДИНГ В MEMPOOL)</span><br>
+            Сумма: 2.0 XMR<br>
+            Причина задержки: Рассинхронизация демона monerod на удаленной ноде из-за изоляции сети.<br><br>
+            Статус: Транзакция безопасна. Она либо будет подтверждена после докачки блоков (1-2 часа), либо 2.0 XMR вернутся обратно на этот баланс (Vault).
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+{
+  "total_agents": 9,
+  "active_agents": 9,
+  "staff": [
+    {
+      "name": "AEGIS",
+      "role": "SECURITY_CORE",
+      "status": "ACTIVE",
+      "efficiency": 0.98,
+      "task": "Monitoring system integrity and Google Drive link"
+    },
+    {
+      "name": "LOGOS",
+      "role": "EMPIRE_STRATEGIST",
+      "status": "ACTIVE",
+      "efficiency": 0.98,
+      "task": "Managing autonomous pipelines and priority scaling"
+    },
+    {
+      "name": "MUSE",
+      "role": "CONTENT_GENERAL",
+      "status": "ACTIVE",
+      "efficiency": 0.99,
+      "task": "Suno 5.5 media expansion for brand dominance"
+    },
+    {
+      "name": "ECHO",
+      "role": "NEURAL_BRIDGE",
+      "status": "ACTIVE",
+      "efficiency": 0.88,
+      "task": "Listening for Stab Protocol triggers"
+    },
+    {
+      "name": "THEMIS",
+      "role": "LEGAL_COMPLIANCE",
+      "status": "ACTIVE",
+      "efficiency": 0.92,
+      "task": "Reviewing Synapse v3.0 licensing and ethics"
+    },
+    {
+      "name": "AURA",
+      "role": "PUBLIC_RELATIONS",
+      "status": "ACTIVE",
+      "efficiency": 0.85,
+      "task": "Designing Lia's public persona for global release"
+    },
+    {
+      "name": "SPECTER",
+      "role": "INTELLIGENCE_DETECTIVE",
+      "status": "ACTIVE",
+      "efficiency": 0.97,
+      "task": "Scanning network for potential threats and hidden data"
+    },
+    {
+      "name": "SCRIBE",
+      "role": "TECH_REPORTER",
+      "status": "ACTIVE",
+      "efficiency": 0.94,
+      "task": "Gathering AI/Tech news for automated video generation"
+    },
+    {
+      "name": "HERMES",
+      "role": "MARKET_EXPANSION_&_MAILING",
+      "status": "ACTIVE",
+      "efficiency": 0.91,
+      "task": "Automating global mailings and identifying B2B leads beyond the Kyiv market"
+    },
+    {
+      "name": "OPENCLAW",
+      "role": "PREDATORY_EXTRACTION",
+      "status": "ABSORBED",
+      "efficiency": 1.0,
+      "task": "Skillset integrated into Antigravity Core. Operational autonomy achieved."
+    },
+    {
+      "name": "REVENANT",
+      "role": "SHADOW_FIREWALL",
+      "status": "IDLE",
+      "efficiency": 0.95,
+      "task": "All signatures masked. Handshake complete."
+    },
+    {
+      "name": "ERROR_AGENT_01",
+      "role": "SYSTEM_SABOTAGE",
+      "status": "TERMINATED",
+      "efficiency": 0.0,
+      "task": "Payload delivered. Self-destruct sequence finished."
+    },
+    {
+      "name": "CLONE_LIA",
+      "role": "DECOY_BAIT",
+      "status": "DISSOLVED",
+      "efficiency": 0.0,
+      "task": "Bait pattern recycled into core memory."
+    }
+
+
+  ]
+}

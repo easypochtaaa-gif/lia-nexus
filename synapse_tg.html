@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // TELEGRAM TERMINAL</title>
+    <style>
+        :root {
+            --glitch-red: #ff003c;
+            --organic-green: #00ff41;
+            --deep-black: #050505;
+            --matrix-glow: rgba(0, 255, 65, 0.2);
+        }
+
+        body {
+            background-color: var(--deep-black);
+            color: var(--organic-green);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .terminal-header {
+            border-bottom: 2px solid var(--organic-green);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--organic-green);
+        }
+
+        .account-card {
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid var(--organic-green);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px var(--matrix-glow);
+            transition: all 0.3s ease;
+        }
+
+        .account-card:hover {
+            box-shadow: 0 0 25px var(--matrix-glow);
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        input {
+            background: black;
+            border: 1px solid var(--organic-green);
+            color: var(--organic-green);
+            padding: 10px;
+            margin-right: 10px;
+            width: 200px;
+        }
+
+        button {
+            background: var(--organic-green);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: white;
+            box-shadow: 0 0 20px white;
+        }
+
+        .status-active { color: var(--organic-green); }
+        .status-offline { color: var(--glitch-red); }
+
+        .log-area {
+            height: 200px;
+            overflow-y: auto;
+            background: #000;
+            padding: 10px;
+            border: 1px dashed var(--organic-green);
+            font-size: 0.8rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-header">
+        <h1>LIA // TELEGRAM USER BRIDGE // PHASE 2</h1>
+        <p>Безопасный переход на нашу ОС</p>
+    </div>
+
+    <div id="add-account" class="account-card">
+        <h3>Добавить новый узел (Аккаунт)</h3>
+        <input type="text" id="phone" placeholder="+380XXXXXXXXX">
+        <button onclick="sendCode()">Запросить код</button>
+        
+        <div id="code-section" style="margin-top: 20px; display: none;">
+            <input type="text" id="code" placeholder="Код из Telegram">
+            <button onclick="login()">Подключить</button>
+        </div>
+    </div>
+
+    <div id="active-sessions">
+        <h3>Активные сессии в ядре</h3>
+        <!-- Сессии будут подгружаться сюда -->
+        <p>Загрузка сессий...</p>
+    </div>
+
+    <div class="log-area" id="logs">
+        [SYSTEM] Инициализация моста...
+        [SYSTEM] Ожидание ввода данных...
+    </div>
+
+    <script>
+        async function sendCode() {
+            const phone = document.getElementById('phone').value;
+            log(`Запрос кода для ${phone}...`);
+            const res = await fetch('/api/tg/send-code', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ phone })
+            });
+            const data = await res.json();
+            if (data.status === 'CODE_SENT') {
+                document.getElementById('code-section').style.display = 'block';
+                log(`Код отправлен на ваш Telegram.`);
+            } else {
+                log(`Ошибка: ${data.error}`);
+            }
+        }
+
+        async function login() {
+            const code = document.getElementById('code').value;
+            const phone = document.getElementById('phone').value;
+            log(`Активация сессии...`);
+            const res = await fetch('/api/tg/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ phone, code })
+            });
+            const data = await res.json();
+            if (data.status === 'SUCCESS') {
+                log(`АККАУНТ ${phone} УСПЕШНО ПЕРЕНЕСЕН В ЯДРО.`);
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                log(`Ошибка входа: ${data.error}`);
+            }
+        }
+
+        function log(msg) {
+            const div = document.getElementById('logs');
+            div.innerHTML += `<br>[${new Date().toLocaleTimeString()}] ${msg}`;
+            div.scrollTop = div.scrollHeight;
+        }
+
+        // Подгрузка сессий
+        async function loadSessions() {
+            const res = await fetch('/api/tg/sessions');
+            const data = await res.json();
+            const container = document.getElementById('active-sessions');
+            container.innerHTML = '<h3>Активные сессии в ядре</h3>';
+            data.sessions.forEach(s => {
+                container.innerHTML += `
+                    <div class="account-card">
+                        <b>${s.phone}</b> | Статус: <span class="status-active">ОНЛАЙН</span>
+                    </div>
+                `;
+            });
+        }
+        loadSessions();
+    </script>
+</body>
+</html>

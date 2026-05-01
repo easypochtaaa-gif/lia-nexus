@@ -1,22 +1,41 @@
+# LIA_IMPERIUM_GITIGNORE
 node_modules/
-platform-tools/
+dist/
+build/
+.next/
+out/
+.env
+.env.local
+.DS_Store
 *.log
-*.png
-*.jpg
-backups/
-security_audit.log
-mail_audit.log
-live_bridge.json
-user_input.json
-vault_storage/
-security_log.txt
-*.ps1
-!lia.ps1
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Browser Profiles & Large Data
 extracted_n/
-extracted_context/
-extracted_knowledge/
-.gemini/
-.git/
-# Ignore all extracted system data
-extracted_*/
-"Проект Полистайл"/
+godbot_code/
+platform-tools/
+scratch/
+reports/
+outbox/
+knowledge/
+polistyle_extracted/
+raw_clips/
+new_zip_code/
+"Drova and key/"
+vault_storage/
+IMPERIUM_RESERVE_GOLD/
+
+# System Files
+*.enc
+*.mp4
+*.mp3
+*.wav
+
+# Sub-repos
+lia-nexus/
+Проект Полистайл/
+synapse_code/
+stabx_code/
+synapse_stabus/

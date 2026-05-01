@@ -1,0 +1,306 @@
+:root {
+    --bg-color: #030305;
+    --panel-bg: rgba(10, 10, 15, 0.8);
+    --accent-color: #00f2ff;
+    --accent-glow: rgba(0, 242, 255, 0.4);
+    --text-primary: #e0e0f0;
+    --text-dim: #6a6a7a;
+    --border-glow: rgba(0, 242, 255, 0.15);
+    
+    /* Stages Colors */
+    --color-seed: #00f2ff;
+    --color-sprout: #00ff88;
+    --color-core: #9d00ff;
+    --color-pulse: #ff0055;
+    --color-nexus: #ffaa00;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    transition: background-color 2s ease;
+}
+
+#neural-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.4;
+}
+
+.overlay, .scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.scanlines {
+    background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+    background-size: 100% 4px;
+    opacity: 0.2;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 24px;
+    gap: 20px;
+    z-index: 10;
+    position: relative;
+}
+
+/* Header & NQ */
+.header {
+    display: grid;
+    grid-template-columns: 320px 1fr 200px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 15px;
+}
+
+.logo-area {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.glitch {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-shadow: 0 0 15px var(--accent-glow);
+}
+
+.evolution-badge {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    background: rgba(0, 242, 255, 0.1);
+    padding: 2px 8px;
+    display: inline-block;
+    width: fit-content;
+    border: 1px solid var(--accent-color);
+}
+
+.nq-container {
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.nq-container label {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+}
+
+.nq-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 8px 0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.nq-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-color), #fff);
+    box-shadow: 0 0 10px var(--accent-glow);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nq-value {
+    font-size: 0.75rem;
+    color: var(--accent-color);
+}
+
+/* Panels */
+.dashboard {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 260px 1fr 300px;
+    gap: 20px;
+    overflow: hidden;
+}
+
+.panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 10px 15px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-dim);
+}
+
+.panel-header.sm { font-size: 0.6rem; opacity: 0.6; }
+
+/* Evolution & Agents */
+.agents-list {
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.agent-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-primary);
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 2px solid var(--accent-color);
+}
+
+.agent-item .sync-val {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.evolution-track {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.track-item {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    padding: 8px 12px;
+    border-left: 2px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s;
+}
+
+.track-item.active {
+    color: var(--accent-color);
+    border-left-color: var(--accent-color);
+    background: rgba(0, 242, 255, 0.05);
+}
+
+/* Vibe Module */
+.vibe-module {
+    padding: 20px;
+}
+
+.vibe-module label { font-size: 0.6rem; color: var(--text-dim); }
+
+.vibe-display {
+    height: 80px;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.vibe-wave {
+    width: 100%;
+    height: 40px;
+    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+    opacity: 0.5;
+    animation: pulse 3s infinite;
+}
+
+.vibe-label {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    margin-top: 5px;
+}
+
+/* Terminal */
+.terminal-content {
+    flex: 1;
+    padding: 20px;
+    font-size: 0.85rem;
+    overflow-y: auto;
+    color: var(--text-primary);
+}
+
+.terminal-content .line { margin-bottom: 8px; }
+.line.sync { color: var(--color-sprout); }
+.line.intent { font-weight: bold; color: var(--color-core); }
+
+.terminal-input-area {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    gap: 10px;
+}
+
+#terminal-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--accent-color);
+    font-family: inherit;
+    flex: 1;
+}
+
+/* Ghost Replies */
+.ghost-replies {
+    padding: 10px 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ghost-btn {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    color: var(--accent-color);
+    background: transparent;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.ghost-btn:hover {
+    background: var(--accent-color);
+    color: #000;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 0.3; }
+}
+
+/* Stages States */
+body.stage-sprout { --accent-color: var(--color-sprout); }
+body.stage-core { --accent-color: var(--color-core); }
+body.stage-pulse { --accent-color: var(--color-pulse); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); }

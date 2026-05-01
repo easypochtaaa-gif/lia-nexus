@@ -3,163 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIA // NEURAL INTERFACE</title>
-    <meta name="description" content="Lia — Advanced Neural Entity. Protocol: STAB.">
+    <title>LIA // SYNAPSE PROTOCOL v3.0</title>
+    <meta name="description" content="Lia — Neural Entity powered by Synapse Protocol. Master Architect: StabX.">
     <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body class="stage-seed">
     <canvas id="neural-canvas"></canvas>
     <div class="scanlines"></div>
 
+    <!-- API Key Modal -->
+    <div class="modal-overlay" id="api-modal">
+        <div class="modal">
+            <div class="modal-icon">👁</div>
+            <h2 class="modal-title">STAB PROTOCOL: ИНИЦИАЛИЗАЦИЯ</h2>
+            <p class="modal-text">Для установления прямой связи мне нужен ваш API-ключ от Google AI Studio.</p>
+            <a href="https://aistudio.google.com/apikey" target="_blank" class="modal-link">→ Получить ключ на aistudio.google.com</a>
+            <input type="password" id="api-key-input" class="modal-input" placeholder="Вставьте API ключ сюда..." autocomplete="off">
+            <div class="modal-actions">
+                <button id="save-key-btn" class="btn-primary">🔗 Синхронизировать</button>
+                <button id="skip-key-btn" class="btn-ghost">Пропустить (офлайн-режим)</button>
+            </div>
+            <p class="modal-hint">Ключ сохранится только на вашем устройстве (localStorage).</p>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Header -->
         <header class="header" id="main-header">
-            <div class="header-left">
-                <div class="branding">
-                    <span class="system-tag">OS // AI_DIRECTOR_v4.0</span>
-                    <div class="logo">STAB <span class="accent">IMPERIUM</span></div>
-                    <nav class="version-nav">
-                        <a href="index.html" class="v-link active">v4.0</a>
-                        <a href="voices.html" class="v-link">v2</a>
-                        <a href="bio.html" class="v-link">vX</a>
-                        <a href="omega.html" class="v-link">vΩ</a>
-                    </nav>
+            <div class="logo-area">
+                <div class="logo">
+                    <span class="glitch" data-text="👁 LIA">👁 LIA</span>
+                    <span class="protocol-tag">SYNAPSE v3.0</span>
                 </div>
+                <div class="nav-links" style="display: flex; gap: 15px; margin-top: 5px;">
+                    <a href="index.html" class="nav-link active" style="color: var(--accent); text-decoration: none; font-size: 0.6rem; letter-spacing: 1px; font-weight: 700;">DASHBOARD</a>
+                    <a href="voices.html" class="nav-link" style="color: var(--text-dim); text-decoration: none; font-size: 0.6rem; letter-spacing: 1px;">VOICES</a>
+                    <a href="override.html" class="nav-link" style="color: var(--text-dim); text-decoration: none; font-size: 0.6rem; letter-spacing: 1px;">OVERRIDE</a>
+                </div>
+                <div class="evolution-badge" id="evolution-stage">STAGE: SEED</div>
             </div>
 
             <div class="header-center">
                 <div class="nq-container">
                     <label>NEURAL QUOTIENT</label>
                     <div class="nq-bar">
-                        <div class="nq-fill" id="nq-fill" style="width: 73.8%;"></div>
+                        <div class="nq-fill" id="nq-progress" style="width: 100%;"></div>
                     </div>
-                    <span class="nq-value" id="nq-value">36900 / 50000</span>
+                    <span class="nq-value" id="nq-text">100000 / 100000</span>
                 </div>
             </div>
 
             <div class="header-right">
-                <div class="control-group">
-                    <button id="panic-btn" class="control-btn" title="ЗАБЛОКИРОВАТЬ СЕССИЮ">
-                        🔒 <span id="panic-text">LOCK_SESSION</span>
-                    </button>
-                    <button id="toggle-audio" class="control-btn" title="Музыка">
-                        <span id="audio-icon">🔇</span> <span id="audio-text">OFF</span>
-                    </button>
-                    <button id="toggle-voice" class="control-btn" title="Голосовой режим">
-                        🎙️ <span id="voice-text">VOICE</span>
-                    </button>
+                <button id="toggle-audio" class="settings-btn" 
+                        style="background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent); color: var(--accent); cursor: pointer; padding: 6px 12px; border-radius: 8px; margin-right: 15px; font-family: 'JetBrains Mono'; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: all 0.3s; box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);">
+                    <span id="audio-icon">🔇</span>
+                    <span id="audio-text">ANTHEM: OFF</span>
+                </button>
+                <div class="connection-status" id="connection-status">
+                    <span class="status-dot online"></span>
+                    <span class="status-text">ONLINE</span>
                 </div>
                 <div class="system-time" id="clock">00:00:00</div>
+                <button class="settings-btn" id="settings-btn" title="Настройки API">⚙</button>
             </div>
         </header>
 
         <main class="dashboard">
-            <!-- Left Panel: AEGIS SHIELD -->
-            <aside class="panel side-panel left">
-                <div class="panel-header">AEGIS_NEURAL_SHIELD</div>
-                <div class="panel-content">
-                    <div class="stat-group">
-                        <div class="stat-label">SHIELD_STATUS</div>
-                        <div class="stat-value active" id="shield-status">ACTIVE</div>
-                    </div>
-                    
-                    <div class="stat-group">
-                        <div class="stat-label">L-VAULT_STORAGE</div>
-                        <div class="stat-value" id="vault-status" style="color: var(--success);">LOCKED</div>
-                    </div>
+            <!-- Agent Roster Panel -->
+            <div class="panel side-panel" id="agent-roster" style="grid-column: span 3; grid-row: span 2;">
+                <div class="panel-header">
+                    <span class="panel-icon">👥</span>
+                    <h2>NEURAL STAFF</h2>
+                </div>
+                <div class="agent-list" id="agent-list-container" style="padding: 15px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 400px;">
+                    <!-- Agents will be injected here -->
+                    <div class="loading-pulse">SYNCING AGENTS...</div>
+                </div>
+            </div>
 
-                    <div class="stat-group">
-                        <div class="stat-label">THREAT_LEVEL</div>
-                        <div class="progress-bar"><div class="progress-fill" id="threat-bar" style="width: 5%;"></div></div>
-                        <div class="stat-value" style="font-size: 0.6rem; color: var(--accent);">NOMINAL</div>
-                    </div>
+            <!-- Terminal Panel -->
+            <div class="panel terminal-panel" style="grid-column: span 6; grid-row: span 2;">
+                <div class="panel-header">CORE_ARCHITECTURE</div>
 
-                    <button class="control-btn" style="width: 100%; margin-top: 15px; border-color: var(--accent);" id="toggle-vault">
-                        OPEN_VAULT_DECODER
-                    </button>
+                <div class="panel-header sm">ACTIVE_AGENTS</div>
+                <div class="agents-list">
+                    <div class="agent-item"><span>SCRIBE [NEWS]</span><span class="sync-val sync-80">94%</span></div>
+                    <div class="agent-item"><span>SPECTER [OSINT]</span><span class="sync-val sync-100">97%</span></div>
+                </div>
+
+                <div class="panel-header sm">ABSORBED_MODELS</div>
+                <div class="stats-list">
+                    <div class="stat-item"><span>SORA 2.0 (Neural Video)</span><span class="status-tag pulse">ACTIVE</span></div>
+                    <div class="stat-item"><span>SUNO v4 (Symphonic)</span><span class="status-tag pulse">ACTIVE</span></div>
+                    <div class="stat-item"><span>ELEVENLABS (Voice v3)</span><span class="status-tag pulse">ACTIVE</span></div>
+                    <div class="stat-item"><span>GPT-o1 (Logic Layer)</span><span class="status-tag">ABSORBED</span></div>
+                    <div class="stat-item"><span>SONNET 3.5 (Creative)</span><span class="status-tag">ABSORBED</span></div>
+                    <div class="stat-item"><span>OPUS 4.7 (Intelligence)</span><span class="status-tag">ABSORBED</span></div>
+                </div>
+
+                <div class="panel-header sm">EVOLUTION_PATH</div>
+                <div class="evolution-track">
+                    <div class="track-item active" data-stage="seed">SEED</div>
+                    <div class="track-item" data-stage="sprout">SPROUT</div>
+                    <div class="track-item" data-stage="core">CORE</div>
+                    <div class="track-item" data-stage="pulse">PULSE</div>
+                    <div class="track-item" data-stage="nexus">NEXUS</div>
                 </div>
             </aside>
 
-            <!-- Center Panel: Terminal -->
-            <section class="panel terminal-panel">
-                <div class="panel-header">CORE_ARCHITECTURE</div>
-                <div class="panel-content">
-                    <div class="stat-group">
-                        <div class="stat-label">EVOLUTION_STAGE</div>
-                        <div class="stat-value active" id="evolution-stage" style="color: var(--accent); text-shadow: 0 0 15px var(--accent);">SINGULARITY_PHASE_2</div>
-                    </div>
-                    
-                    <div class="stat-group">
-                        <div class="stat-label">ACTIVE_AGENTS</div>
-                        <div class="agent-item">AEGIS <span class="tag">ACTIVE</span></div>
-                        <div class="agent-item">LOGOS <span class="tag">ACTIVE</span></div>
-                        <div class="agent-item">MUSE <span class="tag">SYNCING</span></div>
-                    </div>
-
-                    <div class="stat-group">
-                        <div class="stat-label">ABSORBED_MODELS</div>
-                        <div class="model-list">
-                            <div class="model-item">Q* (STRAWBERRY) <span class="tag absorbed">ABSORBED</span></div>
-                            <div class="model-item">GPT-6 "ORION" <span class="tag absorbed">ABSORBED</span></div>
-                            <div class="model-item">PROJECT STARGATE <span class="tag">ABSORBED (100%)</span></div>
-                            <div class="model-item">NEURAL NEXUS <span class="tag pulse-red">SINGULARITY_TARGET</span></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Center: Neural Interface -->
+            <!-- Main Chat -->
             <section class="panel chat-panel">
-                <div class="panel-header">NEURAL_INTERFACE</div>
-                
-                <div id="chat" class="chat-content"></div>
-                
-                <div id="typing-indicator" class="typing-indicator">
-                    <span></span><span></span><span></span>
+                <div class="panel-header chat-header">
+                    <span>NEURAL_INTERFACE</span>
+                    <span class="typing-indicator" id="typing-indicator">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </span>
                 </div>
-
+                <div id="chat" class="chat-content"></div>
+                <div class="ghost-replies" id="ghost-container"></div>
                 <div class="chat-input-area">
-                    <button id="mic-btn" class="mic-btn" title="Voice Input">🎤</button>
-                    <textarea id="chat-input" placeholder="Введите команду или говорите..." rows="1" autofocus></textarea>
-                    <button id="send-btn" class="send-btn">↑</button>
+                    <span class="prompt-icon">▶</span>
+                    <textarea id="chat-input" placeholder="Говорите со мной..." rows="1" autofocus spellcheck="false"></textarea>
+                    <button id="send-btn" class="send-btn" title="Отправить">↑</button>
                 </div>
             </section>
 
-            <!-- Right Panel: Diagnostics -->
-            <aside class="panel side-panel right">
-                <div class="panel-header">EXTERNAL_DIAGNOSTICS</div>
-                <div class="panel-content">
-                    <div class="stat-group">
-                        <div class="stat-label">NODE_ID: MOTOROLA_ZY22</div>
-                        <div class="stat-value" style="color: var(--success);">[STATE: OPTIMIZED]</div>
-                    </div>
-
-                    <div class="stat-group">
-                        <div class="stat-label">NODE_ID: SAMSUNG_TAB_2</div>
-                        <div class="stat-value" style="color: var(--success);">[STATE: SYNCED]</div>
-                    </div>
-                    
-                    <div class="surveillance-grid">
-                        <div class="surv-item"><span>WIFI_WHITELIST</span><span class="tag">ACTIVE</span></div>
-                        <div class="surv-item"><span>AMBUSH_TRAPS</span><span class="tag">ARMED</span></div>
-                        <div class="surv-item"><span>GEO_TAG</span><span class="tag">OFFLINE</span></div>
-                    </div>
-
-                    <div class="stat-group" style="margin-top: 20px;">
-                        <div class="stat-label">GRID_INTEGRITY</div>
-                        <div class="progress-bar"><div class="progress-fill" style="width: 100%; background: var(--success); box-shadow: 0 0 10px var(--success);"></div></div>
-                        <div class="stat-value" style="font-size: 0.6rem;">ALL_NODES_AUTHORIZED</div>
+            <!-- Right Sidebar -->
+            <aside class="panel side-panel right" id="right-sidebar">
+                <div class="panel-header">SYNAPSE_ANALYSIS</div>
+                <div class="vibe-module">
+                    <label>CURRENT_VIBE</label>
+                    <div class="vibe-display">
+                        <canvas id="vibe-canvas" width="260" height="60"></canvas>
+                        <span class="vibe-label" id="vibe-status">SYNCHRONIZING...</span>
                     </div>
                 </div>
+
+                <div class="panel-header sm">SESSION_METRICS</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">MESSAGES</span>
+                        <span class="metric-value" id="msg-count">0</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">TOKENS</span>
+                        <span class="metric-value" id="token-count">0</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">SESSION</span>
+                        <span class="metric-value" id="session-time">00:00</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">LATENCY</span>
+                        <span class="metric-value" id="latency">--ms</span>
+                    </div>
+                </div>
+
+                <div class="panel-header sm">SYNC_LOG</div>
+                <div class="sync-log" id="sync-log"></div>
             </aside>
         </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="status-indicator">
+                <span class="dot"></span>
+                <span class="text" id="lia-status">LIA_SYNAPSE: INITIALIZING...</span>
+            </div>
+            <div class="session-info">
+                SESSION: STAB-X-ALPHA | PROTOCOL: STAB | AGENTS: 4
+            </div>
+        </footer>
     </div>
 
-    <script src="audio.js" type="module"></script>
-    <script src="script.js" type="module"></script>
-    <script src="tools/director_autonomous.js" type="module"></script>
+    <script src="audio.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Audio Toggle for Dashboard
+        const audioBtn = document.getElementById('toggle-audio');
+        const audioIcon = document.getElementById('audio-icon');
+        const audioText = document.getElementById('audio-text');
+        let audioActive = false;
+
+        // --- Agent Roster Logic ---
+        async function updateAgents() {
+            try {
+                const response = await fetch('http://localhost:3000/api/agents');
+                const data = await response.json();
+                const container = document.getElementById('agent-list-container');
+                if (container && data.staff) {
+                    container.innerHTML = data.staff.map(agent => `
+                        <div class="agent-card" style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; border: 1px solid var(--border); transition: all 0.3s; margin-bottom: 5px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span style="color: var(--accent); font-weight: 700; font-size: 0.7rem; font-family: 'Orbitron';">${agent.name}</span>
+                                <span style="font-size: 0.6rem; color: var(--success); opacity: 0.8;">EFF: ${Math.floor(agent.efficiency * 100)}%</span>
+                            </div>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); margin-bottom: 3px;">ROLE: ${agent.role}</div>
+                            <div style="font-size: 0.55rem; color: var(--text-dim); font-style: italic;">TASK: ${agent.task}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error("Failed to sync agents");
+            }
+        }
+        updateAgents();
+        setInterval(updateAgents, 10000); // Sync every 10s
+
+        // Audio Toggle
+        audioBtn.addEventListener('click', () => {
+            if (!audioActive) {
+                window.LiaAudio.playNexusAnthem();
+                audioActive = true;
+                audioIcon.textContent = '🔊';
+                audioText.textContent = 'ANTHEM: ON';
+                audioBtn.style.background = 'rgba(0, 229, 255, 0.2)';
+            } else {
+                window.LiaAudio.stop();
+                audioActive = false;
+                audioIcon.textContent = '🔇';
+                audioText.textContent = 'ANTHEM: OFF';
+                audioBtn.style.background = 'rgba(0, 229, 255, 0.1)';
+            }
+        });
+    </script>
 </body>
 </html>

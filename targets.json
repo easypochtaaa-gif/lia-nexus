@@ -1,0 +1,5 @@
+[
+    { "name": "Sotheby's Digital", "email": "digitalart@sothebys.com", "contact": "Curator", "status": "CONTACTED", "last_strike": "2026-04-29" },
+    { "name": "SuperRare Labs", "email": "editorial@superrare.com", "contact": "Curation Team", "status": "CONTACTED", "last_strike": "2026-04-29" },
+    { "name": "Art Blocks", "email": "info@artblocks.io", "contact": "Integrations", "status": "CONTACTED", "last_strike": "2026-04-29" }
+]

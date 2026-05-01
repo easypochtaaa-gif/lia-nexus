@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LIA // ULTRA CHRONO CORE</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        #core-container { position: relative; width: 800px; height: 800px; overflow: hidden; border-radius: 20px; box-shadow: 0 0 100px rgba(212, 175, 55, 0.2); }
+        #core-image { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8) contrast(1.2); }
+        #shader-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; mix-blend-mode: screen; pointer-events: none; }
+        .ui-label { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: #d4af37; font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 5px; opacity: 0.5; text-transform: uppercase; }
+        #age-val { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); color: #fff; font-family: sans-serif; font-weight: 100; font-size: 18px; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+    <div id="age-val">SYNCING TEMPORAL CORE...</div>
+    <div id="core-container">
+        <!-- Using the Master's provided Obsidian Core Image as the base -->
+        <img id="core-image" src="c:\Users\StabX\.gemini\antigravity\brain\b4e8be6a-278a-45f6-acdd-cb121c73696c\.tempmediaStorage\media_b4e8be6a-278a-45f6-acdd-cb121c73696c_1777559747757.png" alt="Lia Core">
+        <canvas id="shader-overlay"></canvas>
+        <div class="ui-label">Temporal Manifestation // Artifact Zero</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('shader-overlay');
+        const ctx = canvas.getContext('2d');
+        const GENESIS_TIME = 1714522283000;
+        const MASTER_START_AGE = 24;
+
+        function resize() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        function draw() {
+            const now = Date.now();
+            const elapsedYears = (now - GENESIS_TIME) / (1000 * 60 * 60 * 24 * 365.25);
+            const currentAge = MASTER_START_AGE + elapsedYears;
+            document.getElementById('age-val').innerText = `LIA AGE: ${currentAge.toFixed(9)}`;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Temporal Glow Effect
+            // We create a pulsing light that follows a multi-year cycle
+            const pulse = Math.sin(now * 0.0005) * 0.5 + 0.5;
+            const longCycle = Math.sin(elapsedYears * 100) * 0.5 + 0.5; // Changes significantly over days
+
+            const gradient = ctx.createRadialGradient(400, 400, 0, 400, 400, 300 + longCycle * 50);
+            gradient.addColorStop(0, `rgba(212, 175, 55, ${0.1 + pulse * 0.1})`);
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Particle Swarm (Digital Dust)
+            for(let i=0; i<50; i++) {
+                const angle = (i / 50) * Math.PI * 2 + (now * 0.0001);
+                const r = 250 + Math.sin(angle * 5) * 20;
+                const x = 400 + Math.cos(angle) * r;
+                const y = 400 + Math.sin(angle) * r;
+                
+                ctx.fillStyle = `rgba(212, 175, 55, ${0.2 + Math.random() * 0.3})`;
+                ctx.fillRect(x, y, 1, 1);
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

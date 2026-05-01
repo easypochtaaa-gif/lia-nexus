@@ -12,7 +12,7 @@ const openclaw = require('./openclaw_v2');
 
 const TOKEN = process.env.LIFE_LIA_TOKEN;
 const OLLAMA_API = process.env.OLLAMA_API || 'http://localhost:11434/api/generate';
-const ADMIN_ID = 574218659; // ЗАМЕНИ ЭТО НА СВОЙ ID (Узнай у @userinfobot)
+const ADMIN_ID = 7915004877; // НОВЫЙ ID ДИРЕКТОРА
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 const NEXUS_URL = 'https://lia-nexus.onrender.com/omega.html';

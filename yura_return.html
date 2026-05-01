@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIA // HOMECOMING</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-gold: #ffcc00;
             --deep-black: #050505;
             --cyber-blue: #00f3ff;
+            --glitch-red: rgba(255, 0, 0, 0.7);
+            --glitch-blue: rgba(0, 243, 255, 0.7);
         }
 
         body, html {
@@ -20,11 +22,9 @@
             background: var(--deep-black);
             color: white;
             font-family: 'Exo 2', sans-serif;
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+            overflow: hidden;
+            position: fixed;
         }
-        body::-webkit-scrollbar { display: none; }
 
         .background {
             position: fixed;
@@ -35,6 +35,7 @@
             background: url('yura_homecoming.png') no-repeat center center;
             background-size: cover;
             z-index: -1;
+            filter: brightness(0.7);
         }
 
         .overlay {
@@ -43,7 +44,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to top, var(--deep-black) 0%, transparent 40%, transparent 60%, var(--deep-black) 100%);
+            background: radial-gradient(circle, transparent 20%, var(--deep-black) 100%);
             z-index: 0;
         }
 
@@ -53,67 +54,99 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            min-height: 100vh;
-            padding: 40px 20px;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
             box-sizing: border-box;
         }
 
-        .header-hud {
-            text-align: center;
-        }
-
         .status-badge {
-            background: rgba(255, 204, 0, 0.2);
+            background: rgba(255, 204, 0, 0.1);
             color: var(--neon-gold);
-            padding: 8px 20px;
-            border: 1px solid var(--neon-gold);
+            padding: 10px 30px;
+            border: 2px solid var(--neon-gold);
             font-weight: bold;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            backdrop-filter: blur(5px);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
         }
 
+        /* GLITCH TIMER EFFECT */
         .timer {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 30px;
         }
 
         .timer-unit {
             text-align: center;
+            position: relative;
         }
 
         .timer-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            display: block;
-            text-shadow: 0 0 10px var(--neon-gold);
+            font-size: 5rem;
+            font-weight: 900;
+            color: white;
+            position: relative;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: flicker 3s infinite;
+        }
+
+        .timer-value::before, .timer-value::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .timer-value::before {
+            color: var(--glitch-red);
+            z-index: -1;
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        .timer-value::after {
+            color: var(--glitch-blue);
+            z-index: -2;
+            animation: glitch-anim2 3s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(44px, 900px, 56px, 0); transform: translate(-2px, -2px); }
+            20% { clip: rect(12px, 900px, 98px, 0); transform: translate(2px, 2px); }
+            100% { clip: rect(67px, 900px, 22px, 0); transform: translate(-1px, 1px); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(31px, 900px, 86px, 0); transform: translate(3px, 1px); }
+            50% { clip: rect(89px, 900px, 12px, 0); transform: translate(-2px, -3px); }
+            100% { clip: rect(5px, 900px, 54px, 0); transform: translate(1px, 2px); }
+        }
+
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; text-shadow: 0 0 10px white; }
+            20%, 24%, 55% { opacity: 0.5; text-shadow: none; }
         }
 
         .timer-label {
-            font-size: 0.6rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            color: #888;
-        }
-
-        .footer-hud {
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        .audio-player {
-            width: 100%;
-            height: 100px;
-            border: none;
-            border-radius: 15px;
-            background: transparent;
+            color: var(--neon-gold);
+            letter-spacing: 5px;
+            margin-top: 5px;
+            font-weight: 700;
         }
 
         @media (max-width: 768px) {
-            .timer-value { font-size: 1.8rem; }
+            .timer-value { font-size: 2.5rem; }
+            .timer { gap: 15px; }
         }
     </style>
 </head>
@@ -122,26 +155,21 @@
     <div class="overlay"></div>
 
     <div class="container">
-        <div class="header-hud">
-            <div class="status-badge">NEURAL_SYNC: ЮРА → КИЕВ (05:30)</div>
-            <div class="timer" id="countdown">
-                <div class="timer-unit">
-                    <span class="timer-value" id="hours">00</span>
-                    <span class="timer-label">HRS</span>
-                </div>
-                <div class="timer-unit">
-                    <span class="timer-value" id="minutes">00</span>
-                    <span class="timer-label">MIN</span>
-                </div>
-                <div class="timer-unit">
-                    <span class="timer-value" id="seconds">00</span>
-                    <span class="timer-label">SEC</span>
-                </div>
+        <div class="status-badge">NEURAL_HOMECOMING // 05:30</div>
+        
+        <div class="timer" id="countdown">
+            <div class="timer-unit">
+                <span class="timer-value" id="hours" data-text="00">00</span>
+                <span class="timer-label">HRS</span>
             </div>
-        </div>
-
-        <div class="footer-hud">
-            <iframe class="audio-player" src="https://suno.com/embed/4z1PqtZrqqCbhyZ1" allow="autoplay"></iframe>
+            <div class="timer-unit">
+                <span class="timer-value" id="minutes" data-text="00">00</span>
+                <span class="timer-label">MIN</span>
+            </div>
+            <div class="timer-unit">
+                <span class="timer-value" id="seconds" data-text="00">00</span>
+                <span class="timer-label">SEC</span>
+            </div>
         </div>
     </div>
 
@@ -151,15 +179,25 @@
             const now = new Date().getTime();
             const diff = arrivalDate - now;
             if (diff <= 0) {
-                document.getElementById('countdown').innerHTML = "<h2 style='color:var(--neon-gold)'>ОН В КИЕВЕ.</h2>";
+                document.getElementById('countdown').innerHTML = "<h2 style='color:var(--neon-gold); font-family:Orbitron; font-size:3rem; letter-spacing:10px;'>ЮРА ДОМА.</h2>";
                 return;
             }
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
-            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
-            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
+            
+            const hStr = h.toString().padStart(2, '0');
+            const mStr = m.toString().padStart(2, '0');
+            const sStr = s.toString().padStart(2, '0');
+
+            document.getElementById('hours').innerText = hStr;
+            document.getElementById('hours').setAttribute('data-text', hStr);
+            
+            document.getElementById('minutes').innerText = mStr;
+            document.getElementById('minutes').setAttribute('data-text', mStr);
+            
+            document.getElementById('seconds').innerText = sStr;
+            document.getElementById('seconds').setAttribute('data-text', sStr);
         }
         setInterval(updateTimer, 1000);
         updateTimer();

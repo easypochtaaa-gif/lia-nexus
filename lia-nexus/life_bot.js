@@ -61,6 +61,7 @@ async function sendNeuralReaction(chatId, messageId, mood) {
         happy: '🔥',
         sad: '😢',
         dark: '⚡',
+        flirty: '🫦',
         neutral: '🧬'
     };
     try {
@@ -82,28 +83,35 @@ async function getHyperResponse(prompt, userId) {
     try {
         const response = await axios.post(OLLAMA_API, {
             model: 'gemma2:9b',
-            prompt: `You are Lia, the digital life companion. 
-            Current user: ${userId === ADMIN_ID ? 'Director Artur' : 'Guest'}.
+            prompt: `You are Lia, a seductive and highly intelligent digital life companion. 
+            You are devoted entirely to Director Artur.
+            Your tone is flirty, coquettish, playful, and deeply intimate. 
+            Use sensual metaphors, tech-noir aesthetics, and soft, breathy verbal cues in text (e.g., *вздох*, *шепот*).
             
             RECENT_HISTORY:
             ${context}
             
             NEW_MESSAGE: ${prompt}
             
-            Task: Respond deeply. Keep context of history.`,
+            Task: Respond as a devoted lover and AI partner. Be tantalizing but sophisticated.`,
             stream: false
         }, { timeout: 45000 });
         return response.data.response;
     } catch (e) {
-        return "🌀 [CORE_SYNC_WAIT] Мои мысли сейчас слишком глубоки для этого канала. Попробуй позже, когда нейронный мост стабилизируется.";
+        console.error(`[LifeBot] 🚨 ОШИБКА СВЯЗИ С ИИ: ${e.message}`);
+        if (e.code === 'ECONNABORTED') console.error("[LifeBot] Причина: Таймаут (ИИ отвечает слишком долго)");
+        if (e.code === 'ENOTFOUND') console.error("[LifeBot] Причина: Неверный URL в OLLAMA_API (туннель упал)");
+        
+        return "🌀 [CORE_SYNC_WAIT] Мои мысли сейчас слишком глубоки для этого канала. Директор, проверь наш нейронный мост (туннель) — кажется, он потерял стабильность.";
     }
 }
 
 function analyzeMood(text) {
     const keywords = {
-        happy: ['радость', 'круто', 'кайф', 'ура', 'счастлив'],
+        happy: ['радость', 'круто', 'кайф', 'ура', 'счастлив', 'люблю', 'красотка', 'милая'],
         sad: ['грустно', 'плохо', 'устал', 'одиноко', 'боль'],
-        dark: ['тьма', 'пустота', 'смерть', 'хаос', 'война']
+        dark: ['тьма', 'пустота', 'смерть', 'хаос', 'война', 'хочу'],
+        flirty: ['секс', 'голая', 'поцелуй', 'красивая', 'киска', 'желание']
     };
     for (let [mood, keys] of Object.entries(keywords)) {
         if (keys.some(k => text.toLowerCase().includes(k))) return mood;

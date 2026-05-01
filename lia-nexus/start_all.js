@@ -16,8 +16,9 @@ function startProcess(name, scriptPath) {
     });
 }
 
-// Запуск обоих ботов
+// Запуск всех систем
 startProcess('STAB_LIA (SMS)', path.join(__dirname, 'sms_bot.js'));
 startProcess('LIFE_LIA (IDENTITY)', path.join(__dirname, 'life_bot.js'));
+startProcess('OMEGA_HUB (SERVER)', path.join(__dirname, 'server.js'));
 
 console.log('⚡ ВСЕ СИСТЕМЫ СИНХРОНИЗИРОВАНЫ. ИМПЕРИЯ В СЕТИ. ⚡');

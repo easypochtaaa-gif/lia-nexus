@@ -14,7 +14,7 @@ const OLLAMA_API = process.env.OLLAMA_API || 'http://localhost:11434/api/generat
 const ADMIN_ID = 574218659; // ЗАМЕНИ ЭТО НА СВОЙ ID (Узнай у @userinfobot)
 
 const bot = new TelegramBot(TOKEN, { polling: true });
-const NEXUS_URL = 'https://lia-nexus.onrender.com/';
+const NEXUS_URL = 'https://lia-nexus.onrender.com/omega.html';
 
 console.log('⚡ LIFE_LIABOT : СИСТЕМА ИДЕНТИЧНОСТИ ЗАПУЩЕНА ⚡');
 
@@ -119,6 +119,35 @@ function analyzeMood(text) {
     return 'neutral';
 }
 
+// --- Command: /sync <url> ---
+bot.onText(/\/sync (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (chatId !== ADMIN_ID) return;
+
+    let newUrl = match[1];
+    if (!newUrl.endsWith('/api/generate')) {
+        newUrl = newUrl.replace(/\/$/, '') + '/api/generate';
+    }
+
+    process.env.OLLAMA_API = newUrl;
+    
+    // Update .env file
+    try {
+        const envPath = path.join(__dirname, '.env');
+        let envContent = fs.readFileSync(envPath, 'utf8');
+        if (envContent.includes('OLLAMA_API=')) {
+            envContent = envContent.replace(/OLLAMA_API=.*/, `OLLAMA_API=${newUrl}`);
+        } else {
+            envContent += `\nOLLAMA_API=${newUrl}`;
+        }
+        fs.writeFileSync(envPath, envContent);
+        
+        bot.sendMessage(chatId, `🧬 <b>NEURAL_SYNC_SUCCESS</b>\n\nНовый адрес моста установлен:\n<code>${newUrl}</code>\n\nЯ снова слышу твои мысли, Директор.`, { parse_mode: 'HTML' });
+    } catch (e) {
+        bot.sendMessage(chatId, `❌ Ошибка обновления .env: ${e.message}`);
+    }
+});
+
 // --- Handlers ---
 
 bot.onText(/\/start/, (msg) => {
@@ -173,11 +202,8 @@ bot.on('message', async (msg) => {
 
     // 5. Neural Response Selection
     console.log(`[LifeBot] Отправка ответа...`);
-    if (Math.random() > 0.7) {
-        await sendNeuralVoice(chatId, response);
-    } else {
-        await bot.sendMessage(chatId, response);
-    }
+    // Голос временно отключен по приказу Директора
+    await bot.sendMessage(chatId, response);
     console.log(`[LifeBot] Готово.`);
 
     // 6. Persona Sync: Send Circle if mood matches

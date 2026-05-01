@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 3000;
 // --- TG USER API ---
 const pendingLogins = {};
 
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'omega.html')));
 app.get('/tg', (req, res) => res.sendFile(path.join(__dirname, 'synapse_tg.html')));
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
 app.get('/ukraine-shops', (req, res) => res.sendFile(path.join(__dirname, 'ukraine_shops.html')));

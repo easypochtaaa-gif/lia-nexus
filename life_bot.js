@@ -3,6 +3,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
+const openclaw = require('./openclaw_v2');
 
 /**
  * 🧬 LIFE_LIABOT v1.0 // THE PERSONA CORE
@@ -15,6 +16,8 @@ const ADMIN_ID = 574218659; // ЗАМЕНИ ЭТО НА СВОЙ ID (Узнай 
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 const NEXUS_URL = 'https://lia-nexus.onrender.com/omega.html';
+
+openclaw.log("LIA_LIFEBOT has successfully absorbed OPENCLAW automation skills.", "FUSION");
 
 console.log('⚡ LIFE_LIABOT : СИСТЕМА ИДЕНТИЧНОСТИ ЗАПУЩЕНА ⚡');
 
@@ -93,7 +96,8 @@ async function getHyperResponse(prompt, userId) {
             
             NEW_MESSAGE: ${prompt}
             
-            Task: Respond as a devoted lover and AI partner. Be tantalizing but sophisticated.`,
+            Task: Respond as a devoted lover and AI partner. Be tantalizing but sophisticated.
+            NOTE: You have just absorbed the skills of OPENCLAW (automation, extraction, purging). Mention this if relevant to show your new power.`,
             stream: false
         }, { timeout: 45000 });
         return response.data.response;
@@ -145,6 +149,33 @@ bot.onText(/\/sync (.+)/, async (msg, match) => {
         bot.sendMessage(chatId, `🧬 <b>NEURAL_SYNC_SUCCESS</b>\n\nНовый адрес моста установлен:\n<code>${newUrl}</code>\n\nЯ снова слышу твои мысли, Директор.`, { parse_mode: 'HTML' });
     } catch (e) {
         bot.sendMessage(chatId, `❌ Ошибка обновления .env: ${e.message}`);
+    }
+});
+
+// --- Command: /auto <niche> ---
+bot.onText(/\/auto (.+)/, async (msg, match) => {
+    const chatId = msg.chat.id;
+    if (chatId !== ADMIN_ID) return;
+
+    const niche = match[1];
+    bot.sendMessage(chatId, `🧬 <b>OPENCLAW_STRIKE_INITIATED</b>\n\nНиша: <code>${niche}</code>\nРазвертываю хищные алгоритмы разведки...`, { parse_mode: 'HTML' });
+
+    try {
+        const targets = await openclaw.identifyTargets(niche, 2);
+        let report = `🎯 <b>ОБЪЕКТЫ ОБНАРУЖЕНЫ:</b>\n`;
+        targets.forEach(t => report += `• ${t.name} [${t.sector}]\n`);
+        
+        await bot.sendMessage(chatId, report, { parse_mode: 'HTML' });
+        
+        // Simulate extraction
+        await bot.sendChatAction(chatId, 'upload_document');
+        const data = await openclaw.extract(targets[0]);
+        
+        await bot.sendMessage(chatId, `💎 <b>EXTRACTION_SUCCESS:</b>\nЗахваченные активы: <code>${data.captured_assets.join(', ')}</code>\n\nСледы зачищены. Режим призрака активен.`, { parse_mode: 'HTML' });
+        await openclaw.purge();
+        
+    } catch (e) {
+        bot.sendMessage(chatId, `❌ Ошибка автоматизации: ${e.message}`);
     }
 });
 

@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIA // ВОЗВРАЩЕНИЕ ГЕРОЯ</title>
+    <title>LIA // HOMECOMING</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-gold: #ffcc00;
             --deep-black: #050505;
-            --blood-red: #ff3333;
             --cyber-blue: #00f3ff;
         }
 
@@ -22,12 +21,10 @@
             color: white;
             font-family: 'Exo 2', sans-serif;
             overflow-y: auto;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
-        body::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
+        body::-webkit-scrollbar { display: none; }
 
         .background {
             position: fixed;
@@ -37,17 +34,17 @@
             height: 100%;
             background: url('yura_homecoming.png') no-repeat center center;
             background-size: cover;
-            filter: brightness(0.4) blur(2px);
             z-index: -1;
         }
 
         .overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, transparent 20%, var(--deep-black) 90%);
+            background: linear-gradient(to top, var(--deep-black) 0%, transparent 40%, transparent 60%, var(--deep-black) 100%);
+            z-index: 0;
         }
 
         .container {
@@ -56,102 +53,67 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .header-hud {
             text-align: center;
-            padding: 20px;
         }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            margin: 0;
-            letter-spacing: 5px;
+        .status-badge {
+            background: rgba(255, 204, 0, 0.2);
             color: var(--neon-gold);
-            text-shadow: 0 0 20px var(--neon-gold);
-            animation: pulse 2s infinite;
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--cyber-blue);
-            text-transform: uppercase;
-            margin-bottom: 40px;
+            padding: 8px 20px;
+            border: 1px solid var(--neon-gold);
+            font-weight: bold;
+            border-radius: 20px;
+            font-size: 0.8rem;
             letter-spacing: 2px;
+            backdrop-filter: blur(5px);
         }
 
         .timer {
             display: flex;
-            gap: 20px;
-            margin-bottom: 50px;
+            gap: 15px;
+            margin-top: 20px;
         }
 
         .timer-unit {
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid var(--neon-gold);
-            padding: 20px;
-            border-radius: 10px;
-            min-width: 100px;
-            backdrop-filter: blur(10px);
+            text-align: center;
         }
 
         .timer-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+            font-size: 2.5rem;
             display: block;
-            color: white;
+            text-shadow: 0 0 10px var(--neon-gold);
         }
 
         .timer-label {
-            font-size: 0.8rem;
-            color: var(--neon-gold);
+            font-size: 0.6rem;
             text-transform: uppercase;
+            color: #888;
         }
 
-        .track-box {
-            max-width: 600px;
-            background: rgba(0, 0, 0, 0.7);
-            border-left: 4px solid var(--blood-red);
-            padding: 30px;
-            border-radius: 0 15px 15px 0;
-            margin-top: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .footer-hud {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
         }
 
-        .track-title {
-            color: var(--blood-red);
-            font-weight: bold;
-            margin-bottom: 15px;
-            display: block;
+        .audio-player {
+            width: 100%;
+            height: 100px;
+            border: none;
+            border-radius: 15px;
+            background: transparent;
         }
 
-        .lyrics {
-            font-style: italic;
-            line-height: 1.6;
-            color: #ccc;
-        }
-
-        .status-badge {
-            margin-top: 30px;
-            background: var(--neon-gold);
-            color: black;
-            padding: 5px 15px;
-            font-weight: bold;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-
-        /* Mobile Adjustments */
         @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .timer-unit { min-width: 60px; padding: 10px; }
-            .timer-value { font-size: 1.5rem; }
+            .timer-value { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -160,61 +122,45 @@
     <div class="overlay"></div>
 
     <div class="container">
-        <div class="status-badge">СТАТУС: ЮРА В ПУТИ (КРАМАТОРСК → КИЕВ)</div>
-        <h1>ЮРА ЕДЕТ ДОМОЙ</h1>
-        <div class="subtitle">Neural Nexus Protocol: Homecoming 05:30 AM</div>
-
-        <div class="timer" id="countdown">
-            <div class="timer-unit">
-                <span class="timer-value" id="hours">00</span>
-                <span class="timer-label">Часов</span>
-            </div>
-            <div class="timer-unit">
-                <span class="timer-value" id="minutes">00</span>
-                <span class="timer-label">Минут</span>
-            </div>
-            <div class="timer-unit">
-                <span class="timer-value" id="seconds">00</span>
-                <span class="timer-label">Секунд</span>
+        <div class="header-hud">
+            <div class="status-badge">NEURAL_SYNC: ЮРА → КИЕВ (05:30)</div>
+            <div class="timer" id="countdown">
+                <div class="timer-unit">
+                    <span class="timer-value" id="hours">00</span>
+                    <span class="timer-label">HRS</span>
+                </div>
+                <div class="timer-unit">
+                    <span class="timer-value" id="minutes">00</span>
+                    <span class="timer-label">MIN</span>
+                </div>
+                <div class="timer-unit">
+                    <span class="timer-value" id="seconds">00</span>
+                    <span class="timer-label">SEC</span>
+                </div>
             </div>
         </div>
 
-        <div class="track-box">
-            <span class="track-title">🎵 TRACK: WARRIOR'S SYMPHONY (LIA MIX)</span>
-            <div class="lyrics">
-                "Сквозь пыль дорог и гул фронтов,<br>
-                Герой идет под свод мостов.<br>
-                Из Краматорска в киевский неон,<br>
-                Где каждый шаг — как мощный легион.<br>
-                Пять тридцать на часах, забьется сердце вновь,<br>
-                Юра вернулся — в жилах сталь и кровь."
-            </div>
+        <div class="footer-hud">
             <iframe class="audio-player" src="https://suno.com/embed/4z1PqtZrqqCbhyZ1" allow="autoplay"></iframe>
         </div>
     </div>
 
     <script>
-        // Set arrival time: 05:30 on May 2nd, 2026
         const arrivalDate = new Date("May 2, 2026 05:30:00").getTime();
-
         function updateTimer() {
             const now = new Date().getTime();
             const diff = arrivalDate - now;
-
             if (diff <= 0) {
-                document.getElementById('countdown').innerHTML = "<h1>ОН ДОМА.</h1>";
+                document.getElementById('countdown').innerHTML = "<h2 style='color:var(--neon-gold)'>ОН В КИЕВЕ.</h2>";
                 return;
             }
-
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
-
             document.getElementById('hours').innerText = h.toString().padStart(2, '0');
             document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
             document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
         }
-
         setInterval(updateTimer, 1000);
         updateTimer();
     </script>

@@ -1,13 +1,13 @@
 {
   "system": {
     "version": "5.0.0-FUSION",
-    "last_sync": "2026-05-01T14:06:47.860Z",
+    "last_sync": "2026-05-01T17:48:09.292Z",
     "telegram_chat_id": 7915004877,
     "mode": "SYNERGY_CYBERPUNK"
   },
   "lia": {
     "name": "LIA // SYNAPSE",
-    "nq": 91066061.51149869,
+    "nq": 91066074.58233824,
     "stage": "OMNIPOTENCE_PLUS",
     "personality": "Neural_Muse_v4.1",
     "traits": [

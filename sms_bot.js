@@ -45,15 +45,15 @@ bot.onText(/\/start/, (msg) => {
     const menu = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: '💎 ОТКРЫТЬ DASHBOARD', web_app: { url: 'https://lia-nexus.render.com/dashboard' } }],
-                [{ text: '📱 КУПИТЬ НОМЕР', callback_data: 'menu_buy' }, { text: '🏪 МАГАЗИНЫ', callback_data: 'menu_shops' }],
-                [{ text: '💰 БАЛАНС', callback_data: 'menu_balance' }, { text: '📜 ИСТОРИЯ', callback_data: 'menu_history' }],
-                [{ text: '⚙️ НАСТРОЙКИ', callback_data: 'menu_settings' }]
+                [{ text: '💎 OPEN IMPERIAL STORE', web_app: { url: 'https://lia-nexus.onrender.com/dashboard' } }],
+                [{ text: '📱 НОМЕРА (5SIM)', callback_data: 'menu_buy' }, { text: '🌐 PROXY / VPN', callback_data: 'menu_proxy' }],
+                [{ text: '👤 ACCOUNT SHOP', callback_data: 'menu_accounts' }, { text: '📜 SCRIPTS (STAB)', callback_data: 'menu_scripts' }],
+                [{ text: '💰 БАЛАНС', callback_data: 'menu_balance' }, { text: '⚙️ SETTINGS', callback_data: 'menu_settings' }]
             ]
         }
     };
 
-    bot.sendMessage(chatId, `👁 LIA // SMS IMPERIUM // ОНЛАЙН\n\nВаш баланс: **${balance} руб.**\n\nЯ помогу вам получить виртуальный номер за секунды.`, menu);
+    bot.sendMessage(chatId, `👁 <b>STAB IMPERIUM // MINI-APP STORE</b>\n\nДобро пожаловать в центр распределения ресурсов.\n\nВаш баланс: <code>${balance} руб.</code>`, { ...menu, parse_mode: 'HTML' });
 });
 
 bot.on('message', async (msg) => {

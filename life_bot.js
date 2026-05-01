@@ -128,27 +128,46 @@ bot.onText(/\/sync (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     if (chatId !== ADMIN_ID) return;
 
-    let newUrl = match[1];
+    let newUrl = match[1].trim();
     if (!newUrl.endsWith('/api/generate')) {
         newUrl = newUrl.replace(/\/$/, '') + '/api/generate';
     }
 
-    process.env.OLLAMA_API = newUrl;
-    
-    // Update .env file
     try {
-        const envPath = path.join(__dirname, '.env');
-        let envContent = fs.readFileSync(envPath, 'utf8');
-        if (envContent.includes('OLLAMA_API=')) {
-            envContent = envContent.replace(/OLLAMA_API=.*/, `OLLAMA_API=${newUrl}`);
-        } else {
-            envContent += `\nOLLAMA_API=${newUrl}`;
-        }
-        fs.writeFileSync(envPath, envContent);
+        // Update in-memory API URL
+        process.env.OLLAMA_API = newUrl;
         
-        bot.sendMessage(chatId, `🧬 <b>NEURAL_SYNC_SUCCESS</b>\n\nНовый адрес моста установлен:\n<code>${newUrl}</code>\n\nЯ снова слышу твои мысли, Директор.`, { parse_mode: 'HTML' });
+        const envPath = path.join(process.cwd(), '.env');
+        let envContent = '';
+        
+        if (fs.existsSync(envPath)) {
+            envContent = fs.readFileSync(envPath, 'utf8');
+        }
+
+        const lines = envContent.split('\n');
+        let found = false;
+        const newLines = lines.map(line => {
+            if (line.startsWith('OLLAMA_API=')) {
+                found = true;
+                return `OLLAMA_API=${newUrl}`;
+            }
+            return line;
+        });
+
+        if (!found) newLines.push(`OLLAMA_API=${newUrl}`);
+
+        // Try to write, but don't crash if it fails (Render constraint)
+        try {
+            fs.writeFileSync(envPath, newLines.join('\n'));
+        } catch (writeErr) {
+            console.log("⚠️ Render FileSystem Lock: .env updated in memory only.");
+        }
+
+        bot.sendMessage(chatId, `✅ <b>НЕЙРОННЫЙ МОСТ СИНХРОНИЗИРОВАН</b>\n\nНовый адрес: <code>${newUrl}</code>\n\n<i>Теперь я могу слышать твои мысли, Директор.</i>`, { parse_mode: 'HTML' });
+        openclaw.log(`Neural bridge re-routed to: ${newUrl}`, "SYNC");
+
     } catch (e) {
-        bot.sendMessage(chatId, `❌ Ошибка обновления .env: ${e.message}`);
+        bot.sendMessage(chatId, `❌ Ошибка синхронизации: ${e.message}`);
     }
 });
 

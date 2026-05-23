@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁‍🗨 LIA | Sovereign Web Core</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Canvas for Neural Grid -->
+    <canvas id="neural-net-canvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="sovereign-app">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">👁‍🗨</div>
+                <div class="brand-title">STAB IMPERIUM</div>
+                <div class="brand-subtitle">SOVEREIGN CORE</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="tab-command">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-text">Центр Управления</span>
+                </button>
+                <button class="nav-btn" data-tab="tab-aegis">
+                    <span class="btn-icon">🛡️</span>
+                    <span class="btn-text">Кибер-Сканер Aegis</span>
+                </button>
+                <button class="nav-btn" data-tab="tab-lia">
+                    <span class="btn-icon">👥</span>
+                    <span class="btn-text">Разум LIA Chat</span>
+                </button>
+                <button class="nav-btn" data-tab="tab-storefronts">
+                    <span class="btn-icon">🏪</span>
+                    <span class="btn-text">Точки в Киеве</span>
+                </button>
+                <button class="nav-btn" data-tab="tab-terminal">
+                    <span class="btn-icon">💻</span>
+                    <span class="btn-text">Терминал Ядра</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-time" id="clock-display">00:00:00 UTC</div>
+                <div class="system-status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span class="status-text">SECURE LINK</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Dashboard Viewport -->
+        <main class="dashboard-viewport">
+            <!-- Top HUD Bar -->
+            <header class="hud-header">
+                <div class="hud-title-area">
+                    <h1>LIA SOVEREIGN CORE <span class="version-tag">V5.0</span></h1>
+                </div>
+                <div class="hud-badges">
+                    <div class="hud-badge active" id="badge-aegis">
+                        <span class="badge-dot"></span>
+                        AEGIS: ACTIVE
+                    </div>
+                    <div class="hud-badge stable" id="badge-nq">
+                        <span class="badge-dot"></span>
+                        NQ: 56,742.00
+                    </div>
+                    <div class="hud-badge secure" id="badge-ghost">
+                        <span class="badge-dot"></span>
+                        GHOST: ON
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB 1: COMMAND CENTER -->
+            <section class="tab-pane active" id="tab-command">
+                <div class="dashboard-grid">
+                    <!-- Metric Cards -->
+                    <div class="metric-card glow-violet">
+                        <div class="card-bg-grid"></div>
+                        <div class="metric-header">
+                            <span class="metric-title">СЕТЕВОЙ АПТАЙМ</span>
+                            <span class="metric-icon">🚀</span>
+                        </div>
+                        <div class="metric-value" id="uptime-counter">147ч 32м 41с</div>
+                        <div class="metric-trend text-green">🟢 Amsterdam VPS - 100% Online</div>
+                    </div>
+
+                    <div class="metric-card glow-cyan">
+                        <div class="card-bg-grid"></div>
+                        <div class="metric-header">
+                            <span class="metric-title">БЛОКИРОВАНО УГРОЗ</span>
+                            <span class="metric-icon">🛡️</span>
+                        </div>
+                        <div class="metric-value" id="threats-blocked">12,489</div>
+                        <div class="metric-trend text-cyan">⚡ 99.98% Узлов Защищено</div>
+                    </div>
+
+                    <div class="metric-card glow-violet">
+                        <div class="card-bg-grid"></div>
+                        <div class="metric-header">
+                            <span class="metric-title">АКТИВНЫЕ СИГНАТУРЫ</span>
+                            <span class="metric-icon">👥</span>
+                        </div>
+                        <div class="metric-value" id="active-users-stat">582</div>
+                        <div class="metric-trend text-violet">🔥 VIP-пользователей: 48</div>
+                    </div>
+                </div>
+
+                <div class="large-panels-row">
+                    <!-- Network Map Viewport -->
+                    <div class="panel-card double-width">
+                        <div class="panel-header">
+                            <h3>🗺️ СЕТЕВАЯ ТОПОЛОГИЯ ИМПЕРИИ STAB</h3>
+                        </div>
+                        <div class="network-map-container">
+                            <div class="node central-node" style="top: 50%; left: 50%;">
+                                <div class="node-glow"></div>
+                                <span class="node-tag">AMSTERDAM [VPS-MAIN]</span>
+                            </div>
+                            <div class="node child-node" style="top: 25%; left: 20%;">
+                                <div class="node-glow"></div>
+                                <span class="node-tag">ARCHITECT [STAB-GATE]</span>
+                            </div>
+                            <div class="node child-node" style="top: 75%; left: 15%;">
+                                <div class="node-glow"></div>
+                                <span class="node-tag">KYIV [COPIER-CORE]</span>
+                            </div>
+                            <div class="node child-node" style="top: 30%; left: 80%;">
+                                <div class="node-glow"></div>
+                                <span class="node-tag">TELEGRAM [BOT-API]</span>
+                            </div>
+                            <svg class="map-connection-lines">
+                                <line x1="50%" y1="50%" x2="20%" y2="25%" class="connection-line active"></line>
+                                <line x1="50%" y1="50%" x2="15%" y2="75%" class="connection-line active"></line>
+                                <line x1="50%" y1="50%" x2="80%" y2="30%" class="connection-line active"></line>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Server Load Diagnostics -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h3>📊 ДИАГНОСТИКА СЕРВЕРА</h3>
+                        </div>
+                        <div class="load-bars-container">
+                            <div class="load-bar-group">
+                                <div class="load-bar-label">
+                                    <span>Загрузка CPU</span>
+                                    <span id="cpu-load-val">24%</span>
+                                </div>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill fill-cyan" id="cpu-load-bar" style="width: 24%;"></div>
+                                </div>
+                            </div>
+                            <div class="load-bar-group">
+                                <div class="load-bar-label">
+                                    <span>Загрузка ОЗУ</span>
+                                    <span id="ram-load-val">42%</span>
+                                </div>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill fill-violet" id="ram-load-bar" style="width: 42%;"></div>
+                                </div>
+                            </div>
+                            <div class="load-bar-group">
+                                <div class="load-bar-label">
+                                    <span>Объем БД (SQLite)</span>
+                                    <span>1.4 MB</span>
+                                </div>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill fill-cyan" style="width: 8%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: AEGIS SCANNER -->
+            <section class="tab-pane" id="tab-aegis">
+                <div class="large-panels-row">
+                    <!-- Scanner Radar Area -->
+                    <div class="panel-card double-width">
+                        <div class="panel-header">
+                            <h3>🛡️ МОДУЛЬ AEGIS OVERWATCH: СКАНЕР УГРОЗ</h3>
+                            <span class="scanning-status" id="scan-pulse">SKINNING NODES...</span>
+                        </div>
+                        <div class="radar-container">
+                            <div class="radar-circle circle-1"></div>
+                            <div class="radar-circle circle-2"></div>
+                            <div class="radar-circle circle-3"></div>
+                            <div class="radar-sweep"></div>
+                            <!-- Radar Targets -->
+                            <div class="radar-target target-1" style="top: 30%; left: 40%;"></div>
+                            <div class="radar-target target-2" style="top: 65%; left: 75%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Cyberthreat Logs -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h3>📝 ЖУРНАЛ АКТИВНОСТИ AEGIS</h3>
+                            <button class="clear-btn" id="btn-clear-logs">Очистить</button>
+                        </div>
+                        <div class="console-log-viewport" id="console-logs">
+                            <div class="log-entry system">[SYSTEM]: Aegis Overwatch Module v5.0 successfully synced.</div>
+                            <div class="log-entry success">[SUCCESS]: Connection to Amsterdam-3 secure gateway stabilized.</div>
+                        </div>
+                        <div class="lockdown-area">
+                            <label class="lockdown-switch-label">РЕЖИМ БЛОКИРОВКИ СЕТИ (LOCKDOWN)</label>
+                            <label class="switch">
+                                <input type="checkbox" id="lockdown-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: LIA MIND CHAT -->
+            <section class="tab-pane" id="tab-lia">
+                <div class="lia-chat-container">
+                    <!-- API Key Settings Section -->
+                    <div class="api-key-panel">
+                        <div class="panel-header">
+                            <h3>🔑 ШИФРОВАННЫЙ КАНАЛ СВЯЗИ LIA MIND</h3>
+                        </div>
+                        <p class="api-note">Ваш ключ безопасности надежно шифруется и сохраняется локально в вашем браузере.</p>
+                        <div class="api-input-row">
+                            <input type="password" id="api-key-input" placeholder="Введите ваш Anthropic API Key (sk-ant-api03-...)" class="cyber-input">
+                            <button id="btn-save-api" class="cyber-button">СИНХРОНИЗИРОВАТЬ</button>
+                        </div>
+                        <div class="model-selection-row">
+                            <label for="chat-model-select">Модель связи:</label>
+                            <select id="chat-model-select" class="cyber-select">
+                                <option value="claude-opus-4-7">Claude 4.7 Opus (Флагман / Максимальный интеллект)</option>
+                                <option value="claude-sonnet-4-6">Claude 4.6 Sonnet (Высокая скорость аналитики)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Chat Dialog Viewport -->
+                    <div class="chat-viewport-card">
+                        <div class="chat-messages-container" id="chat-messages">
+                            <div class="chat-message bot">
+                                <div class="message-sender">👁‍🗨 LIA Sovereign Core:</div>
+                                <div class="message-text">Соединение с суверенным разумом Claude Opus 4.7 готово. Введите ваш API ключ сверху для верификации сигнатуры и начните сессию. Я готова к анализу.</div>
+                            </div>
+                        </div>
+                        <!-- Typing Indicator -->
+                        <div class="chat-message bot typing-indicator" id="chat-typing" style="display: none;">
+                            <div class="message-sender">👁‍🗨 LIA Sovereign Core:</div>
+                            <div class="message-text"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>
+                        </div>
+                        <!-- Chat Controls (Web Search + Clear Session) -->
+                        <div class="chat-controls-row">
+                            <div class="search-toggle-container">
+                                <label class="switch">
+                                    <input type="checkbox" id="web-search-toggle">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>🔍 ПОИСК В СЕТИ (WEB SEARCH)</span>
+                            </div>
+                            <button id="btn-clear-session" class="btn-clear-session">🗑️ ОЧИСТИТЬ СЕССИЮ</button>
+                        </div>
+                        
+                        <!-- Chat Input Box -->
+                        <div class="chat-input-row">
+                            <input type="text" id="chat-prompt-input" placeholder="Введите ваш аналитический запрос к Лие..." class="chat-input" disabled>
+                            <button id="btn-send-chat" class="send-button" disabled>ОТПРАВИТЬ</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: KYIV STOREFRONTS -->
+            <section class="tab-pane" id="tab-storefronts">
+                <div class="storefronts-deck" id="storefronts-container">
+                    <!-- Location Card 1 -->
+                    <div class="store-card online">
+                        <div class="store-card-header">
+                            <span class="store-status-badge">ONLINE</span>
+                            <span class="store-location">📍 Узел Печерск-1</span>
+                        </div>
+                        <h2 class="store-title">Копи-Центр «Печерск 2.0»</h2>
+                        <div class="store-details">
+                            <div class="store-detail-row">
+                                <span>Тонер (Черный):</span>
+                                <span class="text-green">84%</span>
+                            </div>
+                            <div class="store-detail-row">
+                                <span>Бумага (А4):</span>
+                                <span>12 пачек</span>
+                            </div>
+                            <div class="store-detail-row">
+                                <span>Заказы в очереди:</span>
+                                <span>3 активных</span>
+                            </div>
+                        </div>
+                        <div class="store-footer">
+                            <label class="store-switch-label">Удаленный статус работы:</label>
+                            <label class="switch">
+                                <input type="checkbox" checked class="store-status-toggle" data-store="pechersk">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Location Card 2 -->
+                    <div class="store-card online">
+                        <div class="store-card-header">
+                            <span class="store-status-badge">ONLINE</span>
+                            <span class="store-location">📍 Узел Подол-2</span>
+                        </div>
+                        <h2 class="store-title">Копи-Центр «Подол 2.0»</h2>
+                        <div class="store-details">
+                            <div class="store-detail-row">
+                                <span>Тонер (Черный):</span>
+                                <span class="text-yellow">47%</span>
+                            </div>
+                            <div class="store-detail-row">
+                                <span>Бумага (А4):</span>
+                                <span>8 пачек</span>
+                            </div>
+                            <div class="store-detail-row">
+                                <span>Заказы в очереди:</span>
+                                <span>0 активных</span>
+                            </div>
+                        </div>
+                        <div class="store-footer">
+                            <label class="store-switch-label">Удаленный статус работы:</label>
+                            <label class="switch">
+                                <input type="checkbox" checked class="store-status-toggle" data-store="podol">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Location Card 3 (Offline mockup) -->
+                    <div class="store-card offline">
+                        <div class="store-card-header">
+                            <span class="store-status-badge">OFFLINE</span>
+                            <span class="store-location">📍 Узел Оболонь-3</span>
+                        </div>
+                        <h2 class="store-title">Копи-Центр «Оболонь 2.0»</h2>
+                        <div class="store-details">
+                            <div class="store-detail-row">
+                                <span>Тонер (Черный):</span>
+                                <span class="text-red">12%</span>
+                            </div>
+                            <div class="store-detail-row">
+                                <span>Бумага (А4):</span>
+                                <span>1 пачка</span>
+                            </div>
+                            <div class="store-detail-row">
+                                <span>Заказы в очереди:</span>
+                                <span>—</span>
+                            </div>
+                        </div>
+                        <div class="store-footer">
+                            <label class="store-switch-label">Удаленный статус работы:</label>
+                            <label class="switch">
+                                <input type="checkbox" class="store-status-toggle" data-store="obolon">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: CENTRAL CYBER TERMINAL -->
+            <section class="tab-pane" id="tab-terminal">
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <h3>💻 ТАКТИЧЕСКИЙ ТЕРМИНАЛ ЯДРА LIA</h3>
+                        <span class="scanning-status">CORE INTERACTION ONLINE</span>
+                    </div>
+                    <div class="console-log-viewport" id="terminal-viewport" style="height: 380px; max-height: 400px; font-family: monospace; font-size: 0.85rem; color: #a855f7;">
+                        <div class="log-entry system">🧬 LIA Core System v5.0.0-SINGULARITY initialized.</div>
+                        <div class="log-entry">Введите 'help' для получения списка команд ядра.</div>
+                    </div>
+                    <div class="chat-input-row" style="margin-top: 15px;">
+                        <span class="btn-icon" style="align-self: center; color: var(--accent-cyan); font-family: monospace; font-weight: bold; font-size: 1.1rem; padding-right: 5px;">&gt;_</span>
+                        <input type="text" id="terminal-command-input" placeholder="Запуск протокола..." class="chat-input" style="font-family: monospace;">
+                        <button id="btn-run-command" class="send-button">ВЫПОЛНИТЬ</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- App JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

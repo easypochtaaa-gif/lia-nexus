@@ -1,305 +1,243 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UKRAINE PREMUM SHOPS // NEURAL AGGREGATOR</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #00f2ff;
-            --secondary: #7000ff;
-            --accent: #ff0055;
-            --bg: #050505;
-            --card-bg: #111;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            background: var(--bg);
-            color: #fff;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(112, 0, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 90% 90%, rgba(0, 242, 255, 0.1) 0%, transparent 50%);
-            min-height: 100vh;
-        }
-
-        .header {
-            padding: 50px 20px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-            letter-spacing: 5px;
-            font-weight: 900;
-        }
-
-        .header p {
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-        }
-
-        .search-container {
-            max-width: 800px;
-            margin: -30px auto 30px;
-            position: relative;
-            z-index: 101;
-            padding: 0 20px;
-        }
-
-        .search-bar {
-            background: #111;
-            border-radius: 50px;
-            border: 1px solid #333;
-            padding: 18px 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .search-bar i { color: #444; font-size: 1.2rem; }
-
-        .search-bar input {
-            background: none;
-            border: none;
-            color: #fff;
-            width: 100%;
-            outline: none;
-            font-size: 1.1rem;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto 50px;
-            padding: 0 25px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 30px;
-        }
-
-        .shop-card {
-            background: var(--card-bg);
-            border: 1px solid #222;
-            border-radius: 28px;
-            padding: 30px;
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .shop-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 15px 40px rgba(0, 242, 255, 0.1);
-            transform: translateY(-8px);
-        }
-
-        .shop-main {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .shop-icon {
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: var(--primary);
-            border: 1px solid #333;
-        }
-
-        .shop-name h3 {
-            margin: 0;
-            font-size: 1.6rem;
-            font-weight: 800;
-        }
-
-        .shop-name span {
-            font-size: 0.7rem;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .contact-links {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
-
-        .btn-bot {
-            background: rgba(0, 136, 204, 0.1);
-            color: #0088cc;
-            border: 1px solid rgba(0, 136, 204, 0.2);
-        }
-
-        .btn-bot:hover { background: #0088cc; color: #fff; box-shadow: 0 5px 15px rgba(0,136,204,0.3); }
-
-        .btn-site {
-            background: rgba(112, 0, 255, 0.1);
-            color: #7000ff;
-            border: 1px solid rgba(112, 0, 255, 0.2);
-        }
-
-        .btn-site:hover { background: #7000ff; color: #fff; box-shadow: 0 5px 15px rgba(112,0,255,0.3); }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            padding-top: 15px;
-            border-top: 1px solid #222;
-            color: #666;
-        }
-
-        .status-badge {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: rgba(0, 255, 0, 0.05);
-            color: #0f0;
-            padding: 4px 12px;
-            border-radius: 50px;
-            font-size: 0.6rem;
-            font-weight: bold;
-            border: 1px solid rgba(0, 255, 0, 0.2);
-        }
-
-        .forum-tag {
-            font-size: 0.65rem;
-            color: #888;
-            background: #1a1a1a;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 5px;
-            display: inline-block;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYIV NEURAL NEXUS // Storefront Registry</title>
+  <link rel="stylesheet" href="ukraine_shops.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Additional inline styles for new features */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+    .filter-btn.active {
+      background: var(--accent-primary);
+      color: #fff;
+      border-color: var(--accent-primary);
+      box-shadow: var(--glow-shadow);
+    }
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px 25px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    .search-input:focus {
+      border-color: var(--accent-secondary);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+    }
+    .platform-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.7rem;
+      color: var(--accent-secondary);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>IMPERIAL AGGREGATOR</h1>
-        <p>BigBro // RC Amorale // Sekta Lab // Legalizer</p>
-    </div>
+  <div class="container">
+    <header>
+      <h1>Kyiv Storefronts</h1>
+      <p class="subtitle">SYNAPSE CORE // AGGREGATED VITRINES</p>
+    </header>
 
     <div class="search-container">
-        <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Поиск по 10+ верифицированным сетям..." id="searchInput">
-        </div>
+      <input type="text" id="searchInput" class="search-input" placeholder="Поиск по названию магазина...">
     </div>
 
-    <div class="container" id="shopContainer">
-        <!-- Магазины будут загружены динамически из JSON -->
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" data-platform="all">Все шопы</button>
+      <button class="filter-btn" data-platform="LabRC">LabRC</button>
+      <button class="filter-btn" data-platform="Legalizer">Legalizer</button>
+      <button class="filter-btn" data-platform="BMWRC">BMWRC</button>
+      <button class="filter-btn" data-platform="Amor">Amor</button>
     </div>
 
-    <script>
-        const shopContainer = document.getElementById('shopContainer');
-        const searchInput = document.getElementById('searchInput');
-        let allShops = [];
+    <div class="shop-grid" id="shopGrid">
+      <!-- Shops will be rendered here by JS -->
+    </div>
+  </div>
 
-        // Загрузка данных
-        async function loadShops() {
-            try {
-                // Прямой запрос к JSON файлу на этом же сервере
-                const response = await fetch('/ukraine_shops.json');
-                allShops = await response.json();
-                renderShops(allShops);
-            } catch (e) {
-                console.error("Failed to load shops:", e);
-                // Запасной вариант, если fetch не сработал локально
-                shopContainer.innerHTML = '<p style="text-align:center; color:red;">Ошибка загрузки базы данных. Проверьте соединение.</p>';
-            }
-        }
+  <script>
+    // БАЗА ДАННЫХ МАГАЗИНОВ (Редактируй здесь)
+    const shops = [
+      {
+        name: "VisaWhite",
+        platform: "LabRC",
+        desc: "Премиальный VIP-сервис на LabRC. Специализация на оптовых и розничных поставках. Высокая надежность.",
+        web: "https://labrc.to/forums/visawhite/",
+        bot: "https://t.me/visawhite_official_bot",
+        status: "Online"
+      },
+      {
+        name: "Narkopump",
+        platform: "Legalizer",
+        desc: "Один из крупнейших автоматизированных шопов на Legalizer. Огромная сеть по всему Киеву.",
+        web: "https://www.legalizer.biz/forums/Narkopump/",
+        bot: "https://t.me/narkopump_store_bot",
+        status: "Online"
+      },
+      {
+        name: "Amigo",
+        platform: "LabRC",
+        desc: "Киевский топ-селлер. Известен стабильной работой и качественным сервисом на протяжении лет.",
+        web: "https://labrc.to/forums/amigo/",
+        bot: "https://t.me/amigo_kyiv_bot",
+        status: "Online"
+      },
+      {
+        name: "Pirat Salim",
+        platform: "Legalizer",
+        desc: "Легендарный шоп с Legalizer. Огромный ассортимент и собственная система лояльности.",
+        web: "https://www.legalizer.biz/forums/PiratSalim/",
+        bot: "https://t.me/pirat_salim_bot",
+        status: "Online"
+      },
+      {
+        name: "AmfHouse",
+        platform: "BMWRC",
+        desc: "Сетевой гигант, представленный на BMWRC и LabRC. Широкая география по столице.",
+        web: "https://bmwrc.io/forums/amfhouse/",
+        bot: "https://t.me/amfhouse_delivery_bot",
+        status: "Online"
+      },
+      {
+        name: "PinkPanter",
+        platform: "Amor",
+        desc: "Эксклюзивный партнер площадки Amor. Высокие стандарты анонимности и сервиса.",
+        web: "https://amor.gg/forums/pinkpanter/",
+        bot: "https://t.me/pink_panter_bot",
+        status: "Online"
+      },
+      {
+        name: "Benetton",
+        platform: "LabRC",
+        desc: "VIP-магазин с отличной репутацией на LabRC. Стабильное наличие и качество.",
+        web: "https://labrc.to/forums/benetton/",
+        bot: "https://t.me/benetton_family_bot",
+        status: "Online"
+      },
+      {
+        name: "Kvazimixer",
+        platform: "Legalizer",
+        desc: "Технологичный шоп с Legalizer. Собственные разработки систем выдачи и мониторинга.",
+        web: "https://www.legalizer.biz/forums/Kvazimixer/",
+        bot: "https://t.me/kvazi_mixer_bot",
+        status: "Offline"
+      },
+      {
+        name: "Bonaqua",
+        platform: "LabRC",
+        desc: "Надежный поставщик с LabRC. Специализация на чистых продуктах и быстром сервисе.",
+        web: "https://labrc.to/forums/bonaqua/",
+        bot: "https://t.me/bonaqua_shop_bot",
+        status: "Online"
+      },
+      {
+        name: "Pryanik",
+        platform: "BMWRC",
+        desc: "Шоп с акцентом на сервис и поддержку клиентов. Активен на BMWRC.",
+        web: "https://bmwrc.io/forums/pryanik/",
+        bot: "https://t.me/pryanik_kyiv_bot",
+        status: "Online"
+      },
+      {
+        name: "AllHim",
+        platform: "Legalizer",
+        desc: "Универсальный поставщик, представленный на всех крупных площадках. Масштабная сеть.",
+        web: "https://www.legalizer.biz/forums/AllHim/",
+        bot: "https://t.me/allhim_official_bot",
+        status: "Online"
+      },
+      {
+        name: "Poplavsky",
+        platform: "Legalizer",
+        desc: "Популярный молодежный шоп с креативным подходом и стабильной работой.",
+        web: "https://www.legalizer.biz/forums/Poplavsky/",
+        bot: "https://t.me/poplavsky_shop_bot",
+        status: "Online"
+      }
+    ];
 
-        function renderShops(shops) {
-            shopContainer.innerHTML = '';
-            shops.forEach((shop, index) => {
-                const card = document.createElement('div');
-                card.className = 'shop-card';
-                card.style.animationDelay = `${index * 0.05}s`;
-                
-                const icon = shop.name.toLowerCase().includes('pirat') ? 'skull-crossbones' : 
-                             shop.name.toLowerCase().includes('cat') ? 'cat' : 
-                             shop.name.toLowerCase().includes('kfc') ? 'drumstick-bite' : 'crown';
+    const shopGrid = document.getElementById('shopGrid');
+    const searchInput = document.getElementById('searchInput');
+    const filterButtons = document.querySelectorAll('.filter-btn');
 
-                card.innerHTML = `
-                    <div class="status-badge">ACTIVE</div>
-                    <div class="shop-main">
-                        <div class="shop-icon"><i class="fas fa-${icon}"></i></div>
-                        <div class="shop-name">
-                            <h3>${shop.name}</h3>
-                            <div class="forum-tag">${shop.status}</div>
-                        </div>
-                    </div>
-                    <div class="contact-links">
-                        <a href="${shop.bot}" target="_blank" class="btn btn-bot"><i class="fab fa-telegram"></i> БОТ</a>
-                        <a href="${shop.site}" target="_blank" class="btn btn-site"><i class="fas fa-external-link-alt"></i> САЙТ</a>
-                    </div>
-                    <div class="info-row">
-                        <span>ЛОКАЦИЯ:</span>
-                        <span style="color:#aaa;">УКРАИНА (ОТПРАВКИ)</span>
-                    </div>
-                `;
-                shopContainer.appendChild(card);
-            });
-        }
+    function renderShops(filter = 'all', query = '') {
+      shopGrid.innerHTML = '';
+      
+      const filtered = shops.filter(shop => {
+        const matchesFilter = filter === 'all' || shop.platform === filter;
+        const matchesQuery = shop.name.toLowerCase().includes(query.toLowerCase());
+        return matchesFilter && matchesQuery;
+      });
 
-        searchInput.addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = allShops.filter(s => 
-                s.name.toLowerCase().includes(val) || 
-                s.status.toLowerCase().includes(val)
-            );
-            renderShops(filtered);
-        });
+      filtered.forEach(shop => {
+        const card = document.createElement('div');
+        card.className = 'shop-card';
+        card.innerHTML = `
+          <div class="status-badge" style="color: ${shop.status === 'Online' ? '#22c55e' : '#ef4444'}">
+            ${shop.status}
+          </div>
+          <span class="platform-tag">SOURCE: ${shop.platform.toUpperCase()}</span>
+          <h2 class="shop-name">${shop.name}</h2>
+          <p class="shop-desc">${shop.desc}</p>
+          <div class="actions">
+            <a href="${shop.web}" target="_blank" class="btn btn-web">🌐 Витрина</a>
+            <a href="${shop.bot}" target="_blank" class="btn btn-tg">🤖 Бот магазина</a>
+          </div>
+        `;
+        shopGrid.appendChild(card);
+      });
+    }
 
-        loadShops();
-    </script>
+    // Event Listeners
+    searchInput.addEventListener('input', (e) => {
+      const activeFilter = document.querySelector('.filter-btn.active').dataset.platform;
+      renderShops(activeFilter, e.target.value);
+    });
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderShops(btn.dataset.platform, searchInput.value);
+      });
+    });
+
+    // Initial Render
+    renderShops();
+  </script>
 </body>
 </html>

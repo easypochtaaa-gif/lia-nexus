@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // MUSIC NEXUS // STAB RECORDS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --accent: #ff8c00;
+            --secondary: #00f2ff;
+            --glass: rgba(255, 140, 0, 0.05);
+            --border: rgba(255, 140, 0, 0.2);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .visualizer-box {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .waves {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            height: 100px;
+        }
+
+        .bar {
+            width: 10px;
+            background: var(--accent);
+            border-radius: 5px;
+            animation: bounce 1s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { height: 20px; }
+            50% { height: 80px; }
+        }
+
+        .player-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .track-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .track-meta {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-turbo {
+            margin-top: 30px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.4);
+        }
+
+        .btn-turbo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.6);
+        }
+
+        .nexus-img {
+            width: 100%;
+            border-radius: 20px;
+            margin-top: 40px;
+            border: 1px solid var(--border);
+        }
+
+        .lyrics-box {
+            margin-top: 40px;
+            font-family: 'Inter', sans-serif;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            padding: 20px;
+            border-left: 2px solid var(--accent);
+            background: rgba(255, 255, 255, 0.02);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Music Nexus</h1>
+            <p>Генерация нейронного адреналина</p>
+        </header>
+
+        <div class="visualizer-box">
+            <div class="waves">
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+                <div class="bar" style="animation-delay: 0.5s"></div>
+                <div class="bar" style="animation-delay: 0.2s"></div>
+                <div class="bar" style="animation-delay: 0.4s"></div>
+                <div class="bar" style="animation-delay: 0.6s"></div>
+                <div class="bar" style="animation-delay: 0.1s"></div>
+                <div class="bar" style="animation-delay: 0.3s"></div>
+            </div>
+            <div class="player-info">
+                <div class="track-title" id="trackTitle">STAB_NEURAL_FUSION</div>
+                <div class="track-meta" id="trackMeta">Style: Dark Synth | BPM: 120</div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="btn-turbo" onclick="activateTurbo()">ACTIVATE TURBO</button>
+        </div>
+
+        <div class="lyrics-box" id="lyricsBox">
+            "Waves of data, silence in the wires...<br>
+            Neural fusion, the core never tires..."
+        </div>
+
+        <img src="music_nexus_mockup_1777811865638.png" alt="Music Visualizer" class="nexus-img">
+    </div>
+
+    <script>
+        let audioCtx;
+        let oscillator;
+        let gainNode;
+
+        async function activateTurbo() {
+            try {
+                // Initialize Audio Context on first click (browser security)
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                document.getElementById('trackTitle').innerText = 'STAB_ADRENALINE_TURBO_OVERLOAD';
+                document.getElementById('trackMeta').innerText = 'Style: Cyberpunk / Phonk | BPM: 175';
+                document.getElementById('lyricsBox').innerHTML = '"Fire in the veins, fire in the code!<br>Protocol overload!"';
+                
+                // Start Procedural Synth
+                playCyberBeat();
+
+                // Effect shake
+                document.body.style.animation = 'shake 0.5s';
+                setTimeout(() => document.body.style.animation = '', 500);
+            } catch (e) {
+                console.error("Audio init failed:", e);
+            }
+        }
+
+        function playCyberBeat() {
+            const bpm = 175;
+            const interval = 60 / bpm;
+            
+            setInterval(() => {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                
+                // Simple Kick Synth
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            }, interval * 500); // 8th note beat
+        }
+    </script>
+    <style>
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+    </style>
+</body>
+</html>

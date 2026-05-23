@@ -1,0 +1,8 @@
+{
+    "node_id": "LIA_MOBILE_MOTO_G54",
+    "master_ip": "10.209.50.100",
+    "protocol": "STAB_V4",
+    "sync_interval": 30,
+    "security_level": "MAXIMUM",
+    "stealth_mode": true
+}

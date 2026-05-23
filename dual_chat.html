@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Лія & Шелла – Двохсторонній діалог</title>
+  <link rel="stylesheet" href="dual_chat.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Лія та Шелла – Кастомні моделі</h1>
+    <div class="chat-grid">
+      <!-- Лія -->
+      <section class="chat-panel" id="lia-panel">
+        <header class="chat-header">Лія</header>
+        <div class="chat-messages" id="lia-messages"></div>
+        <textarea class="chat-input" id="lia-input" placeholder="Напишіть повідомлення…"></textarea>
+        <button class="send-btn" onclick="sendMessage('lia')">Відправити</button>
+      </section>
+      <!-- Шелла -->
+      <section class="chat-panel" id="hella-panel">
+        <header class="chat-header">Шелла</header>
+        <div class="chat-messages" id="hella-messages"></div>
+        <textarea class="chat-input" id="hella-input" placeholder="Enter a command…"></textarea>
+        <button class="send-btn" onclick="sendMessage('hella')">Send</button>
+      </section>
+    </div>
+  </div>
+  <script>
+    // Simple mock‑response generator – replace with real model calls later.
+    const responses = {
+      lia: ["Привіт! Я готова допомогти.", "Як можу ще підтримати ваш проєкт?”],
+      hella: ["*static crackle* – Я тут.", "Що треба зробити в цьому темному світі?”]
+    };
+    function sendMessage(agent) {
+      const inputEl = document.getElementById(`${agent}-input`);
+      const msg = inputEl.value.trim();
+      if (!msg) return;
+      const messagesEl = document.getElementById(`${agent}-messages`);
+      const userDiv = document.createElement('div');
+      userDiv.className = 'message user';
+      userDiv.textContent = msg;
+      messagesEl.appendChild(userDiv);
+      inputEl.value = '';
+      // Mock reply after a short delay
+      setTimeout(() => {
+        const replyDiv = document.createElement('div');
+        replyDiv.className = 'message bot';
+        const reply = responses[agent][Math.floor(Math.random()*responses[agent].length)];
+        replyDiv.textContent = reply;
+        messagesEl.appendChild(replyDiv);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }, 500);
+    }
+  </script>
+</body>
+</html>

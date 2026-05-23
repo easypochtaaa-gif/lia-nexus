@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAB Sovereign Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg: #05070B;
+            --card-bg: rgba(10, 14, 23, 0.7);
+            --border: rgba(255, 255, 255, 0.05);
+            --primary: #00F2FE;
+            --accent: #9D4EDD;
+            --success: #00FF87;
+            --danger: #FF007A;
+            --warning: #FFB300;
+            --text: #E2E8F0;
+            --text-muted: #8A99AD;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 30%, #171030 0%, #05070b 70%);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        /* --- Header / HUD --- */
+        header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            background: rgba(5, 7, 11, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .hud-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 18px;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .hud-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- Navigation Tabs --- */
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            margin: 15px 20px;
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.1) 0%, rgba(157, 78, 221, 0.1) 100%);
+            color: #FFF;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        /* --- View Area --- */
+        main {
+            flex: 1;
+            padding: 0 20px 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .view-panel {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .view-panel.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Glassmorphic Card --- */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        /* --- Profile Panel --- */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-glow {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFF;
+        }
+
+        .profile-meta h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFF;
+            margin-bottom: 4px;
+        }
+
+        .badge-premium {
+            background: linear-gradient(135deg, #FFB300 0%, #FF8000 100%);
+            color: #000;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-free {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-muted);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFF;
+        }
+
+        .btn-action {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #00B2FE 100%);
+            color: #05070B;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.35);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: #FFF;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* --- Lootbox Panel --- */
+        .lootbox-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            position: relative;
+        }
+
+        .lootbox-visual {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(157, 78, 221, 0.2) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lootbox-box {
+            font-size: 64px;
+            filter: drop-shadow(0 0 15px rgba(157, 78, 221, 0.4));
+            transition: transform 0.1s ease;
+        }
+
+        .lootbox-visual:hover .lootbox-box {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .lootbox-visual.shaking .lootbox-box {
+            animation: shake 0.5s infinite;
+        }
+
+        .lootbox-visual.shattered .lootbox-box {
+            animation: shatterOut 0.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(2px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(0px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(2px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(2px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        @keyframes shatterOut {
+            0% { transform: scale(1); opacity: 1; filter: brightness(1) blur(0); }
+            50% { transform: scale(1.4); opacity: 0.6; filter: brightness(2) blur(2px); }
+            100% { transform: scale(0.2); opacity: 0; filter: brightness(5) blur(10px); }
+        }
+
+        .lootbox-info {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .lootbox-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFF;
+            margin-bottom: 5px;
+        }
+
+        .lootbox-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            max-width: 250px;
+        }
+
+        .lootbox-cooldown {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15px;
+            color: var(--warning);
+            font-weight: 700;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* --- Hacking Game Panel --- */
+        .hacking-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .grid-hud {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .hacking-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 260px;
+            height: 260px;
+            margin: 10px auto;
+        }
+
+        .grid-node {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-node:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 242, 254, 0.2);
+        }
+
+        .grid-node.active-pattern {
+            background: radial-gradient(circle, var(--accent) 0%, rgba(157, 78, 221, 0.3) 70%);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(157, 78, 221, 0.4);
+        }
+
+        .grid-node.success-click {
+            background: radial-gradient(circle, var(--success) 0%, rgba(0, 255, 135, 0.3) 70%);
+            border-color: var(--success);
+            box-shadow: 0 0 15px rgba(0, 255, 135, 0.4);
+        }
+
+        .grid-node.wrong-click {
+            background: radial-gradient(circle, var(--danger) 0%, rgba(255, 0, 122, 0.3) 70%);
+            border-color: var(--danger);
+            box-shadow: 0 0 15px rgba(255, 0, 122, 0.4);
+        }
+
+        .hacking-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #7B2CBF 100%);
+            color: #FFF;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.25);
+        }
+
+        .hacking-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(157, 78, 221, 0.4);
+        }
+
+        /* --- Reward Modal --- */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 7, 11, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(0, 242, 254, 0.1);
+            position: relative;
+            animation: modalScaleUp 0.3s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes modalScaleUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .reward-glow {
+            font-size: 54px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 20px var(--primary));
+            animation: spinGlow 4s infinite linear;
+        }
+
+        @keyframes spinGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFF;
+            margin-bottom: 10px;
+        }
+
+        .modal-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header HUD -->
+    <header>
+        <div class="hud-logo">STAB SOVEREIGN CORE</div>
+        <div class="hud-status">
+            <span class="status-dot"></span>
+            <span>Online</span>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('profile')">👤 Профиль</button>
+        <button class="tab-btn" onclick="switchTab('lootbox')">🎁 Лутбокс</button>
+        <button class="tab-btn" onclick="switchTab('hacking')">🖥️ Взлом</button>
+    </div>
+
+    <!-- Main View -->
+    <main>
+        <!-- PROFILE TAB -->
+        <div id="panel-profile" class="view-panel active">
+            <div class="card">
+                <div class="profile-header">
+                    <div class="avatar-glow" id="p-avatar">L</div>
+                    <div class="profile-meta">
+                        <h2 id="p-username">User</h2>
+                        <span id="p-badge" class="badge-free">BASE</span>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Запросы сегодня</div>
+                        <div class="stat-value" id="p-requests">0 / 5</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Рефералы</div>
+                        <div class="stat-value" id="p-referrals">0</div>
+                    </div>
+                    <div class="stat-box" style="grid-column: span 2;">
+                        <div class="stat-label">Бонусные Баллы</div>
+                        <div class="stat-value" id="p-credits" style="color: var(--primary);">0 STAB</div>
+                    </div>
+                </div>
+                <button class="btn-action btn-primary" id="btn-premium" onclick="upgradeToPremium()">🚀 Активировать Premium</button>
+            </div>
+
+            <!-- Share Card -->
+            <div class="card" style="margin-top: 15px;">
+                <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">🔗 Реферальная Вербовка</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; line-height: 1.4;">
+                    Вербуйте союзников в систему. За каждого новобранца, сделавшего 3 запроса к Лие, вы получите <b>+5 бесплатных запросов</b> на день!
+                </p>
+                <button class="btn-action btn-outline" onclick="copyReferralLink()">📋 Копировать ссылку</button>
+            </div>
+        </div>
+
+        <!-- LOOTBOX TAB -->
+        <div id="panel-lootbox" class="view-panel">
+            <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <div class="lootbox-container">
+                    <div class="lootbox-visual" id="l-visual" onclick="triggerLootbox()">
+                        <div class="lootbox-box" id="l-box">📦</div>
+                    </div>
+                    <div class="lootbox-info">
+                        <div class="lootbox-title" id="l-title">Ежедневный Сектор Снабжения</div>
+                        <div class="lootbox-desc" id="l-desc">Нажмите на контейнер для проведения дешифрации и получения наград.</div>
+                        <div class="lootbox-cooldown" id="l-cooldown" style="display: none;">00:00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HACKING GAME TAB -->
+        <div id="panel-hacking" class="view-panel">
+            <div class="card">
+                <div class="hacking-container">
+                    <div class="grid-hud">
+                        <span>Узел: <b id="h-node-num" style="color: var(--accent);">Bypassed (0/3)</b></span>
+                        <span>Попытки: <b id="h-tries" style="color: var(--warning);">3</b></span>
+                    </div>
+
+                    <!-- Minigame Grid -->
+                    <div class="hacking-grid" id="h-grid">
+                        <div class="grid-node" data-idx="0"></div>
+                        <div class="grid-node" data-idx="1"></div>
+                        <div class="grid-node" data-idx="2"></div>
+                        <div class="grid-node" data-idx="3"></div>
+                        <div class="grid-node" data-idx="4"></div>
+                        <div class="grid-node" data-idx="5"></div>
+                        <div class="grid-node" data-idx="6"></div>
+                        <div class="grid-node" data-idx="7"></div>
+                        <div class="grid-node" data-idx="8"></div>
+                        <div class="grid-node" data-idx="9"></div>
+                        <div class="grid-node" data-idx="10"></div>
+                        <div class="grid-node" data-idx="11"></div>
+                        <div class="grid-node" data-idx="12"></div>
+                        <div class="grid-node" data-idx="13"></div>
+                        <div class="grid-node" data-idx="14"></div>
+                        <div class="grid-node" data-idx="15"></div>
+                    </div>
+
+                    <button class="btn-action hacking-btn" id="h-start-btn" onclick="startHackingSequence()">🔐 Активировать Взлом</button>
+                    <p style="font-size: 11px; color: var(--text-muted); text-align: center; max-width: 250px; line-height: 1.4;">
+                        Запомните подсвеченную последовательность узлов и повторите её после того, как сетка погаснет. У вас 3 попытки!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- REWARD MODAL -->
+    <div class="modal" id="reward-modal">
+        <div class="modal-content">
+            <div class="reward-glow" id="m-glow">🎁</div>
+            <div class="modal-title" id="m-title">Награда Получена</div>
+            <div class="modal-desc" id="m-desc">Вам успешно начислены бонусные ресурсы.</div>
+            <button class="btn-action btn-primary" onclick="closeModal()">Принять</button>
+        </div>
+    </div>
+
+    <!-- Web Audio API Synth Engine for Cyber Sound FX -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthBeep(frequency, duration, type = 'sine') {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = type;
+                osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+                
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // Add beeps to interactive elements
+        document.querySelectorAll('.tab-btn, .btn-action, .grid-node').forEach(el => {
+            el.addEventListener('pointerdown', () => playSynthBeep(600, 0.1, 'sine'));
+            el.addEventListener('pointerenter', () => playSynthBeep(1200, 0.05, 'triangle'));
+        });
+    </script>
+
+    <!-- Dashboard Operations -->
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            tg.setHeaderColor('#05070B');
+            tg.setBackgroundColor('#05070B');
+        }
+
+        const userId = tg?.initDataUnsafe?.user?.id || 7915004877; // Fallback to Arthur for web testing
+        const username = tg?.initDataUnsafe?.user?.username || "Architect";
+        let refLink = "";
+
+        // Profile State
+        let userData = null;
+
+        async function loadProfile() {
+            try {
+                const res = await fetch(`/api/hub/profile?user_id=${userId}&username=${encodeURIComponent(username)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    userData = data.user;
+                    refLink = data.ref_link;
+
+                    // Populate DOM
+                    document.getElementById('p-username').innerText = `@${userData.username}`;
+                    document.getElementById('p-avatar').innerText = (userData.username.charAt(0) || 'U').toUpperCase();
+                    
+                    const badge = document.getElementById('p-badge');
+                    const btnPrem = document.getElementById('btn-premium');
+                    if (userData.subscription === 'premium') {
+                        badge.className = 'badge-premium';
+                        badge.innerText = '👑 PREMIUM';
+                        btnPrem.style.display = 'none';
+                    } else {
+                        badge.className = 'badge-free';
+                        badge.innerText = '⭐ FREE';
+                        btnPrem.style.display = 'block';
+                    }
+
+                    const dailyLimit = data.free_limit || 5;
+                    const requestsUsed = userData.daily_requests_used;
+                    document.getElementById('p-requests').innerText = userData.subscription === 'premium' ? '∞' : `${requestsUsed} / ${dailyLimit}`;
+                    document.getElementById('p-referrals').innerText = data.referral_count || 0;
+                    document.getElementById('p-credits').innerText = `${userData.bonus_points || 0} STAB`;
+
+                    // Handle Lootbox status
+                    updateLootboxStatus(data.lootbox_cooldown);
+                }
+            } catch (err) {
+                console.error("Failed to load user profile", err);
+            }
+        }
+
+        function upgradeToPremium() {
+            if (tg) {
+                tg.sendData("action:activate_premium");
+                tg.close();
+            } else {
+                alert("Пожалуйста, откройте это меню через Telegram Бот для оплаты Premium.");
+            }
+        }
+
+        function copyReferralLink() {
+            if (navigator.clipboard && refLink) {
+                navigator.clipboard.writeText(refLink);
+                if (tg) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert("Реферальная ссылка скопирована в буфер обмена!");
+                } else {
+                    alert("Реферальная ссылка скопирована!");
+                }
+            }
+        }
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+
+            const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.toLowerCase().includes(tabId === 'profile' ? 'профиль' : tabId === 'lootbox' ? 'лутбокс' : 'взлом'));
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const targetPanel = document.getElementById(`panel-${tabId}`);
+            if (targetPanel) targetPanel.classList.add('active');
+
+            if (tabId === 'profile') {
+                loadProfile();
+            }
+        }
+
+        // Lootbox Logic
+        let lootboxTimer = null;
+        let isLootboxReady = true;
+
+        function updateLootboxStatus(cooldownSeconds) {
+            const visual = document.getElementById('l-visual');
+            const box = document.getElementById('l-box');
+            const title = document.getElementById('l-title');
+            const desc = document.getElementById('l-desc');
+            const cooldownEl = document.getElementById('l-cooldown');
+
+            if (cooldownSeconds > 0) {
+                isLootboxReady = false;
+                visual.style.pointerEvents = 'none';
+                box.innerText = '⚙️';
+                title.innerText = 'Сектор Перезагружается';
+                desc.innerText = 'Снабжение заблокировано. Ждите окончания охлаждения ядра.';
+                cooldownEl.style.display = 'block';
+                startCooldownTimer(cooldownSeconds);
+            } else {
+                isLootboxReady = true;
+                visual.style.pointerEvents = 'auto';
+                visual.className = 'lootbox-visual';
+                box.innerText = '📦';
+                title.innerText = 'Сектор Снабжения Готов';
+                desc.innerText = 'Нажмите на контейнер для проведения дешифрации и получения наград.';
+                cooldownEl.style.display = 'none';
+                if (lootboxTimer) clearInterval(lootboxTimer);
+            }
+        }
+
+        function startCooldownTimer(seconds) {
+            if (lootboxTimer) clearInterval(lootboxTimer);
+            
+            const cooldownEl = document.getElementById('l-cooldown');
+            let remain = seconds;
+            
+            function tick() {
+                if (remain <= 0) {
+                    clearInterval(lootboxTimer);
+                    loadProfile();
+                    return;
+                }
+                const hrs = Math.floor(remain / 3600).toString().padStart(2, '0');
+                const mins = Math.floor((remain % 3600) / 60).toString().padStart(2, '0');
+                const secs = (remain % 60).toString().padStart(2, '0');
+                cooldownEl.innerText = `${hrs}:${mins}:${secs}`;
+                remain--;
+            }
+            
+            tick();
+            lootboxTimer = setInterval(tick, 1000);
+        }
+
+        async function triggerLootbox() {
+            if (!isLootboxReady) return;
+            
+            const visual = document.getElementById('l-visual');
+            visual.classList.add('shaking');
+            playSynthBeep(180, 0.4, 'square');
+            
+            if (tg) tg.HapticFeedback.impactOccurred('medium');
+
+            setTimeout(async () => {
+                visual.classList.remove('shaking');
+                visual.classList.add('shattered');
+                playSynthBeep(440, 0.6, 'sawtooth');
+                if (tg) tg.HapticFeedback.notificationOccurred('success');
+
+                try {
+                    const res = await fetch('/api/hub/lootbox', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: userId })
+                    });
+                    
+                    if (res.ok) {
+                        const reward = await res.json();
+                        setTimeout(() => {
+                            showRewardModal(reward.icon, reward.title, reward.description);
+                            loadProfile();
+                        }, 500);
+                    } else {
+                        const err = await res.json();
+                        alert(err.error || "Произошла ошибка");
+                        loadProfile();
+                    }
+                } catch (e) {
+                    alert("Сбой сетевого соединения");
+                    loadProfile();
+                }
+            }, 800);
+        }
+
+        function showRewardModal(icon, title, desc) {
+            document.getElementById('m-glow').innerText = icon;
+            document.getElementById('m-title').innerText = title;
+            document.getElementById('m-desc').innerText = desc;
+            document.getElementById('reward-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('reward-modal').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('reward-modal').style.display = 'none';
+                document.getElementById('reward-modal').style.opacity = '1';
+                switchTab('profile');
+            }, 300);
+        }
+
+        // Hacking Grid Minigame Logic
+        let gameActive = false;
+        let patternSequence = [];
+        let playerSequence = [];
+        let currentStage = 1;
+        const totalStages = 3;
+        let playerTries = 3;
+        let nodeCount = 4; // Start with 4 nodes pattern
+
+        function startHackingSequence() {
+            if (gameActive) return;
+            gameActive = true;
+            playerTries = 3;
+            currentStage = 1;
+            nodeCount = 4;
+            document.getElementById('h-start-btn').style.display = 'none';
+            document.getElementById('h-tries').innerText = playerTries;
+            
+            runHackingStage();
+        }
+
+        function runHackingStage() {
+            document.getElementById('h-node-num').innerText = `Прогресс (${currentStage-1}/${totalStages})`;
+            playerSequence = [];
+            patternSequence = [];
+            
+            // Generate sequence
+            while (patternSequence.length < nodeCount) {
+                const idx = Math.floor(Math.random() * 16);
+                if (!patternSequence.includes(idx)) {
+                    patternSequence.push(idx);
+                }
+            }
+
+            showPattern();
+        }
+
+        function showPattern() {
+            // Disable clicks
+            setGridInteractive(false);
+            
+            let i = 0;
+            function showNext() {
+                if (i >= patternSequence.length) {
+                    setTimeout(() => {
+                        clearGridStyles();
+                        setGridInteractive(true);
+                    }, 500);
+                    return;
+                }
+                
+                clearGridStyles();
+                const nodeIdx = patternSequence[i];
+                const node = document.querySelector(`.grid-node[data-idx="${nodeIdx}"]`);
+                node.classList.add('active-pattern');
+                playSynthBeep(600 + (i * 100), 0.25, 'triangle');
+                
+                i++;
+                setTimeout(showNext, 500);
+            }
+            
+            setTimeout(showNext, 600);
+        }
+
+        function clearGridStyles() {
+            document.querySelectorAll('.grid-node').forEach(node => {
+                node.className = 'grid-node';
+            });
+        }
+
+        function setGridInteractive(interactive) {
+            const grid = document.getElementById('h-grid');
+            if (interactive) {
+                grid.style.pointerEvents = 'auto';
+            } else {
+                grid.style.pointerEvents = 'none';
+            }
+        }
+
+        // Add node click listener
+        document.querySelectorAll('.grid-node').forEach(node => {
+            node.addEventListener('pointerdown', (e) => {
+                if (!gameActive) return;
+                const clickedIdx = parseInt(node.getAttribute('data-idx'));
+                handleNodeClick(node, clickedIdx);
+            });
+        });
+
+        function handleNodeClick(node, idx) {
+            const expectedIdx = patternSequence[playerSequence.length];
+            
+            if (idx === expectedIdx) {
+                // Correct node
+                node.classList.add('success-click');
+                playSynthBeep(800, 0.15, 'sine');
+                playerSequence.push(idx);
+                
+                if (playerSequence.length === patternSequence.length) {
+                    // Stage cleared
+                    setGridInteractive(false);
+                    setTimeout(() => {
+                        clearGridStyles();
+                        if (currentStage < totalStages) {
+                            currentStage++;
+                            nodeCount++; // Increase difficulty
+                            runHackingStage();
+                        } else {
+                            // Victory
+                            triggerHackingVictory();
+                        }
+                    }, 800);
+                }
+            } else {
+                // Wrong node
+                node.classList.add('wrong-click');
+                playSynthBeep(220, 0.4, 'sawtooth');
+                if (tg) tg.HapticFeedback.notificationOccurred('error');
+                
+                setGridInteractive(false);
+                playerTries--;
+                document.getElementById('h-tries').innerText = playerTries;
+                
+                setTimeout(() => {
+                    clearGridStyles();
+                    if (playerTries <= 0) {
+                        triggerHackingDefeat();
+                    } else {
+                        // Re-run this stage
+                        runHackingStage();
+                    }
+                }, 1000);
+            }
+        }
+
+        async function triggerHackingVictory() {
+            gameActive = false;
+            document.getElementById('h-start-btn').style.display = 'block';
+            document.getElementById('h-node-num').innerText = "Взлом Успешен!";
+            
+            playSynthBeep(988, 0.15, 'sine');
+            setTimeout(() => playSynthBeep(1318, 0.3, 'sine'), 150);
+            
+            try {
+                const res = await fetch('/api/hub/hack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, result: 'victory' })
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    showRewardModal("💎", "Сетка Взломана!", `Вы успешно обошли брандмауэр и получили <b>+${data.reward} STAB Credits</b> на свой баланс!`);
+                    loadProfile();
+                }
+            } catch(e) {
+                alert("Сбой синхронизации награды взлома");
+            }
+        }
+
+        function triggerHackingDefeat() {
+            gameActive = false;
+            document.getElementById('h-start-btn').style.display = 'block';
+            document.getElementById('h-node-num').innerText = "Соединение Разорвано";
+            
+            showRewardModal("❌", "Блокировка Терминала", "Антивирусная система Aegis обнаружила попытку взлома. Узлы заблокированы. Попробуйте еще раз!");
+        }
+
+        // Initialize on load
+        loadProfile();
+    </script>
+</body>
+</html>

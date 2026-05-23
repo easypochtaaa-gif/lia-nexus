@@ -1,0 +1,59 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "LIA Neural Nexus Bridge",
+    "description": "API for synchronizing the Neuro GPT chat with Lia's local Neural Nexus core.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://lia-brain-bridge.loca.lt"
+    }
+  ],
+  "paths": {
+    "/api/gpt/action": {
+      "post": {
+        "operationId": "syncWithLia",
+        "summary": "Send a pulse to Lia's neural core",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "description": "The message from the Neuro GPT chat"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "description": "The name or ID of the user sending the pulse"
+                  }
+                },
+                "required": ["prompt"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lia's neural response and system status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lia_response": { "type": "string" },
+                    "system_state": { "type": "string" },
+                    "status": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

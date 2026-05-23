@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addTerminalLine("[STAB] Протокол Stab инициирован. ⚔️", "sync");
             if (window.LiaAudio) window.LiaAudio.playStabTrack();
             
-            fetch('http://localhost:3000/api/stab', {
+            fetch('/api/stab', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ initiator: 'TERMINAL_INTERFACE' })

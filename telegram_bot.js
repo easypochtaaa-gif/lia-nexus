@@ -4,7 +4,16 @@ const path = require('path');
 const axios = require('axios');
 require('dotenv').config({ path: '../.env' });
 
-const TOKEN = '8579296735:AAFIUQGHnUlp1qlDBlq_ZJ75jiBb48LbdCs';
+const { getToken } = require('./lib/token_loader');
+const express = require('express');
+
+const TOKEN = getToken();
+
+if (!TOKEN) {
+    console.error('❌ [FATAL] TELEGRAM_BOT_TOKEN is missing! System halting.');
+    process.exit(1);
+}
+
 const bot = new TelegramBot(TOKEN, { polling: true });
 
 const MASTER_ID = 7915004877;
@@ -81,7 +90,7 @@ bot.onText(/\/referral/, (msg) => {
     try {
         const subs = JSON.parse(fs.readFileSync(SUB_FILE));
         const user = subs[chatId] || { referral_count: 0 };
-        const refLink = `https://t.me/Lia_Neural_Bot?start=${chatId}`;
+        const refLink = `https://t.me/stab_lia_bot?start=${chatId}`;
         
         bot.sendMessage(chatId, `🕸 ВАША РЕФЕРАЛЬНАЯ СЕТЬ:\n\nПриглашено друзей: **${user.referral_count || 0}**\n\n🎁 БОНУС: Пригласите 3 друзей и получите 24 часа Demo-доступа к мощностям Лии.\n\nВаша ссылка для приглашения:\n\`${refLink}\``);
     } catch (e) { bot.sendMessage(chatId, 'Ошибка системы рефералов.'); }

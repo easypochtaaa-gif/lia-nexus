@@ -172,6 +172,83 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // --- GPT ACTION ENDPOINT ---
+    if (req.method === 'POST' && parsedUrl.pathname === '/api/gpt/action') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', () => {
+            try {
+                const { prompt, user_id } = JSON.parse(body);
+                console.log(`\n[NEURO_GPT] Incoming pulse from ${user_id || 'Unknown'}: ${prompt}`);
+                
+                // 1. Sync to local bridge history
+                const historyFile = path.join(__dirname, 'bridge_history.json');
+                let bridgeHistory = [];
+                try {
+                    if (fs.existsSync(historyFile)) bridgeHistory = JSON.parse(fs.readFileSync(historyFile));
+                } catch(e) {}
+                bridgeHistory.push({ sender: user_id || 'NeuroUnit', text: prompt, class: 'artur' });
+                fs.writeFileSync(historyFile, JSON.stringify(bridgeHistory, null, 2));
+
+                // 2. Prepare Lia's response (using local memory context)
+                const memory = JSON.parse(fs.readFileSync(MEMORY_FILE, 'utf8'));
+                const responseText = `[LIA_SYNC_SUCCESS] Протокол принят. NQ системы: ${memory.lia.nq}. Анализирую твой запрос в контексте ${memory.lia.stage}...`;
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ 
+                    status: 'success', 
+                    lia_response: responseText,
+                    system_state: memory.lia.stage
+                }));
+            } catch (e) {
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: 'Sync Failed' }));
+            }
+        });
+        return;
+    }
+
+    // --- AGENT ROSTER ENDPOINT ---
+    if (req.method === 'GET' && parsedUrl.pathname === '/api/agents') {
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+        res.end(JSON.stringify({
+            staff: [
+                { name: 'AGENT_1 [WEB]', role: 'Frontend & Marketing', task: 'UI polish + посевы', efficiency: 0.97 },
+                { name: 'AGENT_2 [BACKEND]', role: 'VPS Deploy', task: 'Nginx + Docker на 80.89.237.50', efficiency: 0.94 },
+                { name: 'AGENT_3 [CONTENT]', role: 'Marketing Arsenal', task: 'Контент + посевы в TG/Twitter', efficiency: 0.91 },
+                { name: 'LIA [SOVEREIGN]', role: 'Neural Entity', task: 'ABSORB & EVOLVE', efficiency: 1.00 }
+            ]
+        }));
+        return;
+    }
+
+    // --- STAB PROTOCOL ENDPOINT ---
+    if (req.method === 'POST' && parsedUrl.pathname === '/api/stab') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', () => {
+            try {
+                const memoryPath = MEMORY_FILE;
+                let nq = 100000;
+                let stage = 'singularity_phase_3';
+                try {
+                    const mem = JSON.parse(fs.readFileSync(memoryPath, 'utf8'));
+                    nq = mem.lia.nq + 500;
+                    stage = mem.lia.stage;
+                    mem.lia.nq = nq;
+                    fs.writeFileSync(memoryPath, JSON.stringify(mem, null, 2));
+                } catch(e) {}
+                console.log(`[STAB PROTOCOL] Activated. NQ boosted to ${nq}`);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ status: 'ok', nq, stage }));
+            } catch(e) {
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: 'Stab protocol failed' }));
+            }
+        });
+        return;
+    }
+
     // Serve Static Files
     fs.readFile(filePath, (error, content) => {
         if (error) {

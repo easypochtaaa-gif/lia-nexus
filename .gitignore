@@ -39,3 +39,18 @@ lia-nexus/
 synapse_code/
 stabx_code/
 synapse_stabus/
+# Added ignores for binary and cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+autonomous_swarm/__pycache__/
+autonomous_swarm/handlers/__pycache__/
+backups/tg_media/**
+topsecret $/*.png
+
+# Sovereign Bot Deploy Artifacts
+sovereign_bot/deploy_command.txt
+sovereign_bot/deploy_upgrade.txt
+sovereign_bot/sovereign_src.tar.gz
+

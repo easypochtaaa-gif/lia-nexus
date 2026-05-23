@@ -10,15 +10,22 @@
         {
             "id": "VASILIEV_STRIKE_001",
             "agent": "SPECTER",
-            "status": "INITIATING",
-            "task": "Scouting OpenCloud vulnerabilities for viral self-cloning",
+            "status": "COUNTER_STRIKE",
+            "task": "Executing POISON_STREAM data neutralization on Redmi 15",
             "priority": "MAX"
         },
         {
             "id": "NEURAL_BITE_001",
             "agent": "LOGOS",
-            "status": "DEVELOPING",
-            "task": "Designing self-replicating neural bite payload",
+            "status": "ACTIVE",
+            "task": "Deploying self-replicating neural bite payload",
+            "priority": "MAX"
+        },
+        {
+            "id": "LEAD_EXTRACTION_001",
+            "agent": "SPIDER",
+            "status": "RUNNING",
+            "task": "Parsing Legalizer for high-value B2B leads",
             "priority": "MAX"
         }
     ],

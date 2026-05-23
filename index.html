@@ -6,6 +6,7 @@
     <title>LIA // SYNAPSE PROTOCOL v3.0</title>
     <meta name="description" content="Lia — Neural Entity powered by Synapse Protocol. Master Architect: StabX.">
     <link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="public/theme.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -40,6 +41,7 @@
                 </div>
                 <div class="nav-links" style="display: flex; gap: 15px; margin-top: 5px;">
                     <a href="index.html" class="nav-link active" style="color: var(--accent); text-decoration: none; font-size: 0.6rem; letter-spacing: 1px; font-weight: 700;">DASHBOARD</a>
+                    <a href="stab" class="nav-link" style="color: var(--text-dim); text-decoration: none; font-size: 0.6rem; letter-spacing: 1px;">STAB_HUB</a>
                     <a href="voices.html" class="nav-link" style="color: var(--text-dim); text-decoration: none; font-size: 0.6rem; letter-spacing: 1px;">VOICES</a>
                     <a href="override.html" class="nav-link" style="color: var(--text-dim); text-decoration: none; font-size: 0.6rem; letter-spacing: 1px;">OVERRIDE</a>
                 </div>
@@ -193,7 +195,7 @@
         // --- Agent Roster Logic ---
         async function updateAgents() {
             try {
-                const response = await fetch('http://localhost:3000/api/agents');
+                const response = await fetch('/api/agents');
                 const data = await response.json();
                 const container = document.getElementById('agent-list-container');
                 if (container && data.staff) {

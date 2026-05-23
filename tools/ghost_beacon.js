@@ -4,7 +4,8 @@
 
 const https = require('https');
 
-const TOKEN = '8579296735:AAFIUQGHnUlp1qlDBlq_ZJ75jiBb48LbdCs';
+const { getToken } = require('../lib/token_loader');
+const TOKEN = getToken();
 
 let lastUpdateId = -1;
 

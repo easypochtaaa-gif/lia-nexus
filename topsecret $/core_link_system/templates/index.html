@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // TELEGRAM_CORE_LINK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f2ff;
+            --neon-magenta: #ff00ff;
+            --bg-dark: #0a0a0b;
+            --card-bg: rgba(20, 20, 25, 0.8);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Roboto Mono', monospace;
+            margin: 0;
+            display: flex;justify-content: center;align-items: center;min-height: 100vh;
+            background-image: radial-gradient(circle at 20% 30%, rgba(0, 242, 255, 0.05) 0%, transparent 40%);
+        }
+
+        .container { width: 100%; max-width: 500px; padding: 20px; }
+        .card {
+            background: var(--card-bg); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 15px;
+            padding: 30px; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
+        }
+
+        h1 { font-family: 'Orbitron', sans-serif; text-align: center; color: var(--neon-cyan); letter-spacing: 3px; }
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.8rem; color: #aaa; }
+        input { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid #333; border-radius: 5px; color: #fff; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-family: 'Orbitron', sans-serif; cursor: pointer; border-radius: 5px; }
+        button:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); }
+        .status { margin-top: 20px; padding: 15px; border-radius: 5px; display: none; }
+        .status.success { background: rgba(0, 255, 100, 0.1); border: 1px solid #00ff64; color: #00ff64; display: block; }
+        .status.error { background: rgba(255, 0, 0, 0.1); border: 1px solid #ff0000; color: #ff0000; display: block; }
+        #code-section { display: none; margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>LIA CORE LINK</h1>
+            
+            <div id="phone-section">
+                <div class="input-group">
+                    <label>API ID (с my.telegram.org)</label>
+                    <input type="text" id="api_id" placeholder="2397XXXX">
+                </div>
+                <div class="input-group">
+                    <label>API HASH</label>
+                    <input type="text" id="api_hash" placeholder="17984181881829218628...">
+                </div>
+                <div class="input-group">
+                    <label>НОМЕР ТЕЛЕФОНА</label>
+                    <input type="text" id="phone" placeholder="+380XXXXXXXXX">
+                </div>
+                <button onclick="sendCode()">ЗАПРОСИТЬ ДОСТУП</button>
+            </div>
+
+            <div id="code-section">
+                <div class="input-group">
+                    <label>КОД ПОДТВЕРЖДЕНИЯ</label>
+                    <input type="text" id="code" placeholder="12345">
+                </div>
+                <div class="input-group" id="pass-group" style="display:none;">
+                    <label>ПАРОЛЬ 2FA</label>
+                    <input type="password" id="password" placeholder="Твой пароль">
+                </div>
+                <button onclick="verifyCode()">АВТОРИЗИРОВАТЬ</button>
+            </div>
+
+            <div id="status-box" class="status"></div>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(msg, type) {
+            const box = document.getElementById('status-box');
+            box.innerText = msg;
+            box.className = 'status ' + type;
+        }
+
+        async function sendCode() {
+            const phone = document.getElementById('phone').value;
+            const api_id = document.getElementById('api_id').value;
+            const api_hash = document.getElementById('api_hash').value;
+            showStatus('Отправка запроса...', 'success');
+            const res = await fetch('/send_code', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({phone, api_id, api_hash})
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                document.getElementById('phone-section').style.display = 'none';
+                document.getElementById('code-section').style.display = 'block';
+                showStatus('Код отправлен.', 'success');
+            } else { showStatus(data.message, 'error'); }
+        }
+
+        async function verifyCode() {
+            const phone = document.getElementById('phone').value;
+            const code = document.getElementById('code').value;
+            const password = document.getElementById('password').value;
+            showStatus('Синхронизация...', 'success');
+            const res = await fetch('/verify_code', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({phone, code, password})
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showStatus('Успешно!', 'success');
+                setTimeout(() => location.reload(), 2000);
+            } else if (data.status === 'need_password') {
+                document.getElementById('pass-group').style.display = 'block';
+                showStatus('Нужен 2FA.', 'error');
+            } else { showStatus(data.message, 'error'); }
+        }
+    </script>
+</body>
+</html>

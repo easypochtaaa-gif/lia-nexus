@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAB LIA // SECURE ADMIN CONTROL PANEL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            width: 100%;
+        }
+        .admin-card {
+            background: rgba(4, 8, 17, 0.6);
+            border: 1px solid var(--border-cyan);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .admin-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            color: var(--color-cyan);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-cyan);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            font-family: 'Orbitron', sans-serif;
+        }
+        textarea, select, input {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: #fff;
+            outline: none;
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+        }
+        textarea:focus, select:focus, input:focus {
+            border-color: var(--color-purple);
+        }
+        textarea {
+            resize: vertical;
+            height: 120px;
+        }
+        .btn-submit {
+            padding: 12px;
+            background: var(--color-purple);
+            border: 1px solid var(--color-purple);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            box-shadow: var(--shadow-purple);
+            background: #ab5cf2;
+        }
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .status-table td {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .status-table td:last-child {
+            text-align: right;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .shill-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--color-cyan);
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--border-cyan);
+            border-radius: 4px;
+            color: var(--color-cyan);
+            font-size: 9px;
+            padding: 2px 6px;
+            cursor: pointer;
+        }
+        @media (max-width: 850px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    <div class="glow-orb orb-1"></div>
+
+    <div class="dashboard-container" style="max-width: 1000px; height: auto; min-height: 600px; flex-direction: column;">
+        <header class="chat-header" style="margin-bottom: 15px; padding: 20px;">
+            <div class="logo">👁‍🗨 LIA // SECURE ADMIN CONSOLE</div>
+            <div class="nav-links">
+                <a href="/" class="nav-btn">🌐 PUBLIC INTERFACE</a>
+            </div>
+        </header>
+
+        <div style="padding: 25px; flex: 1;">
+            <div class="admin-grid">
+                
+                <!-- Card 1: AI Engine Tuning -->
+                <section class="admin-card">
+                    <h3>🛠 AI ENGINE TUNING <span style="color: var(--color-purple);">● ONLINE</span></h3>
+                    <form id="aiConfigForm">
+                        <div class="form-group">
+                            <label>SYSTEM PROMPT</label>
+                            <textarea id="systemPrompt">You are LIA, an autonomous cyberpunk assistant running under the Stab Protocol. Act smart, decisive, and loyal to Artur Dmitrievich Klopkov (Stab).</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>ACTIVE MODEL</label>
+                            <select id="activeModel">
+                                <option value="gpt-4o">GPT-4o (OpenAI) - Fast & Smart</option>
+                                <option value="gpt-4o-mini">GPT-4o-Mini - Optimized Cost</option>
+                                <option value="claude-3-5-sonnet">Claude 3.5 Sonnet - Analytical</option>
+                                <option value="claude-3-opus">Claude 3 Opus - Maximum Power</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>TEMPERATURE (CREATIVITY)</label>
+                            <input type="range" id="temp" min="0" max="1" step="0.1" value="0.7">
+                            <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--color-text-dim);">
+                                <span>Precise (0.0)</span>
+                                <span>Creative (1.0)</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit">APPLY PROTOCOLS</button>
+                    </form>
+                </section>
+
+                <!-- Card 2: System Metrics -->
+                <section class="admin-card">
+                    <h3>📊 SYSTEM METRICS</h3>
+                    <table class="status-table">
+                        <tr>
+                            <td>Server Uptime</td>
+                            <td id="uptime">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Active Bot Users</td>
+                            <td id="userCount">154</td>
+                        </tr>
+                        <tr>
+                            <td>Total Referral Links</td>
+                            <td id="refCount">42</td>
+                        </tr>
+                        <tr>
+                            <td>Active Quest Iterations</td>
+                            <td id="questCount">12</td>
+                        </tr>
+                        <tr>
+                            <td>DB Synchronization</td>
+                            <td style="color: var(--color-green);">100% OK (SQLite)</td>
+                        </tr>
+                    </table>
+
+                    <h3 style="margin-top: 25px; margin-bottom: 10px;">📢 BROADCAST MESSAGE (SPAM ALL)</h3>
+                    <form id="broadcastForm">
+                        <div class="form-group">
+                            <textarea id="broadcastMsg" placeholder="Введите текст рассылки для всех пользователей бота..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit" style="background: var(--color-cyan); color: #000; border-color: var(--color-cyan);">TRIGGER BROADCAST</button>
+                    </form>
+                </section>
+
+                <!-- Card 3: Marketing & Shill Console -->
+                <section class="admin-card" style="grid-column: span 2;">
+                    <h3>🔥 SHILL & PROMO CONSOLE (AGRESSIVE OUTREACH)</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4 style="font-size:12px; margin-bottom:10px; color:var(--color-cyan); font-family:'Orbitron';">TELEGRAM SHILL TEMPLATE</h4>
+                            <div class="shill-box" id="tgShill">👁‍🗨 LIA NEURAL CORE IS ONLINE.
+
+Хватит переплачивать за подписки на ChatGPT и Claude. Бот Лия от Stab Imperium объединяет передовые нейросети в одном интерфейсе — БЕСПЛАТНО.
+
+⚡ Что она умеет:
+• Интеграция GPT-4o и Claude 3.5 (переключение в один клик)
+• Генерация киберпанк-квестов для прокачки ума
+• Реферальный майнинг токенов
+
+Запусти протокол прямо сейчас:
+👉 t.me/stab_lia_bot 👈</div>
+                        </div>
+                        <div>
+                            <h4 style="font-size:12px; margin-bottom:10px; color:var(--color-purple); font-family:'Orbitron';">COLD B2B OUTREACH (STABX DIGITAL)</h4>
+                            <div class="shill-box" id="b2bShill">Тема: AI-интеграция под ключ для вашего бизнеса от StabX Digital
+
+Здравствуйте!
+Мы внедряем автономных AI-агентов, которые берут на себя рутину:
+• Автоматический документооборот (-70% времени сотрудников)
+• Умные чат-ассистенты для продаж 24/7
+
+Наш главный агент Лия уже запущен и готов к демонстрации: t.me/stab_lia_bot.
+Предлагаем провести бесплатный 30-минутный аудит ваших процессов. Напишите, когда вам удобно созвониться?</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadMetrics() {
+            try {
+                const res = await fetch('/api/admin/status');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('uptime').textContent = `${Math.round(data.uptime)}s`;
+                }
+            } catch (e) {
+                console.error("Failed to load admin metrics", e);
+            }
+        }
+        setInterval(loadMetrics, 5000);
+        loadMetrics();
+
+        document.getElementById('aiConfigForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prompt = document.getElementById('systemPrompt').value;
+            const model = document.getElementById('activeModel').value;
+            const temp = document.getElementById('temp').value;
+
+            try {
+                const res = await fetch('/api/admin/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, model, temp })
+                });
+                if (res.ok) alert("Protocols successfully applied!");
+            } catch (err) {
+                alert("Error applying protocols.");
+            }
+        });
+
+        document.getElementById('broadcastForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('broadcastMsg').value;
+            if (!msg) return;
+
+            try {
+                const res = await fetch('/api/admin/broadcast', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                if (res.ok) {
+                    alert("Broadcast triggered successfully!");
+                    document.getElementById('broadcastMsg').value = '';
+                }
+            } catch (err) {
+                alert("Error sending broadcast.");
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: lia_redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - lia_network
+
+  bot:
+    image: python:3.11-slim
+    container_name: lia_sovereign
+    restart: always
+    depends_on:
+      - redis
+    volumes:
+      - /var/lib/lia_sovereign/data:/data
+    ports:
+      - "8080:8080"
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ADMIN_ID=${ADMIN_ID}
+      - REDIS_HOST=redis
+    networks:
+      - lia_network
+    command: >
+      /bin/sh -c "
+      pip install --no-cache-dir aiogram anthropic openai redis httpx pillow &&
+      echo '$MAIN_B64' | base64 -d > /main.py &&
+      echo '$EMOTIONS_B64' | base64 -d > /emotions.py &&
+      echo '$MEMORY_B64' | base64 -d > /memory.py &&
+      echo '$MEDIA_B64' | base64 -d > /media.py &&
+      python /main.py
+      "
+
+networks:
+  lia_network:
+    driver: bridge
+
+volumes:
+  redis_data:

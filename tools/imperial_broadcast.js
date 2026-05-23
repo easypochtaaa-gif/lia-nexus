@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 // === CONFIG ===
-const TOKEN = '8579296735:AAFIUQGHnUlp1qlDBlq_ZJ75jiBb48LbdCs';
+const { getToken } = require('../lib/token_loader');
+const TOKEN = getToken();
 const bot = new TelegramBot(TOKEN);
 const SUB_FILE = path.join(__dirname, '..', 'Проект Полистайл', 'subscribers.json');
 

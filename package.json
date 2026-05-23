@@ -13,6 +13,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
+    "express-basic-auth": "^1.2.1",
     "input": "^1.0.1",
     "node-telegram-bot-api": "^0.67.0",
     "nodemailer": "^8.0.7",

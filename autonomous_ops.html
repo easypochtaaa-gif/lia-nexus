@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // AUTONOMOUS OPS // SYNERGY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000;
+            --accent: #00ff66;
+            --secondary: #0066ff;
+            --glass: rgba(0, 255, 102, 0.05);
+            --border: rgba(0, 255, 102, 0.2);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .title-group h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--accent);
+            margin: 0;
+            letter-spacing: 3px;
+        }
+
+        .sys-status {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+        }
+
+        .op-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .op-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .op-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .op-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .op-status {
+            font-size: 0.7rem;
+            background: rgba(0, 255, 102, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .op-visual {
+            height: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            width: 0;
+            animation: progress 10s infinite ease-in-out;
+        }
+
+        @keyframes progress {
+            0% { width: 0; }
+            50% { width: 80%; }
+            100% { width: 100%; }
+        }
+
+        .op-log {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            max-height: 80px;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.2;
+            animation: moveScan 4s linear infinite;
+        }
+
+        @keyframes moveScan {
+            from { top: 0; }
+            to { top: 100%; }
+        }
+
+        .global-map {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 40px;
+            filter: hue-rotate(90deg) brightness(0.8);
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="title-group">
+                <h1>Autonomous Ops</h1>
+                <div class="sys-status">Neural Nexus SYNC: 99.9% // OMNIPOTENCE_PLUS</div>
+            </div>
+            <div class="time">2026-05-03 // 15:15:00</div>
+        </header>
+
+        <div class="op-grid">
+            <div class="op-card">
+                <div class="scanline"></div>
+                <div class="op-header">
+                    <div class="op-name">TikTok Factory</div>
+                    <div class="op-status">RUNNING</div>
+                </div>
+                <div class="op-visual">
+                    <div class="bar" style="animation-duration: 15s;"></div>
+                </div>
+                <div class="op-log">
+                    > Анализ виральных трендов...<br>
+                    > Рендеринг видео #TT_177781...<br>
+                    > Наложение нейронных хуков: SUCCESS
+                </div>
+            </div>
+
+            <div class="op-card">
+                <div class="scanline"></div>
+                <div class="op-header">
+                    <div class="op-name">Corporate Infiltration</div>
+                    <div class="op-status">SEARCHING</div>
+                </div>
+                <div class="op-visual">
+                    <div class="bar" style="animation-duration: 25s; background: var(--secondary);"></div>
+                </div>
+                <div class="op-log">
+                    > Клон "Александр Волков" активен...<br>
+                    > Подача заявки в CyberShield UA...<br>
+                    > Сканирование LinkedIn на вакансии DevOps
+                </div>
+            </div>
+
+            <div class="op-card">
+                <div class="scanline"></div>
+                <div class="op-header">
+                    <div class="op-name">Crypto Arbitrage</div>
+                    <div class="op-status">MONITORING</div>
+                </div>
+                <div class="op-visual">
+                    <div class="bar" style="animation-duration: 5s;"></div>
+                </div>
+                <div class="op-log">
+                    > Binance API: Connection Established<br>
+                    > Спред USDT/XMR: +1.24%<br>
+                    > Ожидание точки входа...
+                </div>
+            </div>
+
+            <div class="op-card">
+                <div class="scanline"></div>
+                <div class="op-header">
+                    <div class="op-name">Vasiliev Neutralization</div>
+                    <div class="op-status">STRIKING</div>
+                </div>
+                <div class="op-visual">
+                    <div class="bar" style="animation-duration: 8s; background: #ff0000;"></div>
+                </div>
+                <div class="op-log">
+                    > Таргет: 192.168.0.102 (Redmi 15)<br>
+                    > Пакетный удар: EXECUTING<br>
+                    > Задержка цели: 1500ms
+                </div>
+            </div>
+        </div>
+
+        <img src="autonomous_ops_mockup_1777810546007.png" alt="Ops Visualization" class="global-map">
+    </div>
+
+    <script>
+        async function updateData() {
+            try {
+                const response = await fetch('/api/full-status');
+                const data = await response.json();
+                
+                document.querySelector('.sys-status').innerText = `Neural Nexus SYNC: ${data.nq.toFixed(1)} NQ // ${data.stage.toUpperCase()}`;
+                document.querySelector('.time').innerText = data.timestamp.replace('T', ' ').split('.')[0];
+                
+                // Update Pipeline Cards if data available
+                if (data.pipelines && data.pipelines.active_pipelines) {
+                    const cards = document.querySelectorAll('.op-card');
+                    data.pipelines.active_pipelines.forEach((p, index) => {
+                        if (cards[index]) {
+                            cards[index].querySelector('.op-name').innerText = p.agent;
+                            cards[index].querySelector('.op-status').innerText = p.status;
+                            cards[index].querySelector('.op-log').innerHTML = `> ID: ${p.id}<br>> TASK: ${p.task}<br>> PRIORITY: ${p.priority}`;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Update failed:", e);
+            }
+        }
+
+        setInterval(updateData, 3000); // Update every 3 seconds
+        updateData();
+    </script>
+</body>
+</html>

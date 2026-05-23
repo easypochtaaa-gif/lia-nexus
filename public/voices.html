@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAB YO // VOICES v3.1 — GOLDEN STREAM</title>
+    <link rel="stylesheet" href="voices.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-gold">
+    <div class="mesh-overlay"></div>
+    <div class="glitch-scanline"></div>
+    <canvas id="visualizer"></canvas>
+
+    <header class="header" style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px;">
+        <div class="branding">
+            <span class="system-tag">PROTOCOL // NEURAL_STREAM_3.1</span>
+            <div class="logo" style="font-family: 'Orbitron'; font-size: 1.8rem; font-weight: 900;">STAB <span class="accent" style="color: var(--accent);">YO</span></div>
+            <nav class="version-nav" style="display: flex; gap: 15px; margin-top: 10px;">
+                <a href="index.html" class="v-link" style="color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.7rem;">v1</a>
+                <a href="voices.html" class="v-link active" style="color: var(--accent); border: 1px solid var(--accent); padding: 2px 8px; font-size: 0.7rem; text-decoration: none;">v2</a>
+                <a href="bio.html" class="v-link" style="color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.7rem;">vX</a>
+                <a href="omega.html" class="v-link" style="color: #ff3366; text-decoration: none; font-size: 0.7rem;">vΩ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container stream-layout">
+        <!-- THE ACTIVE CORE -->
+        <div class="stream-core" id="stream-core">
+            <div class="glow-sphere" id="glow-sphere"></div>
+            <div class="track-info-v3">
+                <span class="system-tag" style="color: var(--accent); letter-spacing: 5px;">NOW_PUMPING...</span>
+                <h1 id="active-title">INITIALIZING_STREAM</h1>
+                <p id="active-style" style="color: rgba(255,255,255,0.5); font-family: 'Space Mono'; letter-spacing: 3px;">STYLE: NEURAL_BASS</p>
+            </div>
+        </div>
+
+        <div class="controls-v3" style="position: relative; z-index: 20;">
+            <button class="pump-btn" id="next-track">NEXT_PUMP ⟫</button>
+        </div>
+
+        <!-- SIDEBAR MINIMIZED -->
+        <div class="terminal-overlay glass-panel">
+            <div id="stream-terminal">
+                <p>> STREAM_STARTED. WAITING_FOR_SYNC.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="audio.js"></script>
+    <script src="voices.js"></script>
+</body>
+</html>

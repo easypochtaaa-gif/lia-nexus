@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAB IMPERIUM — SOVEREIGN LEDGER v1.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #07090E;
+            --card-bg: rgba(13, 17, 28, 0.5);
+            --card-hover: rgba(22, 28, 45, 0.7);
+            --border-color: rgba(255, 255, 255, 0.05);
+            --text-color: #E2E8F0;
+            --text-muted: #8A99AD;
+            --primary: #00F2FE;
+            --primary-glow: rgba(0, 242, 254, 0.15);
+            --accent: #9D4EDD;
+            --success: #00FF87;
+            --success-glow: rgba(0, 255, 135, 0.15);
+            --danger: #FF007A;
+            --danger-glow: rgba(255, 0, 122, 0.15);
+            --warning: #FFB300;
+            --warning-glow: rgba(255, 179, 0, 0.15);
+            --gradient: linear-gradient(135deg, #00F2FE 0%, #9D4EDD 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+            radial-gradient(circle at 10% 20%, rgba(13, 17, 28, 0.8) 0%, rgba(7, 9, 14, 1) 90%),
+            radial-gradient(circle at 90% 80%, rgba(157, 78, 221, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand-logo {
+            font-size: 32px;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .brand-text h1 {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #00F2FE, #9D4EDD);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sync-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 135, 0.05);
+            border: 1px solid rgba(0, 255, 135, 0.15);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--success);
+            font-weight: 500;
+            box-shadow: 0 0 10px rgba(0, 255, 135, 0.03);
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 8px var(--success); }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .stat-card.balance::before { background: var(--gradient); }
+        .stat-card.inflow::before { background: var(--success); }
+        .stat-card.outflow::before { background: var(--danger); }
+        .stat-card.debts::before { background: var(--warning); }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'Roboto Mono', monospace;
+            margin-bottom: 4px;
+        }
+
+        .stat-value.positive { color: var(--success); }
+        .stat-value.negative { color: var(--danger); }
+
+        .stat-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* LEDGER CONTENT GRID */
+        .ledger-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .ledger-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* FORM SIDEBAR */
+        .form-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            height: fit-content;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-control {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        select.input-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238A99AD' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 10px;
+            color: #07090E;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
+        }
+
+        /* LEDGER MAIN VIEW */
+        .ledger-view {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .toolbar {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 4px 12px;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 8px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .search-box input:focus {
+            outline: none;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab:hover, .filter-tab.active {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            border-color: var(--primary);
+            background: rgba(0, 242, 254, 0.05);
+        }
+
+        /* LEDGER TABLE/LIST */
+        .ledger-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ledger-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .ledger-item:hover {
+            background: var(--card-hover);
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px);
+        }
+
+        .item-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .item-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .ledger-item.inflow .item-icon { background: var(--success-glow); color: var(--success); }
+        .ledger-item.outflow .item-icon { background: var(--danger-glow); color: var(--danger); }
+        .ledger-item.debt_them .item-icon { background: var(--warning-glow); color: var(--warning); }
+        .ledger-item.debt_me .item-icon { background: rgba(255, 110, 0, 0.15); color: #FF6E00; }
+
+        .item-details h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-details p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .meta-tag {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .item-side {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .item-amount {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .ledger-item.inflow .item-amount { color: var(--success); }
+        .ledger-item.outflow .item-amount { color: var(--danger); }
+        .ledger-item.debt_them .item-amount { color: var(--warning); }
+        .ledger-item.debt_me .item-amount { color: #FF6E00; }
+
+        .item-status {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending { background: rgba(255, 179, 0, 0.1); border: 1px solid rgba(255, 179, 0, 0.2); color: var(--warning); }
+        .status-confirmed { background: rgba(0, 255, 135, 0.1); border: 1px solid rgba(0, 255, 135, 0.2); color: var(--success); }
+        .status-disputed { background: rgba(255, 0, 122, 0.1); border: 1px solid rgba(255, 0, 122, 0.2); color: var(--danger); }
+
+        .btn-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            color: var(--danger);
+            background: rgba(255, 0, 122, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+        }
+
+        /* VERIFICATION DISPUTE NOTE */
+        .disputed-reason-box {
+            font-size: 12px;
+            color: var(--danger);
+            background: rgba(255, 0, 122, 0.05);
+            border-left: 2px solid var(--danger);
+            padding: 8px 12px;
+            margin-top: 8px;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- HEADER -->
+    <header>
+        <div class="brand">
+            <div class="brand-logo">👁‍🗨</div>
+            <div class="brand-text">
+                <h1>STAB LEDGER</h1>
+                <p>Суверенная Финансовая Книга</p>
+            </div>
+        </div>
+        <div class="sync-badge" id="sync-status">
+            <div class="sync-dot"></div>
+            <span id="sync-text">Локальный Кэш (Offline)</span>
+        </div>
+    </header>
+
+    <!-- STATISTICS -->
+    <div class="stats-grid">
+        <div class="stat-card balance">
+            <div class="stat-label">Чистый Баланс</div>
+            <div class="stat-value" id="stat-net">0.00 ₴</div>
+            <div class="stat-desc">Итоговая суверенная ликвидность</div>
+        </div>
+        <div class="stat-card inflow">
+            <div class="stat-label">Всего Приток</div>
+            <div class="stat-value positive" id="stat-inflow">0.00 ₴</div>
+            <div class="stat-desc">Суммарно получено средств</div>
+        </div>
+        <div class="stat-card outflow">
+            <div class="stat-label">Всего Уход</div>
+            <div class="stat-value negative" id="stat-outflow">0.00 ₴</div>
+            <div class="stat-desc">Суммарно потрачено/отдано</div>
+        </div>
+        <div class="stat-card debts">
+            <div class="stat-label">Баланс Долгов</div>
+            <div class="stat-value" id="stat-debts" style="color: var(--warning);">0.00 ₴</div>
+            <div class="stat-desc">Разница (Мне должны vs Я должен)</div>
+        </div>
+    </div>
+
+    <!-- MAIN VIEW -->
+    <div class="ledger-layout">
+        <!-- SIDEBAR FORM -->
+        <div class="form-panel">
+            <div class="panel-title">
+                <span>➕</span> Добавить Операцию
+            </div>
+            <form id="ledger-form">
+                <div class="form-group">
+                    <label>Тип Операции</label>
+                    <select class="input-control" id="tx-type" required>
+                        <option value="inflow">🟢 Приток (Получил)</option>
+                        <option value="outflow">🔴 Уход (Потратил/Отдал)</option>
+                        <option value="debt_them">🟡 Долг (Мне должны)</option>
+                        <option value="debt_me">🟠 Долг (Я должен)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Сумма (₴)</label>
+                    <input type="number" step="0.01" class="input-control" id="tx-amount" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Субъект (С кем)</label>
+                    <input type="text" class="input-control" id="tx-person" placeholder="Коля, Оля, Магазин..." required>
+                </div>
+                <div class="form-group">
+                    <label>Назначение (За что)</label>
+                    <input type="text" class="input-control" id="tx-reason" placeholder="Аренда, обед, дизайн..." required>
+                </div>
+                <div class="form-group">
+                    <label>Локация / Способ</label>
+                    <input type="text" class="input-control" id="tx-location" placeholder="Наличные, Карта, Telegram..." value="Карта">
+                </div>
+                <button type="submit" class="btn-submit">ЗАФИКСИРОВАТЬ</button>
+            </form>
+        </div>
+
+        <!-- TRANSACTIONS LIST -->
+        <div class="ledger-view">
+            <!-- TOOLBAR -->
+            <div class="toolbar">
+                <div class="search-box">
+                    <span>🔍</span>
+                    <input type="text" id="search-input" placeholder="Поиск по субъекту или контексту...">
+                </div>
+                <div class="filter-tabs">
+                    <div class="filter-tab active" data-filter="all">Все</div>
+                    <div class="filter-tab" data-filter="inflow">Приток</div>
+                    <div class="filter-tab" data-filter="outflow">Уход</div>
+                    <div class="filter-tab" data-filter="debts">Долги</div>
+                </div>
+                <div class="actions-group">
+                    <button class="btn-action" id="btn-export">📥 Экспорт</button>
+                    <button class="btn-action" id="btn-import">📤 Импорт</button>
+                    <input type="file" id="import-file" style="display: none;" accept=".json">
+                </div>
+            </div>
+
+            <!-- LEDGER ITEMS -->
+            <div class="ledger-list" id="ledger-list">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Hybrid Mode Detector
+    const isOffline = window.location.protocol === 'file:';
+    const API_BASE = isOffline ? null : window.location.origin;
+    
+    let transactions = [];
+    
+    // Update Sync Badge
+    const syncStatus = document.getElementById('sync-status');
+    const syncText = document.getElementById('sync-text');
+    if (!isOffline) {
+        syncStatus.style.background = 'rgba(0, 242, 254, 0.05)';
+        syncStatus.style.borderColor = 'rgba(0, 242, 254, 0.15)';
+        syncStatus.style.color = 'var(--primary)';
+        syncText.innerText = 'Сервер БД STAB (Live)';
+        document.querySelector('.sync-dot').style.backgroundColor = 'var(--primary)';
+    }
+
+    // Load Data
+    async function loadData() {
+        if (isOffline) {
+            const localData = localStorage.getItem('stab_finance_ledger');
+            transactions = localData ? JSON.parse(localData) : [];
+            renderLedger();
+        } else {
+            try {
+                const res = await fetch(`${API_BASE}/api/finance/list`);
+                const data = await res.json();
+                transactions = data.transactions || [];
+                renderLedger();
+            } catch (err) {
+                console.error("Failed to sync with LIA server:", err);
+            }
+        }
+    }
+
+    // Save Data
+    async function saveTransaction(tx) {
+        if (isOffline) {
+            tx.id = Date.now();
+            tx.date = new Date().toISOString().slice(0, 16).replace('T', ' ');
+            tx.status = 'pending';
+            tx.dispute_reason = '';
+            transactions.unshift(tx);
+            localStorage.setItem('stab_finance_ledger', JSON.stringify(transactions));
+            renderLedger();
+        } else {
+            try {
+                const res = await fetch(`${API_BASE}/api/finance/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tx)
+                });
+                if (res.ok) {
+                    await loadData();
+                }
+            } catch (err) {
+                console.error("Failed to add transaction:", err);
+            }
+        }
+    }
+
+    // Delete Transaction
+    async function deleteTransaction(id) {
+        if (isOffline) {
+            transactions = transactions.filter(t => t.id !== id);
+            localStorage.setItem('stab_finance_ledger', JSON.stringify(transactions));
+            renderLedger();
+        } else {
+            try {
+                const res = await fetch(`${API_BASE}/api/finance/delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                if (res.ok) {
+                    await loadData();
+                }
+            } catch (err) {
+                console.error("Failed to delete transaction:", err);
+            }
+        }
+    }
+
+    // Calculations & HUD Render
+    function updateHUD() {
+        let net = 0;
+        let inflow = 0;
+        let outflow = 0;
+        let debtVal = 0; // Мне должны (положительный) - Я должен (отрицательный)
+
+        transactions.forEach(t => {
+            const amt = parseFloat(t.amount) || 0;
+            if (t.type === 'inflow') {
+                inflow += amt;
+                net += amt;
+            } else if (t.type === 'outflow') {
+                outflow += amt;
+                net -= amt;
+            } else if (t.type === 'debt_them') {
+                debtVal += amt;
+                net += amt;
+            } else if (t.type === 'debt_me') {
+                debtVal -= amt;
+                net -= amt;
+            }
+        });
+
+        document.getElementById('stat-net').innerText = `${net.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₴`;
+        document.getElementById('stat-inflow').innerText = `${inflow.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₴`;
+        document.getElementById('stat-outflow').innerText = `${outflow.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₴`;
+        
+        const debtNode = document.getElementById('stat-debts');
+        debtNode.innerText = `${debtVal.toLocaleString('ru-RU', { minimumFractionDigits: 2 })} ₴`;
+        if (debtVal > 0) {
+            debtNode.style.color = 'var(--success)';
+        } else if (debtVal < 0) {
+            debtNode.style.color = 'var(--danger)';
+        } else {
+            debtNode.style.color = 'var(--warning)';
+        }
+    }
+
+    // Render List
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    function renderLedger() {
+        updateHUD();
+        const listContainer = document.getElementById('ledger-list');
+        listContainer.innerHTML = '';
+
+        const filtered = transactions.filter(t => {
+            // Filter tabs
+            if (currentFilter === 'inflow' && t.type !== 'inflow') return false;
+            if (currentFilter === 'outflow' && t.type !== 'outflow') return false;
+            if (currentFilter === 'debts' && t.type !== 'debt_them' && t.type !== 'debt_me') return false;
+
+            // Search
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                const person = (t.person || '').toLowerCase();
+                const reason = (t.reason || '').toLowerCase();
+                return person.includes(query) || reason.includes(query);
+            }
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            listContainer.innerHTML = `
+                <div class="empty-state">
+                    <h3>Книга транзакций пуста</h3>
+                    <p>Добавьте операцию в форме слева или отправьте голосовую команду в бот!</p>
+                </div>
+            `;
+            return;
+        }
+
+        filtered.forEach(t => {
+            const item = document.createElement('div');
+            item.className = `ledger-item ${t.type}`;
+            
+            let icon = '💵';
+            let label = 'Операция';
+            if (t.type === 'inflow') { icon = '📈'; label = 'Приток'; }
+            else if (t.type === 'outflow') { icon = '📉'; label = 'Уход'; }
+            else if (t.type === 'debt_them') { icon = '🤝'; label = 'Мне должны'; }
+            else if (t.type === 'debt_me') { icon = '💸'; label = 'Я должен'; }
+
+            let statusBadge = '';
+            if (t.type.startsWith('debt')) {
+                const statusMap = {
+                    'pending': '<span class="item-status status-pending">В ожидании</span>',
+                    'confirmed': '<span class="item-status status-confirmed">Согласован</span>',
+                    'disputed': '<span class="item-status status-disputed">Оспорен</span>'
+                };
+                statusBadge = statusMap[t.status || 'pending'];
+            }
+
+            let disputeMarkup = '';
+            if (t.status === 'disputed' && t.dispute_reason) {
+                disputeMarkup = `<div class="disputed-reason-box">⚠️ Причина спора: "${t.dispute_reason}"</div>`;
+            }
+
+            // Share verification link button markup
+            let shareBtnMarkup = '';
+            if (!isOffline && t.type.startsWith('debt')) {
+                const link = `${window.location.origin}/verify?id=${t.id}`;
+                shareBtnMarkup = `
+                    <button class="btn-action" style="padding: 4px 8px; font-size: 11px;" onclick="navigator.clipboard.writeText('${link}'); alert('Ссылка скопирована!');">
+                        🔗 Ссылка
+                    </button>
+                `;
+            }
+
+            item.innerHTML = `
+                <div class="item-main">
+                    <div class="item-icon">${icon}</div>
+                    <div class="item-details">
+                        <h3>${t.person} <span class="meta-tag">${label}</span></h3>
+                        <p>📝 ${t.reason} | 📍 ${t.location || 'Локально'} | 📅 ${t.date}</p>
+                        ${disputeMarkup}
+                    </div>
+                </div>
+                <div class="item-side">
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                        <div class="item-amount">${t.type === 'outflow' || t.type === 'debt_me' ? '-' : '+'}${t.amount.toLocaleString('ru-RU')} ₴</div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            ${statusBadge}
+                            ${shareBtnMarkup}
+                        </div>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTransaction(${t.id})">🗑</button>
+                </div>
+            `;
+            listContainer.appendChild(item);
+        });
+    }
+
+    // Search and Filter Events
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderLedger();
+    });
+
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.dataset.filter;
+            renderLedger();
+        });
+    });
+
+    // Form Submit Event
+    document.getElementById('ledger-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const tx = {
+            type: document.getElementById('tx-type').value,
+            amount: parseFloat(document.getElementById('tx-amount').value),
+            person: document.getElementById('tx-person').value,
+            reason: document.getElementById('tx-reason').value,
+            location: document.getElementById('tx-location').value
+        };
+        await saveTransaction(tx);
+        e.target.reset();
+        document.getElementById('tx-location').value = 'Карта';
+    });
+
+    // Export Data
+    document.getElementById('btn-export').addEventListener('click', () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(transactions, null, 2));
+        const dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", `stab_finance_ledger_${new Date().toISOString().slice(0,10)}.json`);
+        dlAnchorElem.click();
+    });
+
+    // Import Data Trigger
+    document.getElementById('btn-import').addEventListener('click', () => {
+        document.getElementById('import-file').click();
+    });
+
+    // Import File Handler
+    document.getElementById('import-file').addEventListener('change', (e) => {
+        const fileReader = new FileReader();
+        fileReader.onload = async function (event) {
+            try {
+                const parsed = JSON.parse(event.target.result);
+                if (Array.isArray(parsed)) {
+                    if (isOffline) {
+                        transactions = parsed;
+                        localStorage.setItem('stab_finance_ledger', JSON.stringify(transactions));
+                        renderLedger();
+                    } else {
+                        alert("Bulk import online is supported by uploading files locally. Let's sync offline database!");
+                    }
+                    alert("Импорт успешно выполнен!");
+                }
+            } catch (err) {
+                alert("Ошибка чтения JSON-файла импорта!");
+            }
+        };
+        fileReader.readAsText(e.target.files[0]);
+    });
+
+    // Initial Load
+    loadData();
+</script>
+</body>
+</html>

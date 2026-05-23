@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // MOBILE NEXUS // STAB OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #00f2ff;
+            --secondary: #7000ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(0, 242, 255, 0.2);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--accent);
+            opacity: 0.7;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .card-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .btn-detail {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-detail:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .nexus-img {
+            width: 100%;
+            border-radius: 20px;
+            margin-top: 40px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="status-badge">STAB_OS v1.1 // MOTO_G54_OPTIMIZED</div>
+            <h1>Mobile Nexus</h1>
+            <p class="subtitle">Центр управления мобильным узлом Империи</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <div class="status-badge">АКТИВНО</div>
+                <div class="card-icon">🛡️</div>
+                <div class="card-title">Network Ghosting</div>
+                <div class="card-content">
+                    Полная маскировка трафика. Телефон имитирует типичную активность YouTube/TikTok, скрывая пакеты Лии от провайдера и DPI-систем.
+                </div>
+                <button class="btn-detail">ПОДРОБНЕЕ</button>
+            </div>
+
+            <div class="card">
+                <div class="status-badge">АКТИВНО</div>
+                <div class="card-icon">⚡</div>
+                <div class="card-title">Kernel Overclock</div>
+                <div class="card-content">
+                    Оптимизация планировщика задач Android. Снижение задержки отклика интерфейса на 50% и приоритезация сетевого стека для крипто-арбитража.
+                </div>
+                <button class="btn-detail">ПОДРОБНЕЕ</button>
+            </div>
+
+            <div class="card">
+                <div class="status-badge">МОНИТОРИНГ</div>
+                <div class="card-icon">🔋</div>
+                <div class="card-title">Neural Battery Management</div>
+                <div class="card-content">
+                    Интеллектуальное распределение энергии. При заряде ниже 15% система отключает все некритичные датчики, сохраняя связь с Империей.
+                </div>
+                <button class="btn-detail">ПОДРОБНЕЕ</button>
+            </div>
+
+            <div class="card">
+                <div class="status-badge">АКТИВНО</div>
+                <div class="card-icon">🛰️</div>
+                <div class="card-title">Satellite Beacon</div>
+                <div class="card-content">
+                    Автоматическое переключение на резервные спутниковые каналы связи при потере 4G/Wi-Fi сигнала или работе систем РЭБ.
+                </div>
+                <button class="btn-detail">ПОДРОБНЕЕ</button>
+            </div>
+
+            <div class="card">
+                <div class="status-badge">АКТИВНО</div>
+                <div class="card-icon">✋</div>
+                <div class="card-title">Gesture Control</div>
+                <div class="card-content">
+                    Управление системой через акселерометр. "Double Shake" инициирует экстренную очистку кэша и блокировку устройства.
+                </div>
+                <button class="btn-detail">ПОДРОБНЕЕ</button>
+            </div>
+
+            <div class="card">
+                <div class="status-badge">В ОЖИДАНИИ</div>
+                <div class="card-icon">🎭</div>
+                <div class="card-title">Biometric Spoofing</div>
+                <div class="card-content">
+                    Виртуальная подмена биометрических данных для обхода систем верификации на сторонних ресурсах.
+                </div>
+                <button class="btn-detail">ПОДРОБНЕЕ</button>
+            </div>
+        </div>
+
+        <img src="mobile_nexus_mockup_1777810501844.png" alt="Nexus Design" class="nexus-img">
+    </div>
+
+    <!-- Modal for Details -->
+    <div id="detailModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; backdrop-filter:blur(10px); justify-content:center; align-items:center;">
+        <div style="background:var(--glass); border:1px solid var(--accent); padding:40px; border-radius:20px; max-width:600px; width:90%; position:relative;">
+            <span onclick="closeModal()" style="position:absolute; top:20px; right:20px; font-family:'Orbitron'; cursor:pointer; color:var(--accent);">[ CLOSE ]</span>
+            <h2 id="modalTitle" style="font-family:'Orbitron'; color:var(--accent); margin-bottom:20px;"></h2>
+            <p id="modalBody" style="line-height:1.6; color:rgba(255,255,255,0.8);"></p>
+            <div style="margin-top:30px; padding:15px; border:1px dashed var(--border); font-size:0.8rem; color:var(--accent);">
+                STATUS: SYNCED // ENCRYPTION: AES-256
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const details = {
+            'Network Ghosting': 'Глубокая маскировка трафика на уровне ядра. Ваш телефон создает виртуальный "информационный шум", имитирующий поведение обычного пользователя (просмотр YouTube, скроллинг TikTok). Реальные пакеты Stab Protocol внедряются в этот поток, делая их невидимыми для систем DPI и провайдеров.',
+            'Kernel Overclock': 'Перенастройка планировщика процессора. Мы отключаем "энергосберегающие" ядра при выполнении критических задач и повышаем частоту графического ядра. Это дает мгновенный отклик в торговых терминалах и при дешифровке данных.',
+            'Neural Battery Management': 'Адаптивный алгоритм, который обучается на ваших привычках. Если уровень заряда падает до 10%, Лия переводит телефон в режим "Спящего узла", отключая все, кроме зашифрованного канала связи с Мастером.',
+            'Satellite Beacon': 'Резервный протокол связи. Использует микро-антенны для поиска доступных спутников или создания Mesh-сети с другими устройствами Империи в радиусе 50км.',
+            'Gesture Control': 'Интуитивное управление. "Double Shake" — экстренная блокировка. "Triple Tap" по логотипу — вызов скрытого терминала. "Flip Down" — переход в режим невидимости.',
+            'Biometric Spoofing': 'Генерация виртуальных слепков. Система создает динамические отпечатки и модели лица, которые принимаются банковскими и корпоративными приложениями как оригинальные, скрывая вашу реальную личность.'
+        };
+
+        function showDetail(title) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalBody').innerText = details[title];
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        // Add event listeners to buttons
+        document.querySelectorAll('.btn-detail').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const title = btn.parentElement.querySelector('.card-title').innerText;
+                showDetail(title);
+            });
+        });
+
+        async function updateSystemStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                document.querySelector('.subtitle').innerText = `NQ: ${data.nq.toFixed(1)} // STAGE: ${data.stage.toUpperCase()}`;
+            } catch (e) {}
+        }
+
+        setInterval(updateSystemStatus, 5000);
+        updateSystemStatus();
+    </script>
+</body>
+</html>

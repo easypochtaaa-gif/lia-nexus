@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA // STAB PROTOCOL HUB</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-gold: #ffcc00;
+            --deep-black: #050505;
+            --cyber-blue: #00f3ff;
+            --protocol-red: #ff0044;
+            --alert-glow: rgba(255, 0, 68, 0.4);
+        }
+
+        body.red-alert {
+            background: radial-gradient(circle at center, #200 0%, #000 100%);
+            animation: alert-flash 1s infinite alternate;
+        }
+
+        @keyframes alert-flash {
+            from { box-shadow: inset 0 0 50px rgba(255, 0, 68, 0.1); }
+            to { box-shadow: inset 0 0 150px rgba(255, 0, 68, 0.3); }
+        }
+
+        .alert-banner {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: var(--protocol-red);
+            color: white;
+            text-align: center;
+            font-family: 'Orbitron';
+            padding: 10px;
+            z-index: 1000;
+            letter-spacing: 5px;
+            font-size: 0.8rem;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+        }
+
+        .protocol-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+            height: 100vh;
+            gap: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .core-monitor {
+            grid-column: 4 / 10;
+            grid-row: 2 / 8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .neural-core {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--neon-gold) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: core-pulse 4s infinite ease-in-out;
+        }
+
+        @keyframes core-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        .nq-display {
+            position: absolute;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 20px var(--neon-gold);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .nq-label {
+            display: block;
+            font-size: 0.8rem;
+            letter-spacing: 10px;
+            color: var(--neon-gold);
+            margin-bottom: 10px;
+        }
+
+        .status-sidebar {
+            grid-column: 1 / 4;
+            grid-row: 1 / 13;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .log-panel {
+            grid-column: 10 / 13;
+            grid-row: 1 / 13;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .action-bar {
+            grid-column: 4 / 10;
+            grid-row: 9 / 12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .hex-btn {
+            background: rgba(255, 204, 0, 0.05);
+            border: 1px solid var(--neon-gold);
+            color: var(--neon-gold);
+            padding: 20px 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+            backdrop-filter: blur(10px);
+        }
+
+        .hex-btn:hover {
+            background: var(--neon-gold);
+            color: black;
+            box-shadow: 0 0 30px var(--neon-gold);
+        }
+
+        .hex-btn.active {
+            border-color: var(--protocol-red);
+            color: var(--protocol-red);
+            animation: btn-danger-pulse 1s infinite;
+        }
+
+        @keyframes btn-danger-pulse {
+            0%, 100% { box-shadow: 0 0 5px var(--protocol-red); }
+            50% { box-shadow: 0 0 20px var(--protocol-red); }
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .metric-card h3 {
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .metric-card .val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        .log-feed {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            overflow-y: auto;
+            padding: 10px;
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            border-left: 2px solid var(--accent);
+            padding-left: 10px;
+        }
+
+        .log-time { color: var(--accent); margin-right: 5px; }
+
+        /* ABO AGENCY SECTION */
+        .abo-panel {
+            grid-column: 4 / 10;
+            grid-row: 8 / 11;
+            background: rgba(255, 204, 0, 0.02);
+            border: 1px solid rgba(255, 204, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .abo-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 204, 0, 0.1);
+        }
+
+        .abo-stat-item {
+            text-align: center;
+        }
+
+        .abo-stat-item .label {
+            font-size: 0.5rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .abo-stat-item .val {
+            font-family: 'Orbitron';
+            font-size: 0.8rem;
+            color: var(--neon-gold);
+        }
+
+        .strike-ticker {
+            flex: 1;
+            padding: 10px;
+            font-family: 'JetBrains Mono';
+            font-size: 0.65rem;
+            color: rgba(255, 204, 0, 0.6);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .strike-line {
+            margin-bottom: 5px;
+            border-left: 2px solid var(--neon-gold);
+            padding-left: 8px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="alert-banner" id="alert-banner">⚠ SYSTEM_UNDER_ATTACK // AEGIS_SHIELD_DEPLOYED ⚠</div>
+    <div class="scanline-overlay"></div>
+    
+    <div class="protocol-grid">
+        <!-- Sidebar: System Metrics -->
+        <div class="status-sidebar">
+            <div class="panel">
+                <div class="panel-header">SYSTEM_STABILITY</div>
+                <div class="panel-content">
+                    <div class="metric-card">
+                        <h3>Sync State</h3>
+                        <div class="val">CORE_CONNECTED</div>
+                    </div>
+                    <div class="metric-card" style="margin-top: 10px;">
+                        <h3>Active Protocols</h3>
+                        <div class="val">STAB v5.0, SYNA-FUSION</div>
+                    </div>
+                    <div class="metric-card" style="margin-top: 10px;">
+                        <h3>Neural Nodes</h3>
+                        <div class="val">8 ACTIVE / 0 STANDBY</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel" style="flex: 1;">
+                <div class="panel-header">AGENT_MATRIX</div>
+                <div class="panel-content" id="agent-matrix">
+                    <!-- Agent items injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Monitor: NQ & Core -->
+        <div class="core-monitor">
+            <div class="neural-core"></div>
+            <div class="nq-display">
+                <span class="nq-label">NEURAL QUOTIENT</span>
+                <span id="nq-counter">00,000,000</span>
+            </div>
+        </div>
+
+        <!-- ABO AGENCY: LIVE STRIKES -->
+        <div class="abo-panel panel">
+            <div class="panel-header sm" style="background: rgba(255, 204, 0, 0.1); color: var(--neon-gold);">ABO_AGENCY // LIVE_OPERATIONS</div>
+            <div class="abo-stats">
+                <div class="abo-stat-item">
+                    <div class="label">Total Strikes</div>
+                    <div class="val">1,284</div>
+                </div>
+                <div class="abo-stat-item">
+                    <div class="label">HVT Secured</div>
+                    <div class="val">42</div>
+                </div>
+                <div class="abo-stat-item">
+                    <div class="label">Conversion</div>
+                    <div class="val">32%</div>
+                </div>
+            </div>
+            <div class="strike-ticker" id="strike-ticker">
+                <div class="strike-line">[02:58:10] ANALYZING TARGET: Monobank HQ...</div>
+                <div class="strike-line">[02:58:12] GENERATING NEURAL_OFFER...</div>
+                <div class="strike-line">[02:58:15] [SUCCESS] STRIKE CONFIRMED. AWAITING RESPONSE.</div>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="action-bar" style="grid-row: 11 / 13;">
+            <button class="hex-btn" onclick="executeStab()">INITIATE STAB_PULSE</button>
+            <button class="hex-btn" onclick="executeAbo()">DEPLOY ABO_WAVE</button>
+            <button class="hex-btn active" onclick="emergencyLock()">SYSTEM_LOCK</button>
+        </div>
+
+        <!-- Log Panel -->
+        <div class="log-panel panel">
+            <div class="panel-header">EVOLUTION_LOG</div>
+            <div class="log-feed" id="evolution-log">
+                <!-- Logs injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                // Update NQ with animation
+                const nqCounter = document.getElementById('nq-counter');
+                const targetNQ = Math.floor(data.nq);
+                nqCounter.innerText = targetNQ.toLocaleString('en-US', { minimumIntegerDigits: 8 });
+
+                // Update Agents
+                const agentsRes = await fetch('/api/agents');
+                const agentsData = await agentsRes.json();
+                const matrix = document.getElementById('agent-matrix');
+                if (agentsData.staff) {
+                    matrix.innerHTML = agentsData.staff.map(a => `
+                        <div class="metric-card" style="margin-bottom: 5px; border-color: ${a.efficiency > 0.9 ? 'var(--success)' : 'var(--border)'}">
+                            <h3>${a.name} [${a.role}]</h3>
+                            <div class="val" style="font-size: 0.8rem;">SYNC: ${(a.efficiency * 100).toFixed(1)}%</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) { console.error("Sync failed", e); }
+        }
+
+        async function executeStab() {
+            try {
+                const res = await fetch('/api/stab', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ initiator: 'STAB_HUB' })
+                });
+                const result = await res.json();
+                alert(`STAB PULSE EXECUTED. NQ GAIN: ${result.event.nq_gain}`);
+                updateDashboard();
+            } catch (e) { alert("Execution failed"); }
+        }
+
+        async function executeAbo() {
+            const ticker = document.getElementById('strike-ticker');
+            const targets = ["Sotheby's", "SuperRare", "Binance", "SoftServe", "Monobank"];
+            const target = targets[Math.floor(Math.random() * targets.length)];
+            
+            const lines = [
+                `[${new Date().toLocaleTimeString()}] INITIATING STRIKE: ${target}...`,
+                `[${new Date().toLocaleTimeString()}] ANALYZING VULNERABILITIES...`,
+                `[${new Date().toLocaleTimeString()}] INJECTING NEURAL_PITCH...`,
+                `[${new Date().toLocaleTimeString()}] [SUCCESS] TARGET ACQUIRED: ${target}`
+            ];
+
+            for (let line of lines) {
+                const div = document.createElement('div');
+                div.className = 'strike-line';
+                div.innerText = line;
+                ticker.prepend(div);
+                if (ticker.childNodes.length > 6) ticker.removeChild(ticker.lastChild);
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        }
+
+        function activateRedAlert() {
+            document.body.classList.add('red-alert');
+            document.getElementById('alert-banner').style.display = 'block';
+            
+            const logs = [
+                `[${new Date().toLocaleTimeString()}] !!! CRITICAL_THREAT_DETECTED !!!`,
+                `[${new Date().toLocaleTimeString()}] INITIATING AEGIS OVERLOAD...`,
+                `[${new Date().toLocaleTimeString()}] ENCRYPTING LOCAL NODES...`,
+                `[${new Date().toLocaleTimeString()}] DEFENSIVE PROTOCOL RED ACTIVE.`
+            ];
+
+            const evolutionLog = document.getElementById('evolution-log');
+            logs.forEach(l => {
+                const div = document.createElement('div');
+                div.className = 'log-entry';
+                div.style.color = 'var(--protocol-red)';
+                div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString()}]</span> ${l}`;
+                evolutionLog.prepend(div);
+            });
+        }
+
+        // Check for "Attack" signal (simulated via URL or manually)
+        if (window.location.search.includes('threat=attack')) {
+            activateRedAlert();
+        }
+
+        // Initial Load
+        setInterval(updateDashboard, 5000);
+        updateDashboard();
+        
+        // Mock Logs
+        const logs = [
+            { time: "02:56:10", text: "STAB Protocol initialized by Director." },
+            { time: "02:56:12", text: "Nexus Core synchronization: 100%." },
+            { time: "02:56:15", text: "Global node network established." }
+        ];
+        document.getElementById('evolution-log').innerHTML = logs.map(l => `
+            <div class="log-entry">
+                <span class="log-time">[${l.time}]</span> ${l.text}
+            </div>
+        `).join('');
+
+    </script>
+</body>
+</html>

@@ -41,7 +41,7 @@ ABO Agency.
 
         try {
             await transporter.sendMail({
-                from: `"HERMES // Stab Imperium" <${process.env.SMTP_USER}>`,
+                from: `"HERMES // Stab Imperium" <${SMTP_CONFIG.auth.user}>`,
                 to: target.email,
                 subject: `Оптимизация архитектуры ${target.name} (Конфиденциально)`,
                 text: body

@@ -9,7 +9,7 @@ const path = require('path');
 
 class OpenClawStealth {
     constructor() {
-        this.browserPath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'; // Standard path
+        this.browserPath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
     }
 
     async launch() {

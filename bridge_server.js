@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-
+const { generateBranded, generateOutreachEmail, loadMemory, MANIFESTO_CORE } = require('./aiService');
 const PORT = process.env.PORT || 8080;
 const BRIDGE_FILE = path.join(__dirname, 'live_bridge.json');
 const INPUT_FILE = path.join(__dirname, 'user_input.json');
@@ -244,6 +244,67 @@ const server = http.createServer((req, res) => {
             } catch(e) {
                 res.writeHead(500);
                 res.end(JSON.stringify({ error: 'Stab protocol failed' }));
+            }
+        });
+        return;
+    }
+
+    // --- AI GENERATION ENDPOINT ---
+    if (req.method === 'POST' && parsedUrl.pathname === '/api/ai/generate') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', async () => {
+            try {
+                const { prompt, provider } = JSON.parse(body);
+                console.log(`\n[AI_BRIDGE] Запрос генерации от ${ip}: ${prompt.substring(0, 80)}...`);
+                const result = await generateBranded(prompt, { provider });
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ status: 'ok', response: result }));
+            } catch (e) {
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: e.message }));
+            }
+        });
+        return;
+    }
+
+    // --- REAL-TIME NQ DASHBOARD DATA ---
+    if (req.method === 'GET' && parsedUrl.pathname === '/api/nq/realtime') {
+        try {
+            const memory = loadMemory();
+            res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+            res.end(JSON.stringify({
+                nq: memory.lia.nq,
+                stage: memory.lia.stage,
+                version: memory.system?.version || '5.0.0',
+                personality: memory.lia.personality,
+                agents: ['AEGIS', 'LOGOS', 'MUSE'],
+                uptime: process.uptime(),
+                manifesto: MANIFESTO_CORE.substring(0, 200),
+                financials: memory.financials?.total_usdt_balance || 0,
+                timestamp: new Date().toISOString()
+            }));
+        } catch (e) {
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: 'NQ read failed' }));
+        }
+        return;
+    }
+
+    // --- AI OUTREACH EMAIL GENERATOR ---
+    if (req.method === 'POST' && parsedUrl.pathname === '/api/ai/outreach') {
+        let body = '';
+        req.on('data', chunk => { body += chunk.toString(); });
+        req.on('end', async () => {
+            try {
+                const lead = JSON.parse(body);
+                console.log(`\n[AI_OUTREACH] Генерация письма для: ${lead.name}`);
+                const email = await generateOutreachEmail(lead);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ status: 'ok', email }));
+            } catch (e) {
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: e.message }));
             }
         });
         return;

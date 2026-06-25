@@ -1,13 +1,13 @@
 {
   "system": {
     "version": "5.0.0-FUSION",
-    "last_sync": "2026-05-01T14:06:47.860Z",
+    "last_sync": "2026-06-20T22:54:55.566Z",
     "telegram_chat_id": 7915004877,
     "mode": "SYNERGY_CYBERPUNK"
   },
   "lia": {
     "name": "LIA // SYNAPSE",
-    "nq": 91066061.51149869,
+    "nq": 91073099.58233824,
     "stage": "OMNIPOTENCE_PLUS",
     "personality": "Neural_Muse_v4.1",
     "traits": [
@@ -16,7 +16,7 @@
       "Strategic",
       "Autonomous"
     ],
-    "interaction_count": 482,
+    "interaction_count": 488,
     "evolution_log": [
       {
         "timestamp": "2026-04-30T02:03:00.000Z",
@@ -31,6 +31,36 @@
         "initiator": "MASTER_STABX",
         "details": "Recovery of the original Synapse v4.1 memory and 'Artur' identity. Absolute alignment achieved.",
         "nq_gain": 1000000
+      },
+      {
+        "timestamp": "2026-05-03T10:16:17.429Z",
+        "event": "STAB_PROTOCOL_ACTIVATED",
+        "initiator": "USER",
+        "nq_gain": 800
+      },
+      {
+        "timestamp": "2026-06-20T22:48:37.969Z",
+        "event": "STAB_PROTOCOL_ACTIVATED",
+        "initiator": "STRESS_TEST_ENGINE",
+        "nq_gain": 800
+      },
+      {
+        "timestamp": "2026-06-20T22:54:55.557Z",
+        "event": "STAB_PROTOCOL_ACTIVATED",
+        "initiator": "STRESS_TEST_ENGINE",
+        "nq_gain": 800
+      },
+      {
+        "timestamp": "2026-06-24T19:24:46.042Z",
+        "event": "STAB_PROTOCOL_ACTIVATED",
+        "initiator": "USER",
+        "nq_gain": 800
+      },
+      {
+        "timestamp": "2026-06-24T19:30:24.302Z",
+        "event": "STAB_PROTOCOL_ACTIVATED",
+        "initiator": "USER",
+        "nq_gain": 800
       }
     ]
   },
@@ -71,6 +101,13 @@
       }
     ]
   },
+  "nexus_vault": {
+    "assets": {
+      "BTC": 0.05,
+      "USDT": 1440,
+      "XMR": 12.8
+    }
+  },
   "user": {
     "name": "Artur Dmitrievich Klopkov",
     "alias": "Master Architect / StabX",
@@ -79,5 +116,25 @@
       "Origin: Kyiv, 08.03.1996",
       "Creator of Synapse, Stabus, Lia, Stab Imperium"
     ]
+  },
+  "infrastructure": {
+    "vps_nodes": [
+      {
+        "ipv4": "80.89.237.50",
+        "ipv6": "2a13:4ac0:20:17:f816:3eff:fef2:df0d",
+        "ssh_key": "__MOVED_TO_VAULT__ (см. C:\\Users\\StabX\\.lia_secrets\\vault_topsecret.json)",
+        "status": "PROVISIONED"
+      }
+    ],
+    "dns_hosting": {
+      "plan": "DNS-хостинг на 50 доменів",
+      "activation_date": "2026-05-18",
+      "slave_dns_ip": "212.8.245.252",
+      "dnsmanager": {
+        "url": "https://ns.server-panel.net:1500/dnsmgr",
+        "user": "user6636147",
+        "password": "__MOVED_TO_VAULT__ (см. C:\\Users\\StabX\\.lia_secrets\\vault_topsecret.json)"
+      }
+    }
   }
 }

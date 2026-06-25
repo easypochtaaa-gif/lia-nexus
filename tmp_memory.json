@@ -1,0 +1,8 @@
+{
+  "lia": {
+    "nq": 100000,
+    "stage": "singularity_phase_3",
+    "name": "Лия",
+    "version": "3.0"
+  }
+}

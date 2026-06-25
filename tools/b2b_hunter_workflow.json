@@ -1,0 +1,126 @@
+{
+  "name": "ABO Agency - Autonomous B2B Hunter & Mail Monitor",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a9d7b420-b2bf-4638-b78f-ef520cb95dfa",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "e2e8c201-9a28-4ef7-8fe2-51c09b068800",
+      "name": "Outreach Schedule (9:00 AM Mon-Fri)",
+      "type": "n8n-nodes-base.triggerActiveScheduled",
+      "typeVersion": 1,
+      "position": [
+        220,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python C:\\Users\\StabX\\Desktop\\Lia\\tools\\b2b_hunter.py"
+      },
+      "id": "f5127ef6-82bf-4b92-b430-6db35f128bc2",
+      "name": "Execute B2B AI Strike",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        480,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/10 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "monitor_cron",
+      "name": "Poll Every 10 Minutes",
+      "type": "n8n-nodes-base.triggerActiveScheduled",
+      "typeVersion": 1,
+      "position": [
+        220,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python C:\\Users\\StabX\\Desktop\\Lia\\tools\\email_monitor.py"
+      },
+      "id": "execute_monitor",
+      "name": "Check Email Replies",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        480,
+        600
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Execute B2B AI Strike",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outreach Schedule (9:00 AM Mon-Fri)": {
+      "main": [
+        [
+          {
+            "node": "Execute B2B AI Strike",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Every 10 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Check Email Replies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "df16b490-e74c-4e8c-8f4b-70c8f58b0902",
+  "id": "b2b_outreach_flow",
+  "meta": {
+    "instanceId": "instance-b2b"
+  }
+}

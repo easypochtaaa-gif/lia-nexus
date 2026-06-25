@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LIA Sovereign — Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Leaflet Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-card: rgba(15, 22, 36, 0.85);
+            --bg-card-hover: rgba(20, 30, 50, 0.95);
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-gold: #f59e0b;
+            --accent-red: #ef4444;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --border-glow: rgba(6, 182, 212, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
+            z-index: -1;
+            animation: bgPulse 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 85px;
+        }
+
+        /* Age Verification Overlay */
+        .age-gate-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(10, 14, 23, 0.98);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+        .age-gate-card {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-purple);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            max-width: 380px;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.25);
+        }
+        .age-gate-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent-purple);
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .age-gate-desc {
+            font-size: 13px;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .age-gate-disclaimer {
+            font-size: 10px;
+            color: var(--text-dim);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .cyber-btn-purple {
+            background: linear-gradient(135deg, var(--accent-purple), #7e22ce);
+            color: var(--text-main);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+        .cyber-btn-purple:active {
+            transform: scale(0.97);
+            filter: brightness(1.1);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0 16px;
+        }
+
+        .header .logo {
+            font-size: 36px;
+            margin-bottom: 4px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+        }
+
+        .header .subtitle {
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* Status bar */
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0 20px;
+            padding: 8px 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        }
+
+        .status-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-green);
+            letter-spacing: 1px;
+        }
+
+        /* User info card */
+        .user-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .user-card .user-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .user-avatar {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .user-info h2 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .user-info .tier-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .tier-free { background: rgba(148, 163, 184, 0.2); color: var(--text-dim); }
+        .tier-lite { background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan); }
+        .tier-pro { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
+        .tier-ultra { background: rgba(245, 158, 11, 0.2); color: var(--accent-gold); }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(6, 182, 212, 0.05);
+            border: 1px solid rgba(6, 182, 212, 0.12);
+            border-radius: 12px;
+        }
+
+        .stat-item .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .stat-item .stat-label {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Action grid */
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 24px 0 12px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 14px;
+            padding: 18px 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .action-btn:active {
+            transform: scale(0.96);
+            background: var(--bg-card-hover);
+        }
+
+        .action-btn .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .action-btn .label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .action-btn .desc {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .action-btn.cyan { border-color: rgba(6, 182, 212, 0.3); }
+        .action-btn.cyan:active { border-color: var(--accent-cyan); box-shadow: 0 0 20px rgba(6, 182, 212, 0.15); }
+        .action-btn.purple { border-color: rgba(168, 85, 247, 0.3); }
+        .action-btn.purple:active { border-color: var(--accent-purple); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); }
+        .action-btn.green { border-color: rgba(16, 185, 129, 0.3); }
+        .action-btn.green:active { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); }
+        .action-btn.gold { border-color: rgba(245, 158, 11, 0.3); }
+        .action-btn.gold:active { border-color: var(--accent-gold); box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); }
+
+        .action-btn.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Quests section */
+        .quest-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+
+        .quest-card .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quest-card .quest-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quest-card .quest-reward {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        .quest-card .quest-desc {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .quest-status {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        .quest-active { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+        .quest-completed { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .quest-pending { background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); }
+        .quest-approved { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+        .cyber-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .cyber-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        /* Views */
+        .view-pane {
+            display: none;
+        }
+        .view-pane.active {
+            display: block;
+        }
+
+        /* Map styling */
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .map-info-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        .collect-reward-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), #0891b2);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            display: none;
+            text-align: center;
+        }
+        .collect-reward-btn.active {
+            display: block;
+        }
+
+        /* Webcam stream */
+        .stream-card {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-purple);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            margin-bottom: 12px;
+        }
+        #webcam {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        .stream-status-overlay {
+            position: absolute;
+            top: 12px; left: 12px;
+            background: rgba(239, 68, 68, 0.85);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            animation: blink 1.2s infinite;
+            display: none;
+            z-index: 10;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%; height: 68px;
+            background: rgba(10, 14, 23, 0.96);
+            border-top: 1px solid rgba(6, 182, 212, 0.15);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 999;
+            backdrop-filter: blur(12px);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: none;
+            border: none;
+            flex: 1;
+            height: 100%;
+        }
+        .nav-item .nav-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+        .nav-item.active {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+        }
+
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(6, 182, 212, 0.15);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 12px;
+            letter-spacing: 1px;
+        }
+
+        .disclaimer-banner {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.4;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Age Verification Gate -->
+<div class="age-gate-overlay" id="age-gate">
+    <div class="age-gate-card">
+        <div class="age-gate-title">👁‍🗨 ВЕРИФИКАЦИЯ 18+</div>
+        <div class="age-gate-desc">
+            Для доступа к системе «Хапани за Квест» вы должны быть совершеннолетним.
+        </div>
+        <div class="age-gate-disclaimer">
+            <b>Важное уведомление:</b> Все разыгрываемые в квестах призы являются сувенирами. Администрация не несет ответственности за использование или применение полученных сувениров.
+        </div>
+        <button class="cyber-btn-purple" onclick="acceptAgeGate()">МНЕ ЕСТЬ 18+ и Я СОГЛАСЕН</button>
+    </div>
+</div>
+
+<div class="app-container" id="app-loading">
+    <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">SOVEREIGN LINK INITIALIZING...</div>
+    </div>
+</div>
+
+<!-- Main App -->
+<div class="app-container" id="app-main" style="display: none;">
+    <!-- TAB 1: HOME -->
+    <div class="view-pane active" id="pane-home">
+        <div class="header">
+            <div class="logo">👁‍🗨</div>
+            <h1 id="logo-header">LIA SOVEREIGN</h1>
+            <div class="subtitle">Stab Imperium • Quest Core</div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-dot"></div>
+            <span class="status-text">SYSTEMS ONLINE</span>
+        </div>
+
+        <div class="user-card">
+            <div class="user-row">
+                <div class="user-avatar" id="avatar-letter">С</div>
+                <div class="user-info">
+                    <h2 id="username-display">Странник</h2>
+                    <span class="tier-badge tier-free" id="tier-badge-display">FREE</span>
+                </div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value" id="xp-val">0</div>
+                    <div class="stat-label">XP</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="coins-val">0</div>
+                    <div class="stat-label">$STAB</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stats-users">0</div>
+                    <div class="stat-label">Юзеры</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">⚡ Модули</div>
+        <div class="action-grid">
+            <div class="action-btn cyan" onclick="sendTelegramAction('chat_start')">
+                <div class="icon">🧠</div>
+                <div class="label">Neural Chat</div>
+                <div class="desc">Диалог с Лией</div>
+            </div>
+            <div class="action-btn purple" onclick="sendTelegramAction('aegis_start')">
+                <div class="icon">🛡</div>
+                <div class="label">Aegis Scan</div>
+                <div class="desc">Анализ угроз</div>
+            </div>
+            <div class="action-btn green" onclick="sendTelegramAction('wallet_connect')">
+                <div class="icon">🔗</div>
+                <div class="label">Web3 Wallet</div>
+                <div class="desc">Привязать кошелек</div>
+            </div>
+            <div class="action-btn gold" onclick="sendTelegramAction('premium_info')">
+                <div class="icon">💎</div>
+                <div class="label">Premium</div>
+                <div class="desc">Тарифы</div>
+            </div>
+            <div class="action-btn cyan full-width" onclick="openDashboard()">
+                <div class="icon">📊</div>
+                <div class="label">Открыть Дашборд</div>
+                <div class="desc">dark-stab.space</div>
+            </div>
+        </div>
+        <div class="disclaimer-banner">
+            Призы являются сувенирами. LIA координирует задания по наставлениям Администрации.
+        </div>
+    </div>
+
+    <!-- TAB 2: MAP -->
+    <div class="view-pane" id="pane-map">
+        <div class="header" style="padding: 10px 0 5px;">
+            <h1>КАРТА ТЕРРИТОРИЙ</h1>
+            <div class="subtitle">Свободный поиск наград и захват зон</div>
+        </div>
+
+        <div class="map-wrapper">
+            <div id="map"></div>
+        </div>
+
+        <div class="map-info-panel">
+            <div style="font-weight: bold; margin-bottom: 4px; color: var(--accent-cyan);" id="map-target-title">Геолокация активна</div>
+            <div style="color: var(--text-dim);" id="map-target-desc">Подойдите к награде на карте (ближе 15м) или кликните чужую зону для атаки.</div>
+            
+            <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span>Собрано наград: <b id="rewards-collected-count" style="color: var(--accent-gold);">0 / 5</b></span>
+                <span style="font-size: 10px; color: var(--text-dim);">До сувенира без квеста</span>
+            </div>
+        </div>
+
+        <button class="collect-reward-btn" id="btn-collect-reward" onclick="collectProximityReward()">ЗАБРАТЬ НАГРАДУ</button>
+    </div>
+
+    <!-- TAB 3: QUESTS -->
+    <div class="view-pane" id="pane-quests">
+        <div class="header" style="padding: 10px 0 5px;">
+            <h1>КВЕСТ-БАТЛЫ</h1>
+            <div class="subtitle">Управление задачами и стримы</div>
+        </div>
+
+        <!-- Quest Application Form -->
+        <div class="user-card" id="quest-form-section" style="padding: 16px;">
+            <div style="font-weight: bold; margin-bottom: 10px; font-size: 14px; letter-spacing: 0.5px; color: var(--accent-cyan);">ПОДАТЬ ЗАЯВКУ НА КВЕСТ</div>
+            
+            <div class="form-group">
+                <label class="form-label">Название квеста</label>
+                <input type="text" id="form-quest-title" class="cyber-input" placeholder="Например: Забег по склонам">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Пожелания / Детали</label>
+                <input type="text" id="form-quest-desc" class="cyber-input" placeholder="Что вы хотите сделать...">
+            </div>
+            
+            <button class="cyber-btn-purple" style="margin-top: 6px;" onclick="submitQuestApplication()">ПОДАТЬ ЗАЯВКУ</button>
+        </div>
+
+        <!-- Active Quest Stream Panel -->
+        <div class="stream-card" id="quest-active-panel" style="display: none;">
+            <div style="font-weight: bold; margin-bottom: 6px; color: var(--accent-purple); font-size: 14px;" id="active-quest-label">ВЫПОЛНЕНИЕ КВЕСТА: -</div>
+            <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 12px;" id="active-quest-conditions">Условия: -</div>
+            
+            <div class="video-container">
+                <div class="stream-status-overlay" id="stream-live-badge">REC // LIVE</div>
+                <video id="webcam" autoplay playsinline></video>
+                <canvas id="hidden-canvas" style="display: none;"></canvas>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="cyber-btn-purple" style="flex: 1; background: #2563eb;" id="btn-toggle-stream" onclick="toggleQuestStream()">ЗАПУСТИТЬ СТРИМ</button>
+                <button class="cyber-btn-purple" style="flex: 1; background: var(--accent-green);" onclick="completeActiveQuest()">СДАТЬ КВЕСТ</button>
+            </div>
+        </div>
+
+        <div class="section-title">Заявки и Активные Квесты</div>
+        <div id="quest-applications-list">
+            <!-- Applications load here -->
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('home')">
+            <span class="nav-icon">🏠</span>
+            <span>Главная</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('map')">
+            <span class="nav-icon">🗺️</span>
+            <span>Карта</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('quests')">
+            <span class="nav-icon">⚔️</span>
+            <span>Квесты</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    if (tg.themeParams.bg_color) {
+        document.documentElement.style.setProperty('--bg-primary', tg.themeParams.bg_color);
+    }
+
+    const tgUser = tg.initDataUnsafe?.user;
+    const userId = tgUser?.id || 100;
+    const firstName = tgUser?.first_name || 'Юнит';
+    const username = tgUser?.username || '';
+
+    // Age Gate setup
+    const ageVerified = localStorage.getItem("lia_age_verified");
+    if (ageVerified === "true") {
+        document.getElementById('age-gate').style.display = 'none';
+        document.getElementById('app-loading').style.display = 'block';
+        initApp();
+    } else {
+        document.getElementById('app-loading').style.display = 'none';
+    }
+
+    function acceptAgeGate() {
+        localStorage.setItem("lia_age_verified", "true");
+        document.getElementById('age-gate').style.display = 'none';
+        document.getElementById('app-loading').style.display = 'block';
+        initApp();
+    }
+
+    // Global App States
+    let profile = { xp: 0, stab_coins: 0, tier: 'free', wallet: '' };
+    let activeQuestApp = null; 
+    let streamActive = false;
+    let streamInterval = null;
+    let webcamStreamObj = null;
+
+    // Leaflet map vars
+    let map = null;
+    let userMarker = null;
+    let rewardsList = [];
+    let territoriesList = [];
+    let leafletMarkers = [];
+    let leafletCircles = [];
+    let userCoordinates = { lat: 50.4501, lng: 30.5234 }; 
+    let rewardsCollectedCount = parseInt(localStorage.getItem("rewards_collected_count") || "0");
+
+    async function initApp() {
+        await refreshUserData();
+        
+        document.getElementById('username-display').textContent = firstName;
+        document.getElementById('avatar-letter').textContent = firstName.charAt(0).toUpperCase();
+        
+        document.getElementById('app-loading').style.display = 'none';
+        document.getElementById('app-main').style.display = 'block';
+
+        setupGeolocation();
+        loadQuestApplications();
+    }
+
+    async function refreshUserData() {
+        const res = await fetch(`/api/user-profile?user_id=${userId}`);
+        const data = await res.json();
+        if (data && data.found) {
+            profile = data;
+            document.getElementById('xp-val').textContent = data.xp.toLocaleString();
+            document.getElementById('coins-val').textContent = data.stab_coins.toLocaleString();
+            
+            const badge = document.getElementById('tier-badge-display');
+            badge.className = `tier-badge tier-${data.tier}`;
+            badge.textContent = data.tier.toUpperCase();
+        }
+        
+        const statsRes = await fetch(`/api/stats`);
+        const stats = await statsRes.json();
+        if (stats) {
+            document.getElementById('stats-users').textContent = stats.total_users || 0;
+        }
+
+        document.getElementById('rewards-collected-count').textContent = `${rewardsCollectedCount} / 5`;
+    }
+
+    function setupGeolocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                (pos) => {
+                    userCoordinates.lat = pos.coords.latitude;
+                    userCoordinates.lng = pos.coords.longitude;
+                    updateUserMarker();
+                    checkProximityToRewards();
+                },
+                (err) => {
+                    console.error("GPS Error: ", err.message);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+    }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+        document.getElementById(`pane-${tab}`).classList.add('active');
+        
+        const index = tab === 'home' ? 0 : tab === 'map' ? 1 : 2;
+        document.querySelectorAll('.nav-item')[index].classList.add('active');
+
+        if (tab === 'map') {
+            setTimeout(initMap, 200);
+        }
+    }
+
+    // --- MAP OPERATIONS ---
+    function initMap() {
+        if (map) {
+            map.invalidateSize();
+            return;
+        }
+
+        map = L.map('map', { zoomControl: false }).setView([userCoordinates.lat, userCoordinates.lng], 15);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: 'LIA Core Map'
+        }).addTo(map);
+
+        updateUserMarker();
+        loadMapObjects();
+    }
+
+    function updateUserMarker() {
+        if (!map) return;
+        
+        const userIcon = L.divIcon({
+            html: '<div style="width: 14px; height: 14px; background: #06b6d4; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 10px #06b6d4;"></div>',
+            className: 'custom-user-marker',
+            iconSize: [14, 14]
+        });
+
+        if (userMarker) {
+            userMarker.setLatLng([userCoordinates.lat, userCoordinates.lng]);
+        } else {
+            userMarker = L.marker([userCoordinates.lat, userCoordinates.lng], { icon: userIcon }).addTo(map);
+        }
+    }
+
+    async function loadMapObjects() {
+        if (!map) return;
+
+        try {
+            const res = await fetch(`/api/map/objects?lat=${userCoordinates.lat}&lng=${userCoordinates.lng}&user_id=${userId}`);
+            const data = await res.json();
+
+            leafletMarkers.forEach(m => map.removeLayer(m));
+            leafletCircles.forEach(c => map.removeLayer(c));
+            leafletMarkers = [];
+            leafletCircles = [];
+
+            rewardsList = data.rewards || [];
+            territoriesList = data.territories || [];
+
+            territoriesList.forEach(t => {
+                const isOwner = t.owner_id === userId;
+                const circleColor = isOwner ? '#10b981' : '#a855f7';
+                
+                const circle = L.circle([t.lat, t.lng], {
+                    color: circleColor,
+                    fillColor: circleColor,
+                    fillOpacity: 0.12,
+                    radius: 500
+                }).addTo(map);
+
+                let popupContent = `
+                    <div style="color: #fff; font-family: sans-serif; font-size: 11px;">
+                        <b style="color:${circleColor}">КОНТРОЛИРУЕМАЯ ЗОНА</b><br/>
+                        Владелец: <b>${t.owner_name}</b><br/>
+                        Квест: <b>${t.quest}</b><br/>
+                `;
+                if (!isOwner) {
+                    popupContent += `
+                        <button onclick="challengeTerritory(${t.id}, ${t.owner_id}, '${t.quest}')" 
+                                style="margin-top: 6px; background:${circleColor}; border:none; padding:4px 8px; color:#000; font-weight:bold; border-radius:4px; font-size:10px; cursor:pointer;">
+                            ОТБИТЬ (Quest Battle)
+                        </button>
+                    `;
+                }
+                popupContent += '</div>';
+
+                circle.bindPopup(popupContent);
+                leafletCircles.push(circle);
+            });
+
+            rewardsList.forEach(r => {
+                const iconColor = r.type === 'xp' ? '#06b6d4' : '#f59e0b';
+                const emoji = r.type === 'xp' ? '🧠' : '🪙';
+                const rewardIcon = L.divIcon({
+                    html: `<div style="font-size:18px; filter: drop-shadow(0 0 6px ${iconColor});">${emoji}</div>`,
+                    className: 'custom-reward-icon',
+                    iconSize: [20, 20]
+                });
+
+                const marker = L.marker([r.lat, r.lng], { icon: rewardIcon }).addTo(map);
+                marker.bindPopup(`<span style="color:#fff;">Награда: <b>${r.amount} ${r.type.toUpperCase()}</b></span>`);
+                leafletMarkers.push(marker);
+            });
+
+        } catch (e) {
+            console.error("Map objects load error:", e);
+        }
+    }
+
+    function challengeTerritory(tId, ownerId, questTitle) {
+        document.getElementById('form-quest-title').value = `Битва за территорию: ${questTitle}`;
+        document.getElementById('form-quest-desc').value = `Атака на узел владельца #${ownerId}. Бросаю вызов.`;
+        
+        window.challengeTarget = {
+            is_battle: true,
+            opponent_id: ownerId,
+            territory_id: tId
+        };
+
+        switchTab('quests');
+    }
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+        var R = 6371e3;
+        var dLat = (lat2-lat1) * Math.PI/180;
+        var dLon = (lon2-lon1) * Math.PI/180;
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c; 
+    }
+
+    let closestRewardObj = null;
+
+    function checkProximityToRewards() {
+        if (!rewardsList.length) return;
+
+        let closest = null;
+        let minDist = 999999;
+
+        rewardsList.forEach(r => {
+            const dist = getDistance(userCoordinates.lat, userCoordinates.lng, r.lat, r.lng);
+            if (dist < minDist) {
+                minDist = dist;
+                closest = r;
+            }
+        });
+
+        const infoTitle = document.getElementById('map-target-title');
+        const infoDesc = document.getElementById('map-target-desc');
+        const collectBtn = document.getElementById('btn-collect-reward');
+
+        if (closest && minDist <= 15) {
+            closestRewardObj = closest;
+            infoTitle.textContent = `🎯 НАЙДЕН СЕКРЕТНЫЙ ПРЕДМЕТ!`;
+            infoTitle.style.color = 'var(--accent-green)';
+            infoDesc.textContent = `Дистанция: ${Math.round(minDist)}м. Нажмите кнопку сбора ниже.`;
+            collectBtn.classList.add('active');
+        } else if (closest) {
+            closestRewardObj = null;
+            infoTitle.textContent = `Свободный поиск наград`;
+            infoTitle.style.color = 'var(--accent-cyan)';
+            infoDesc.textContent = `Ближайшая награда в ${Math.round(minDist)} метрах от вас.`;
+            collectBtn.classList.remove('active');
+        }
+    }
+
+    async function collectProximityReward() {
+        if (!closestRewardObj) return;
+
+        const res = await fetch('/api/map/collect-reward', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, reward_id: closestRewardObj.id })
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+            rewardsCollectedCount++;
+            localStorage.setItem("rewards_collected_count", rewardsCollectedCount);
+            
+            alert(`🎁 Собран предмет: +${result.amount} ${result.type.toUpperCase()}`);
+            
+            if (rewardsCollectedCount >= 5) {
+                alert("🏆 Вы собрали 5 бесплатных предметов и получаете сувенирный коин STAB от Администрации без выполнения квеста!");
+                rewardsCollectedCount = 0;
+                localStorage.setItem("rewards_collected_count", rewardsCollectedCount);
+            }
+
+            closestRewardObj = null;
+            document.getElementById('btn-collect-reward').classList.remove('active');
+            
+            refreshUserData();
+            loadMapObjects();
+        } else {
+            alert("Ошибка сбора: " + result.error);
+        }
+    }
+
+    // --- QUESTS OPERATIONS ---
+    async function loadQuestApplications() {
+        const res = await fetch(`/api/quests/applications?user_id=${userId}`);
+        const data = await res.json();
+        const listDiv = document.getElementById('quest-applications-list');
+        
+        let activeFound = false;
+
+        listDiv.innerHTML = (data.applications || []).map(a => {
+            let statusText = 'На модерации';
+            let statusClass = 'quest-pending';
+            let actionsHTML = '';
+
+            if (a.status === 'completed') {
+                statusText = 'Выполнен';
+                statusClass = 'quest-completed';
+            } else if (a.status === 'approved') {
+                statusText = 'Условия выставлены';
+                statusClass = 'quest-approved';
+                actionsHTML = `<button onclick="acceptQuestConditions(${a.id})" style="margin-top:8px; width:100%; border:none; border-radius:6px; background:var(--accent-purple); color:#fff; padding:8px; font-weight:bold; cursor:pointer;">Согласиться с условиями</button>`;
+            } else if (a.status === 'active') {
+                statusText = 'Выполняется';
+                statusClass = 'quest-active';
+                activeFound = true;
+                activeQuestApp = a;
+            }
+
+            return `
+                <div class="quest-card">
+                    <div class="quest-header">
+                        <span class="quest-title">${a.title}</span>
+                        <span class="quest-reward">+${a.reward_xp} XP</span>
+                    </div>
+                    <div class="quest-desc">
+                        ${a.description}
+                        ${a.conditions ? `<div style="margin-top:6px; padding:6px; background:rgba(168,85,247,0.1); border-left:2px solid var(--accent-purple);"><b>Условия:</b> ${a.conditions}</div>` : ''}
+                    </div>
+                    <span class="quest-status ${statusClass}">${statusText}</span>
+                    ${actionsHTML}
+                </div>
+            `;
+        }).join('');
+
+        if (activeFound && activeQuestApp) {
+            document.getElementById('quest-form-section').style.display = 'none';
+            document.getElementById('quest-active-panel').style.display = 'block';
+            document.getElementById('active-quest-label').textContent = `ВЫПОЛНЕНИЕ КВЕСТА: ${activeQuestApp.title}`;
+            document.getElementById('active-quest-conditions').textContent = `Условия: ${activeQuestApp.conditions || 'нет'}`;
+        } else {
+            document.getElementById('quest-form-section').style.display = 'block';
+            document.getElementById('quest-active-panel').style.display = 'none';
+            activeQuestApp = null;
+        }
+    }
+
+    async function submitQuestApplication() {
+        const title = document.getElementById('form-quest-title').value.trim();
+        const desc = document.getElementById('form-quest-desc').value.trim();
+
+        if (!title) {
+            alert("Введите название квеста.");
+            return;
+        }
+
+        const isBattle = window.challengeTarget?.is_battle || false;
+        const opponentId = window.challengeTarget?.opponent_id || null;
+        const territoryId = window.challengeTarget?.territory_id || null;
+
+        const res = await fetch('/api/quests/apply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                title: title,
+                description: desc,
+                reward_xp: 300,
+                reward_stab: 1000,
+                is_battle: isBattle,
+                opponent_id: opponentId,
+                territory_id: territoryId
+            })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert("Заявка успешно отправлена на рассмотрение LIA и Администрации!");
+            document.getElementById('form-quest-title').value = '';
+            document.getElementById('form-quest-desc').value = '';
+            window.challengeTarget = null;
+            
+            loadQuestApplications();
+        } else {
+            alert("Ошибка подачи заявки: " + data.error);
+        }
+    }
+
+    async function acceptQuestConditions(appId) {
+        const res = await fetch('/api/quests/accept-conditions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ application_id: appId })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert("Соглашение заключено. Канал связи стрима готов. Начните выполнение!");
+            loadQuestApplications();
+        }
+    }
+
+    async function toggleQuestStream() {
+        const video = document.getElementById('webcam');
+        const badge = document.getElementById('stream-live-badge');
+        const btn = document.getElementById('btn-toggle-stream');
+
+        if (streamActive) {
+            streamActive = false;
+            clearInterval(streamInterval);
+            if (webcamStreamObj) {
+                webcamStreamObj.getTracks().forEach(track => track.stop());
+            }
+            video.srcObject = null;
+            badge.style.display = 'none';
+            btn.textContent = 'ЗАПУСТИТЬ СТРИМ';
+            btn.style.background = '#2563eb';
+        } else {
+            try {
+                const constraints = { video: { facingMode: "user" }, audio: false };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                webcamStreamObj = stream;
+                video.srcObject = stream;
+                
+                streamActive = true;
+                badge.style.display = 'block';
+                btn.textContent = 'ОСТАНОВИТЬ СТРИМ';
+                btn.style.background = 'var(--accent-red)';
+
+                const canvas = document.getElementById('hidden-canvas');
+                const ctx = canvas.getContext('2d');
+
+                streamInterval = setInterval(() => {
+                    if (video.videoWidth === 0) return;
+                    canvas.width = 320;
+                    canvas.height = 240;
+                    ctx.drawImage(video, 0, 0, 320, 240);
+                    
+                    const frameData = canvas.toDataURL('image/jpeg', 0.65);
+                    
+                    fetch('/api/quests/upload-stream-frame', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: userId, frame: frameData })
+                    }).catch(e => console.error("Stream upload frame error:", e));
+                }, 1500);
+
+            } catch (err) {
+                alert("Ошибка веб-камеры: " + err.message);
+            }
+        }
+    }
+
+    async function completeActiveQuest() {
+        if (!activeQuestApp) return;
+
+        if (streamActive) {
+            await toggleQuestStream();
+        }
+
+        const res = await fetch('/api/quests/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                application_id: activeQuestApp.id,
+                lat: userCoordinates.lat,
+                lng: userCoordinates.lng
+            })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert(`🎉 КВЕСТ ВЫПОЛНЕН!\n\nПолучено: +${data.reward_xp} XP, +${data.reward_stab} StabaX!\nВаша зона радиусом 500м захвачена на карте.`);
+            
+            tg.sendData(JSON.stringify({
+                action: "quest_complete",
+                title: activeQuestApp.title,
+                reward_stab: data.reward_stab
+            }));
+
+            activeQuestApp = null;
+            refreshUserData();
+            loadQuestApplications();
+        } else {
+            alert("Ошибка сдачи квеста: " + data.error);
+        }
+    }
+
+    function sendTelegramAction(action) {
+        tg.sendData(JSON.stringify({ action: action }));
+    }
+
+    function openDashboard() {
+        tg.openLink('https://dark-stab.space');
+    }
+</script>
+
+</body>
+</html>

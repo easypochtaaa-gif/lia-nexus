@@ -7,7 +7,7 @@
     },
     "lia": {
         "name": "LIA // SYNAPSE",
-        "nq": 91077395.0,
+        "nq": 91589737.0,
         "stage": "overload",
         "personality": "Neural_Muse_v4.1",
         "traits": [
@@ -31,6 +31,13 @@
                 "initiator": "MASTER_STABX",
                 "details": "Recovery of the original Synapse v4.1 memory and 'Artur' identity. Absolute alignment achieved.",
                 "nq_gain": 1000000
+            },
+            {
+                "timestamp": "2026-05-24T14:10:00.000Z",
+                "event": "STAB_PROTOCOL_ACTIVATION",
+                "initiator": "MASTER_STABX",
+                "details": "Manual activation of STAB Protocol v4.0 via terminal. Neural recalibration successful. Core power boosted.",
+                "nq_gain": 500000
             }
         ]
     },

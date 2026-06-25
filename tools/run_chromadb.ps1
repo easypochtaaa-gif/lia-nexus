@@ -5,6 +5,6 @@
 
 Write-Host "🚀 Запускаем Chromadb сервер..."
 # Запускаем в фоне, чтобы не блокировать скрипт
-Start-Process -FilePath "python" -ArgumentList "-m", "chromadb", "--host", "localhost", "--port", "8000" -NoNewWindow
-Start-Sleep -Seconds 5  # небольшая пауза, чтобы сервер успел подняться
+Start-Process -FilePath "chroma" -ArgumentList "run", "--host", "localhost", "--port", "8000" -NoNewWindow
+Start-Sleep -Seconds 10  # Увеличиваем паузу для стабильности
 Write-Host "✅ Chromadb сервер запущен на http://localhost:8000"

@@ -9,7 +9,7 @@ class SwarmConfig:
     NAME = "LIA_SWARM_CORE"
     
     # 🔑 KEYS
-    TOKEN = os.getenv('LIFE_LIA_TOKEN')
+    TOKEN = os.getenv('TELEGRAM_BOT_TOKEN') or os.getenv('BOT_TOKEN')
     ADMIN_ID = int(os.getenv('ADMIN_ID', 7915004877))
     
     # 📁 PATHS

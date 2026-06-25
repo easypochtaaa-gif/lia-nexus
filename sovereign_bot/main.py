@@ -1,5 +1,13 @@
+"""
+⚠️ DEPRECATED — sovereign_bot/main.py (LEGACY v4.x)
+=====================================================
+Основной бот теперь: lia-sovereign-bot/main.py (запущен на VPS в Docker)
+Этот файл сохранён как референс. НЕ ЗАПУСКАТЬ — токен тот же что у lia-sovereign-bot → TelegramConflictError.
+Для локального управления ПК используй: lia_pc_agent.py (другой токен LOCAL_BOT_TOKEN)
+"""
 import asyncio
 import os
+import sys
 import logging
 import sqlite3
 import aiohttp
@@ -8,6 +16,15 @@ import io
 from aiohttp import web
 from datetime import datetime
 from aiogram import Bot, Dispatcher, F, types
+
+# Safety guard
+if __name__ == "__main__":
+    print("[DEPRECATED] ЭТОТ БОТ (sovereign_bot/main.py) БОЛЬШЕ НЕ ИСПОЛЬЗУЕТСЯ.")
+    print("   Основной бот: lia-sovereign-bot/main.py (на VPS)")
+    print("   Локальный агент: lia_pc_agent.py")
+    print("   Для принудительного запуска задай I_KNOW_WHAT_IM_DOING=1")
+    if os.getenv("I_KNOW_WHAT_IM_DOING") != "1":
+        sys.exit(1)
 from aiogram.filters import Command, CommandObject
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import FSInputFile, BufferedInputFile
@@ -127,7 +144,7 @@ def load_bot_token():
         except Exception:
             pass
     # Fallback to other tokens
-    for k in ["TG_BOT_TOKEN", "LIFE_LIA_TOKEN", "SMS_BOT_TOKEN"]:
+    for k in ["TG_BOT_TOKEN"]:
         if os.getenv(k):
             return os.getenv(k)
     return None
@@ -135,7 +152,10 @@ def load_bot_token():
 # --- CONFIGURATION ---
 ADMIN_ID = 7915004877  # Architect Arthur
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(PROJECT_ROOT, "sovereign_bot", "lia_sovereign.db")
+# Use /data/ in Docker (volume mount), local path otherwise
+DB_PATH = "/data/lia_sovereign.db" if os.path.exists("/data") else os.path.join(os.path.dirname(os.path.abspath(__file__)), "lia_sovereign.db")
+# Ensure DB directory exists
+os.makedirs(os.path.dirname(DB_PATH) or '.', exist_ok=True)
 
 # --- INITIALIZATION ---
 bot_token = load_bot_token()
@@ -331,7 +351,7 @@ def get_user(user_id):
 
 async def parse_finance_command(text: str, user_id: int):
     """
-    Leverages Claude 3.5 Sonnet to parse natural language financial operations
+    Leverages Claude Opus 4.7 Sonnet to parse natural language financial operations
     into structured JSON objects.
     """
     system_prompt = (
@@ -401,7 +421,7 @@ async def handle_finance_data(message: types.Message, data: dict, user_id: int):
     }
     label = type_labels.get(tx_type, "🔴 УХОД")
     
-    domain = os.getenv("FINANCE_DOMAIN", "http://80.89.237.50:8080")
+    domain = os.getenv("FINANCE_DOMAIN", "https://dark-stab.space")
     verify_link = f"{domain}/verify?id={tx_id}"
     
     hud_text = (
@@ -423,12 +443,12 @@ async def handle_finance_data(message: types.Message, data: dict, user_id: int):
 
 async def handle_cyber_hub(request):
     """Serves the main Telegram Mini App Cyber-Hub dashboard."""
-    path = "hub.html"
+    path = os.path.join(os.path.dirname(__file__), "hub.html")
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             html = f.read()
         return web.Response(text=html, content_type="text/html")
-    return web.Response(text="❌ STAB Cyber-Hub HTML file not found.", status=404)
+    return web.Response(text=f"❌ STAB Cyber-Hub HTML file not found at {path}.", status=404)
 
 async def handle_api_hub_profile(request):
     """Retrieves or registers user stats and returns all details for TWA."""
@@ -585,12 +605,12 @@ async def handle_api_hub_hack(request):
 
 async def handle_finance_dashboard(request):
     """Serves the main premium finance ledger dashboard."""
-    path = "finance_ledger.html"
+    path = os.path.join(os.path.dirname(__file__), "finance_ledger.html")
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             html = f.read()
         return web.Response(text=html, content_type="text/html")
-    return web.Response(text="❌ STAB Finance Ledger dashboard HTML file not found.", status=404)
+    return web.Response(text=f"❌ STAB Finance Ledger dashboard HTML file not found at {path}.", status=404)
 
 async def handle_verify_page(request):
     """Serves the interactive third-party verification card."""
@@ -1099,19 +1119,38 @@ async def generate_lia_ai_reply(user_id: int, text: str) -> str:
     model = map_model_name(model)
     system_prompt = get_setting("admin_system_prompt") if user_id == ADMIN_ID else get_setting("system_prompt")
     
-    # 4. Update emotions
-    state_emotions = EmotionEngine.process_message(user_id, text)
+    # 4. Update emotions (v2.0: LLM sentiment analysis when available)
+    state_emotions = EmotionEngine.process_message(user_id, text, llm_client=openai_client)
     
-    # 5. Save short-term memory cache
-    await MemoryManager.save_recent_message(user_id, "user", text)
+    # 5. Save message to long-term infinite memory (ChromaDB) with emotional tagging
+    try:
+        from sovereign_bot.chroma_memory import LiaMemory
+        from sovereign_bot.memory_enhanced import MemoryConsolidator
+        importance = MemoryConsolidator.score_importance(text)
+        await LiaMemory.save_message(
+            user_id, "user", text,
+            metadata={
+                "emotional_state": state_emotions.get("mood", "neutral"),
+                "importance": importance,
+            }
+        )
+    except Exception as e:
+        logging.error(f"Failed to save infinite memory: {e}")
     
-    # 6. Retrieve long-term memories
-    memories = await MemoryManager.retrieve_relevant_memories(user_id, text, openai_client)
+    # 6. Retrieve relevant context from ALL past sessions via ChromaDB (mood-aware)
     memory_context = ""
-    if memories:
-        memory_context = "\n\n[RELEVANT MEMORIES FOUND]:\n" + "\n".join([f"- В {timestamp} пользователь сказал: '{content}'" for content, timestamp, _ in memories])
+    try:
+        from sovereign_bot.chroma_memory import LiaMemory
+        current_mood = state_emotions.get("mood", "neutral") if state_emotions else None
+        memories = await LiaMemory.retrieve_context(user_id, text, current_mood=current_mood)
+        if memories:
+            memory_context = "\n\n[RELEVANT NEURAL HISTORY]:\n" + "\n".join(
+                [f"- [{m['timestamp']}] {m['role']}: {m['content']}" for m in memories]
+            )
+    except Exception as e:
+        logging.error(f"Failed to retrieve infinite memory: {e}")
         
-    # 7. Build custom system prompt
+    # 7. Build system prompt with infinite memory context
     full_system = system_prompt + EmotionEngine.get_prompt_modifier(user_id) + memory_context
     recent_context = await MemoryManager.get_recent_context(user_id)
     
@@ -1160,14 +1199,46 @@ async def generate_lia_ai_reply(user_id: int, text: str) -> str:
     # 9. Save assistant response to short-term cache
     if not response_text.startswith("❌"):
         await MemoryManager.save_recent_message(user_id, "assistant", response_text)
-        
-        # Auto-extract fact if needed
-        text_lower = text.lower()
-        is_fact = any(x in text_lower for x in ["меня зовут", "мой ", "моя ", "запомни", "я живу", "я люблю"])
-        if is_fact:
-            clean_fact = text.replace("запомни,", "").replace("запомни", "").strip()
-            await MemoryManager.save_long_term_memory(user_id, clean_fact, openai_client)
-            
+
+        # ── LLM-based fact extraction (replaces keyword matching) ──
+        try:
+            from sovereign_bot.memory_enhanced import MemoryConsolidator
+            facts = await MemoryConsolidator.extract_facts(user_id, text, openai_client)
+            for fact in facts:
+                if fact.get("fact"):
+                    await MemoryManager.save_long_term_memory(
+                        user_id,
+                        fact["fact"],
+                        openai_client,
+                        importance=fact.get("importance", 0.5),
+                        category=fact.get("category", "general"),
+                    )
+        except Exception as e:
+            logging.error(f"LLM fact extraction failed: {e}")
+
+        # ── Summarization trigger (every ~10 messages) ──
+        try:
+            from sovereign_bot.memory_enhanced import (
+                increment_message_count,
+                reset_message_count,
+                should_summarize,
+            )
+            from sovereign_bot.chroma_memory import LiaMemory
+
+            count = increment_message_count(user_id)
+            if should_summarize(user_id):
+                reset_message_count(user_id)
+                recent = await MemoryManager.get_recent_context(user_id)
+                if len(recent) >= 5:
+                    summary = await MemoryConsolidator.summarize_conversation(
+                        recent, openai_client
+                    )
+                    if summary:
+                        await LiaMemory.save_summary(user_id, summary)
+                        logging.debug(f"Summary saved for user {user_id}")
+        except Exception as e:
+            logging.error(f"Summarization trigger failed: {e}")
+
     return response_text
 
 # --- STATE MANAGERS (Simple in-memory dictionary for simplicity and stability) ---
@@ -1178,7 +1249,7 @@ CRYPTIC_CHALLENGES = {} # user_id -> {"word": str, "expires_at": float}
 def get_main_menu(user_id):
     builder = InlineKeyboardBuilder()
     user = get_user(user_id)
-    domain = os.getenv("FINANCE_DOMAIN", "http://80.89.237.50:8080")
+    domain = os.getenv("FINANCE_DOMAIN", "https://dark-stab.space")
     
     builder.button(text="👁‍🗨 Войти в Cyber-Hub (TWA)", web_app=types.WebAppInfo(url=f"{domain}/hub"))
     builder.button(text="🧠 Задать вопрос Лие", callback_data="chat_lia")
@@ -1645,6 +1716,62 @@ async def cb_quest_ans(callback: types.CallbackQuery):
         conn.close()
         await callback.answer("Неверный ответ! Попробуйте другой вариант.", show_alert=True)
 
+# --- CUSTOM INTERACTIVE QUESTS HANDLERS ---
+@dp.message(Command("hapanut"))
+async def cmd_hapanut(message: types.Message):
+    await message.answer(
+        "🚬 <b>[ПРОТОКОЛ ХАПАНУТЬ ДЕЛА АКТИВИРОВАН]</b>\n\n"
+        "О, бро! Ты пришел за делами? 👁‍🗨\n\n"
+        "Твой секретный код для прохождения третьего этапа квеста на сайте:\n"
+        "👉 <code>LIA_WANTS_TO_SMOKE_1337</code>\n\n"
+        "Введи его на странице квестов на <a href=\"https://dark-stab.space/quest.html\">dark-stab.space/quest.html</a> и приготовься перекурить дела под лучший нейро-симфонический трек! 🎵",
+        parse_mode="HTML",
+        disable_web_page_preview=True
+    )
+
+@dp.message(Command("claim"))
+async def cmd_claim(message: types.Message, command: CommandObject):
+    user_id = message.from_user.id
+    username = message.from_user.username or f"user_{user_id}"
+    
+    if not command.args:
+        await message.answer("⚠️ <b>Использование:</b> <code>/claim &lt;кодовое_слово&gt;</code>", parse_mode="HTML")
+        return
+        
+    coupon = command.args.strip()
+    if coupon == "LIA_QUEST_COMPLETED_777":
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if already claimed
+        cursor.execute("SELECT value FROM settings WHERE key = ?", (f"quest_claimed_{user_id}",))
+        claimed = cursor.fetchone()
+        
+        if claimed:
+            conn.close()
+            await message.answer("👁‍🗨 Вы уже забрали свой бонус за прохождение квестов! Возвращайтесь к делам 🚬.")
+            return
+            
+        # Register if not registered
+        register_user(user_id, username)
+        
+        # Award 1000 points
+        cursor.execute("UPDATE users SET bonus_points = bonus_points + 1000 WHERE user_id = ?", (user_id,))
+        # Store claim state
+        cursor.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, '1')", (f"quest_claimed_{user_id}",))
+        conn.commit()
+        conn.close()
+        
+        await message.answer(
+            "👑 <b>[СИНХРОНИЗАЦИЯ УСПЕШНАЯ]</b>\n\n"
+            "Поздравляем с прохождением всех испытаний Лии! 👁‍🗨\n"
+            "🎁 Вам начислено <b>+1000 бонусных баллов</b> 💎\n\n"
+            "Проверьте ваш баланс в меню профиля.",
+            parse_mode="HTML"
+        )
+    else:
+        await message.answer("❌ <b>Неверное кодовое слово.</b> Пройдите все этапы квеста на сайте, чтобы получить его!")
+
 @dp.message(Command("admin"))
 async def admin_cmd_handler(message: types.Message):
     if message.from_user.id != ADMIN_ID:
@@ -1851,7 +1978,7 @@ async def cb_aegis_accept(callback: types.CallbackQuery):
     await callback.message.edit_text(
         "🛡 `[AEGIS CYBER-TEST]:` ИНИЦИАЛИЗАЦИЯ НЕЙРО-СКАНИРОВАНИЯ.\n\n"
         "Пожалуйста, отправьте скриншот вашего рабочего стола, настроек смартфона/ПК или страницы безопасности в следующем сообщении.\n\n"
-        "Наш суверенный ИИ (Claude 3.5 Sonnet Vision) проведет детальный аудит на наличие уязвимостей, угроз безопасности или утечек данных и выдаст полный рапорт в стиле киберпанка!",
+        "Наш суверенный ИИ (Claude Opus 4.7 Sonnet Vision) проведет детальный аудит на наличие уязвимостей, угроз безопасности или утечек данных и выдаст полный рапорт в стиле киберпанка!",
         reply_markup=get_back_button()
     )
 
@@ -2022,21 +2149,6 @@ async def cb_aegis_scanner(callback: types.CallbackQuery):
     )
     await callback.message.edit_text(scanning_text, reply_markup=get_back_button())
 
-@dp.callback_query(F.data == "aegis_cybertest")
-async def cb_aegis_cybertest(callback: types.CallbackQuery):
-    user_id = callback.from_user.id
-    ADMIN_STATES[user_id] = "waiting_for_audit"
-    text = (
-        "🛡 `[AEGIS NEURAL CYBER-TEST PROTOCOL]:` ИНИЦИАЛИЗАЦИЯ...\n\n"
-        "Я проведу глубокий нейросетевой аудит вашей цифровой безопасности на базе **Claude 3.5 Sonnet Vision**.\n\n"
-        "**Как пройти аудит:**\n"
-        "1. Сделайте скриншот вашего рабочего стола, экрана настроек смартфона/ПК, или вкладки 'Безопасность' в вашем браузере.\n"
-        "2. **Отправьте этот скриншот (фотографией) в этот чат**.\n"
-        "3. Либо просто отправьте текстовое описание вашей системы (ОС, антивирус, характеристики устройства).\n\n"
-        "Я отсканирую сигнатуры, найду потенциальные уязвимости и выдам кибер-карту с рейтингом защищенности!"
-    )
-    await callback.message.edit_text(text, reply_markup=get_back_button())
-
 @dp.callback_query(F.data == "start_cryptic")
 async def cb_start_cryptic(callback: types.CallbackQuery):
     import random
@@ -2137,7 +2249,16 @@ async def cb_admin_settings(callback: types.CallbackQuery):
     builder.button(text="✍️ Изменить System Prompt", callback_data="edit_system_prompt")
     builder.button(text="🔙 Назад", callback_data="admin_panel")
     builder.adjust(2, 2, 1, 1)
-    await callback.message.edit_text(settings_text, reply_markup=builder.as_markup())
+    
+    reply_markup = builder.as_markup()
+    try:
+        await callback.message.edit_text(settings_text, reply_markup=reply_markup)
+    except Exception:
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
+        await callback.message.answer(settings_text, reply_markup=reply_markup)
 
 @dp.callback_query(F.data.startswith("toggle_free_model_") | F.data.startswith("toggle_prem_model_"))
 async def cb_toggle_model(callback: types.CallbackQuery):
@@ -2164,11 +2285,19 @@ async def cb_edit_prompt(callback: types.CallbackQuery):
 async def cb_admin_users(callback: types.CallbackQuery):
     if callback.from_user.id != ADMIN_ID: return
     ADMIN_STATES[ADMIN_ID] = "waiting_for_user_id"
-    await callback.message.edit_text(
+    text = (
         "👥 `[USER MANAGEMENT MODULE]:` АВТОРИЗАЦИЯ\n\n"
-        "Отправьте мне Telegram ID пользователя, которого вы хотите просмотреть, забанить или наградить Premium-статусом.",
-        reply_markup=get_back_button("admin_panel")
+        "Отправьте мне Telegram ID пользователя, которого вы хотите просмотреть, забанить или наградить Premium-статусом."
     )
+    reply_markup = get_back_button("admin_panel")
+    try:
+        await callback.message.edit_text(text, reply_markup=reply_markup)
+    except Exception:
+        try:
+            await callback.message.delete()
+        except Exception:
+            pass
+        await callback.message.answer(text, reply_markup=reply_markup)
 
 @dp.callback_query(F.data == "admin_broadcast")
 async def cb_admin_broadcast(callback: types.CallbackQuery):
@@ -2607,6 +2736,7 @@ async def text_handler(message: types.Message):
                 for idx, chunk in enumerate(chunks[1:], start=2):
                     if idx == len(chunks):
                         await message.answer(f"👁‍🗨 `[LIA RESPONSE ({idx}/{len(chunks)})]:` {chunk}", reply_markup=get_exit_dialogue_button())
+
                     else:
                         await message.answer(f"👁‍🗨 `[LIA RESPONSE ({idx}/{len(chunks)})]:` {chunk}")
                         
@@ -2722,14 +2852,23 @@ async def voice_handler(message: types.Message):
             reply_markup=get_exit_dialogue_button()
         )
         await status_msg.delete()
-        
-        # Save fact if needed
-        text_lower = transcription.lower()
-        is_fact = any(x in text_lower for x in ["меня зовут", "мой ", "моя ", "запомни", "я живу", "я люблю"])
-        if is_fact:
-            clean_fact = transcription.replace("запомни,", "").replace("запомни", "").strip()
-            await MemoryManager.save_long_term_memory(user_id, clean_fact, openai_client)
-            
+
+        # LLM-based fact extraction for voice transcript
+        try:
+            from sovereign_bot.memory_enhanced import MemoryConsolidator
+            facts = await MemoryConsolidator.extract_facts(user_id, transcription, openai_client)
+            for fact in facts:
+                if fact.get("fact"):
+                    await MemoryManager.save_long_term_memory(
+                        user_id,
+                        fact["fact"],
+                        openai_client,
+                        importance=fact.get("importance", 0.5),
+                        category=fact.get("category", "general"),
+                    )
+        except Exception as e:
+            logging.error(f"Voice fact extraction failed: {e}")
+
     except Exception as e:
         await status_msg.edit_text(f"❌ Ошибка голосового взаимодействия: {str(e)}", reply_markup=get_exit_dialogue_button())
     finally:
@@ -2744,14 +2883,26 @@ async def voice_handler(message: types.Message):
 
 # --- HTTP API HANDLERS FOR WEB INTEGRATION ---
 async def handle_api_chat(request):
+    """Web chat API endpoint. Accepts text + optional user_id, returns LIA AI reply.
+    Assigns web users to ID range 100000+ based on IP hash if no user_id provided."""
     try:
         data = await request.json()
-        text = data.get("text", "")
-        user_id = int(data.get("user_id", 99999))
-        
+        text = data.get("text", "") or data.get("message", "") or data.get("prompt", "")
+
+        # Accept explicit user_id or generate one from IP for web visitors
+        user_id = data.get("user_id")
+        if not user_id:
+            try:
+                ip = request.remote or "0.0.0.0"
+                user_id = (hash(ip) % 900000) + 100000  # Web user IDs: 100000-999999
+            except Exception:
+                user_id = 99999
+        else:
+            user_id = int(user_id)
+
         if not text:
             return web.json_response({"error": "Empty message text"}, status=400)
-            
+
         reply_text = await generate_lia_ai_reply(user_id, text)
         return web.json_response({"reply": reply_text})
     except Exception as e:
@@ -2868,11 +3019,36 @@ async def main():
     # Run Web server in background task on port 8080
     runner = web.AppRunner(app)
     await runner.setup()
-    
+
     port = int(os.getenv("PORT", 8080))
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
     print(f"Sovereign AIOHTTP Finance Web Server started on port {port}")
+
+    # ── Background: Memory maintenance scheduler ──
+    try:
+        from sovereign_bot.memory_scheduler import MemoryScheduler
+        asyncio.create_task(
+            MemoryScheduler.run_periodic_maintenance(
+                interval_minutes=60,
+                openai_client=openai_client,
+                anthropic_client=anthropic_client,
+                max_age_days=90,
+                min_importance=0.2,
+            )
+        )
+        print("LIA // MEMORY_SCHEDULER: Background maintenance task started.")
+    except Exception as e:
+        print(f"Warning: Memory scheduler failed to start: {e}")
+
+    # ── Background: Init enhanced emotion tables ──
+    try:
+        from sovereign_bot.emotions_enhanced import EmotionalArc, RelationshipTracker
+        EmotionalArc.init_db()
+        RelationshipTracker.init_db()
+        print("LIA // EMOTIONS_ENHANCED: Arc + Relationship tables initialized.")
+    except Exception as e:
+        print(f"Warning: Enhanced emotion tables init failed: {e}")
     
     # Clean previous webhooks for active polling
     await bot.delete_webhook(drop_pending_updates=True)

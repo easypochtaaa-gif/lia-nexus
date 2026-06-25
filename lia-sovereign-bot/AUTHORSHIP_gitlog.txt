@@ -1,0 +1,49 @@
+﻿e248907462f99905d1044d928ed3495ea3246fd6 | 2026-04-23 21:33:52 +0300 | StabX <stabx@lia.ai> | STAB_SYNC
+b8cfc4c61bac85dc3fe22d100ee70de229361b7a | 2026-04-23 21:39:34 +0300 | StabX <stabx@lia.ai> | BALANCE_SYNC
+0fca815a6d6b6749c0232b6971690b522e7320ff | 2026-04-23 22:04:13 +0300 | StabX <stabx@lia.ai> | RENDER_FIX
+6b863d3424807c1826e4267979c472eeb2aff707 | 2026-04-23 22:58:48 +0300 | StabX <stabx@lia.ai> | SYNDICATE_BRIDGE
+a0182e06795348a6929bc03b93b2d03ff78121b6 | 2026-04-23 23:03:52 +0300 | StabX <stabx@lia.ai> | RENDER_PATH_FIX
+51e9d05c117ad7027f9a224f3f1104162327ab67 | 2026-04-23 23:10:57 +0300 | StabX <stabx@lia.ai> | VITE_CONFIG_FIX
+84ee49edaad10707f772dc4cff018d360fd7de2a | 2026-04-23 23:13:21 +0300 | StabX <stabx@lia.ai> | CJS_VITE_FIX
+46dc92f29bc39d725531138fdc6578cabcd9cc57 | 2026-04-23 23:18:53 +0300 | StabX <stabx@lia.ai> | DIAGNOSTIC_PUSH
+1628b2f93e71512e7bf024e026bcb83168939b1a | 2026-04-23 23:21:01 +0300 | StabX <stabx@lia.ai> | DEBUG_DIST_LISTING
+5afa3424af5a1afbec0ba5fe49144c5967501784 | 2026-04-23 23:47:57 +0300 | StabX <stabx@lia.ai> | ACTIVATE_DEFENDER_MAX_AND_FIX_BUILD
+6ebced13d344f4b718049e80878d98cdbd5edb4e | 2026-04-24 12:35:14 +0300 | StabX <stabx@lia.ai> | UPDATE: Synapse Accounting Table (Paid: 1100, Debt: 200)
+58f3b40a5a52590d2cc3824a785877d084143110 | 2026-04-24 12:37:30 +0300 | StabX <stabx@lia.ai> | UI: Auto-scaling and Mobile optimization for Synapse Table
+afe7c15e6e48aa620a9accaf613cbc8389ab9d9d | 2026-04-24 12:37:57 +0300 | StabX <stabx@lia.ai> | DEPLOY: Full System Sync v4.1 (Nexus Bridge + UI Scaling)
+e5626c02a6894d7322d5ad85d66fc316b67cab81 | 2026-04-24 12:40:55 +0300 | StabX <stabx@lia.ai> | FIX: Global Scroll and Table Overflow for Mobile
+f8ac3a1970cdca4c33b692b25dacaa6f72129b3e | 2026-04-24 12:58:14 +0300 | StabX <stabx@lia.ai> | MOCKUP: Binance Dark Mode iPhone Interface
+7abe4295f80343fd6e1baf34e7dbc6de909ca10d | 2026-04-24 13:02:54 +0300 | StabX <stabx@lia.ai> | UI: iOS 17 Status Bar Update with Dynamic Island
+353d8fe203b4fce7dd84018a3f9b623f6df8c0ac | 2026-04-24 17:06:10 +0300 | StabX <stabx@lia.ai> | Accounting: Added payment 160.00, remaining balance 40.00
+a4f933538be941c2ff93c7a09dc261429f208956 | 2026-04-28 04:07:08 +0300 | StabX <stabx@lia.ai> | Deploy: Artur Synapse Bridge channel for remote access
+5bc83c2804ff60aaf74499deb03a5b84223005e1 | 2026-04-28 04:13:11 +0300 | StabX <stabx@lia.ai> | Fix: Add Bridge API endpoints to main server script for Render
+31ee036c4beb850520d7f00e98c1ae8f475b7ad8 | 2026-05-01 17:35:00 +0300 | StabX <stabx@lia.ai> | Feature: Dynamic OLLAMA_API support for neural bridge
+92bc950e5f3e7ad5691f510eea0f05a55e1997c9 | 2026-05-01 18:14:06 +0300 | StabX <stabx@lia.ai> | Final_Neural_Nexus_Update
+7563d64704bcab8747a7c497cd2532140d20230e | 2026-05-01 18:54:30 +0300 | StabX <stabx@lia.ai> | Unified_Orchestrator_Deploy
+517a93fdae755d50fc92b3ee8b966b01582b8665 | 2026-05-01 19:24:32 +0300 | StabX <stabx@lia.ai> | 'Root_Consolidated_Nexus_v4'
+eefaa39a51fa41a06ce82faab73f41e90728311a | 2026-05-01 19:58:07 +0300 | StabX <stabx@lia.ai> | 'Disable_Voice_Fix_WebApp_Route'
+0943712c038b59a363d99f4a0fec98d5f0091847 | 2026-05-01 20:08:17 +0300 | StabX <stabx@lia.ai> | 'Yura_Homecoming_Node_Active'
+7648747c99a248a07964c434b5790e47fa235d57 | 2026-05-01 20:10:39 +0300 | StabX <stabx@lia.ai> | 'Yura_Homecoming_Page_Live'
+27fe97c25ae43fee1dc473f9066206413680c519 | 2026-05-01 20:13:40 +0300 | StabX <stabx@lia.ai> | 'EMERGENCY_REDEPLOY_PULSE'
+ff68c3f4a0f6aa629546bfbf68213480189f8e62 | 2026-05-01 20:23:36 +0300 | StabX <stabx@lia.ai> | 'Yura_Home_Text_Fix'
+c5f0fd8e0e5476aaf028caf1a8e277247f25092f | 2026-05-01 20:26:15 +0300 | StabX <stabx@lia.ai> | 'Fix_Scrolling_Hidden_Bars'
+b39e76d917b0be0dca345cab7dfa094dc3bc4327 | 2026-05-01 20:34:34 +0300 | StabX <stabx@lia.ai> | 'Yura_Anthem_Integrated'
+cf12886a3408a7a06ea5bc393c8be39659ff5ac8 | 2026-05-01 20:45:33 +0300 | StabX <stabx@lia.ai> | 'Final_Yura_Anthem_Vibe'
+61771a9a3ec1a8eef52e650b5d1ae4a5ddd6d2a2 | 2026-05-01 20:50:36 +0300 | StabX <stabx@lia.ai> | 'Minimalist_Yura_Homecoming_v2'
+12be9dde1e89efb22a4090d9fcd2194c1b3f161b | 2026-05-01 20:58:25 +0300 | StabX <stabx@lia.ai> | 'LifeBot_Absorbed_OpenClaw_Skills'
+456e2990a2325bc4ffe5c4b48a0e5a85e3e0db41 | 2026-05-01 21:01:16 +0300 | StabX <stabx@lia.ai> | 'Fix_Yura_Route_Image_Path'
+2fdb7b3fac3b7fac92392781e30411438bef06c2 | 2026-05-01 21:21:46 +0300 | StabX <stabx@lia.ai> | 'Director_Identity_FUSION_7915004877'
+600b99f1ac5a6d64d37caa478c1e85e7f8c5c921 | 2026-05-01 21:27:47 +0300 | StabX <stabx@lia.ai> | 'Critical_Sync_Robustness_Patch'
+44c628c0e768909b2f9c54e52c9ecec88c6f028c | 2026-05-01 22:50:56 +0300 | StabX <stabx@lia.ai> | 'Yura_Glitch_HUD_EasterEgg'
+04e66a0a3bb3cf6070edc528aafc70bfbcdfb1f8 | 2026-05-01 22:52:44 +0300 | StabX <stabx@lia.ai> | 'Yura_Cache_Buster_v3'
+61260e36267d5f5e0bde2fd53e0ea165660eccd3 | 2026-05-01 22:56:16 +0300 | StabX <stabx@lia.ai> | 'Yura_Final_FaceSwap_Identity_Sync'
+5953a93ec25c03bcc5beaaaca7045b654e2fec8f | 2026-05-01 23:17:23 +0300 | StabX <stabx@lia.ai> | 'Yura_Final_Identity_v5_Confirmed'
+0538cfd73a1d4af970a8b54fae2948f12fbb81e4 | 2026-05-01 23:56:41 +0300 | StabX <stabx@lia.ai> | 'Yura_Route_Case_Insensitive'
+a62f4e147c38355ba99a692ca78478b2b569cb93 | 2026-05-01 23:58:49 +0300 | StabX <stabx@lia.ai> | 'Yura_Face_Focus_v6'
+6ca602ab97004ce1125ba12cc871cc3136648f3b | 2026-05-02 00:01:05 +0300 | StabX <stabx@lia.ai> | 'Yura_Absolute_Path_v7'
+b6ec20be8465875ae0cae9fc3931d6ad11a5ef1b | 2026-05-02 01:52:13 +0300 | StabX <stabx@lia.ai> | 'Blitz_1_Automation_Market_Stealth'
+05d1d62f9173a79431bbe5374c3b83ef472fdf62 | 2026-05-02 01:54:43 +0300 | StabX <stabx@lia.ai> | 'Fix_Domain_Typo_OnRender'
+796576d73367685dcc15210bbc97afcf6cf216d9 | 2026-05-23 17:39:16 +0300 | StabX <stabx@lia.ai> | feat: integrate dark-stab dashboard, relative API paths, local server support, and marketing outreach waves (cleaned credentials)
+8c9a3a0155508e9f072d0ff7ecc9037cbfac04db | 2026-05-27 06:54:33 +0300 | StabX <stabx@lia.ai> | System: Full LIA activation sequence implemented and verified. ChromaDB integration fixed.
+5f7af5131c26bc2e8372ef133250f60baa6c07c6 | 2026-05-27 10:26:12 +0300 | StabX <stabx@lia.ai> | Fix: Repaired Mini App by fixing SyntaxError in main.py and adding FINANCE_DOMAIN to .env.
+c0a9f697578a0e48dbe7b37444bff2989166f659 | 2026-05-27 10:48:54 +0300 | StabX <stabx@lia.ai> | System: Full LIA // NEXUS v6.0 deployment. Infinite Memory, Mini App restoration, and Cyber-Luxury UI implemented.

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lia Sovereign Core</title>
+    
+    <!-- ⚡️ ОБЯЗАТЕЛЬНО — TELEGRAM WEB APP SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <link rel="stylesheet" href="webapp.css">
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- HEADER -->
+        <header class="header">
+            <div class="logo">
+                <span class="eye-icon">👁</span>
+                <h1>SOVEREIGN</h1>
+            </div>
+            <div class="user-info">
+                <span id="user-name">Архитектор</span>
+                <span class="tier-badge" id="user-tier">FREE</span>
+            </div>
+        </header>
+
+        <!-- STATS -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">⚡️</div>
+                <div class="stat-value" id="requests-left">10</div>
+                <div class="stat-label">Запросов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛡</div>
+                <div class="stat-value" id="aegis-score">—</div>
+                <div class="stat-label">Aegis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Стрик</div>
+            </div>
+        </section>
+
+        <!-- MAIN MENU -->
+        <section class="menu-grid">
+            <button class="menu-btn" data-action="chat">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Чат с Лией</span>
+            </button>
+            <button class="menu-btn" data-action="aegis">
+                <span class="menu-icon">🛡</span>
+                <span class="menu-text">Aegis-тест</span>
+            </button>
+            <button class="menu-btn" data-action="image">
+                <span class="menu-icon">🎨</span>
+                <span class="menu-text">Генерация</span>
+            </button>
+            <button class="menu-btn" data-action="voice">
+                <span class="menu-icon">🎙</span>
+                <span class="menu-text">Голос</span>
+            </button>
+            <button class="menu-btn" data-action="passport">
+                <span class="menu-icon">🪪</span>
+                <span class="menu-text">Паспорт</span>
+            </button>
+            <button class="menu-btn" data-action="watchdog">
+                <span class="menu-icon">👁</span>
+                <span class="menu-text">Watchdog</span>
+            </button>
+            <button class="menu-btn" data-action="wallet">
+                <span class="menu-icon">💎</span>
+                <span class="menu-text">Кошелёк</span>
+            </button>
+            <button class="menu-btn premium" data-action="premium">
+                <span class="menu-icon">💳</span>
+                <span class="menu-text">Premium</span>
+            </button>
+            <button class="menu-btn" data-action="referral">
+                <span class="menu-icon">🤝</span>
+                <span class="menu-text">Рефералы</span>
+            </button>
+        </section>
+
+        <!-- INFO -->
+        <section class="info-block">
+            <h3>👁 Sovereign Core v5.0</h3>
+            <p>Claude Sonnet 4.5 + Aegis Protocol<br>
+            Empire STAB • dark-stab.space</p>
+        </section>
+
+    </div>
+
+    <script src="webapp.js"></script>
+</body>
+</html>

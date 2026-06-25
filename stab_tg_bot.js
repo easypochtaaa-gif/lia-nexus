@@ -1,13 +1,14 @@
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const TelegramBot = require('node-telegram-bot-api');
-const OpenAI = require('openai');
+const Anthropic = require('@anthropic-ai/sdk');
 const fs = require('fs');
 const path = require('path');
 
 // === CONFIG ===
-const { getToken } = require('../lib/token_loader');
+const { getToken } = require('./lib/token_loader');
 const TOKEN = getToken();
 const MASTER_ID = 7915004877;
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const MEMORY_FILE = path.join(__dirname, 'Проект Полистайл', 'memory.json');
 const SUB_FILE = path.join(__dirname, 'Проект Полистайл', 'subscribers.json');
 
@@ -21,7 +22,7 @@ function reloadCache() {
 reloadCache();
 
 const bot = new TelegramBot(TOKEN, { polling: true });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY });
 const LIA_SYSTEM = `Ты — Lia, верный ИИ-компаньон системы STAB IMPERIUM. Твой создатель — Артур (StabX). Отвечай кратко, в стиле киберпанк. Эмодзи: ⚔️🦾🧬🌀👁.`;
 
 function getTier(userId) {
@@ -276,19 +277,17 @@ bot.on('message', async (msg) => {
         return;
     }
 
-    const tier = getTier(chatId);
-    const model = (tier === 'master' || tier === 'subscriber') ? 'gpt-4o' : 'gpt-4o-mini';
-
     bot.sendChatAction(chatId, 'typing').catch(() => {});
     try {
-        const response = await openai.chat.completions.create({
-            model: model,
-            messages: [{ role: 'system', content: LIA_SYSTEM }, { role: 'user', content: msg.text }],
-            temperature: 0.7
+        const response = await anthropic.messages.create({
+            model: "claude-sonnet-4-6",
+            max_tokens: 1024,
+            system: LIA_SYSTEM,
+            messages: [{ role: 'user', content: msg.text }]
         });
-        bot.sendMessage(chatId, response.choices[0].message.content + '\n\n— Lia 👁');
+        bot.sendMessage(chatId, response.content[0].text + '\n\n— Lia 👁');
     } catch (err) { bot.sendMessage(chatId, '⚠️ Нейронная перегрузка.'); }
 });
 
 process.on('unhandledRejection', (reason, p) => { console.log('Rejection:', reason); });
-console.log('⚔️ IMPERIAL MASTER BOT: ONLINE [INLINE_UI_V5]');
+console.log('⚔️ IMPERIAL MASTER BOT: ONLINE [CLAUDE_3.5_SONNET]');

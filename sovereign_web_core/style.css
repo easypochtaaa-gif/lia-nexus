@@ -1058,6 +1058,67 @@ input:checked + .slider:before {
     transition: all 0.3s ease;
 }
 
+.voice-button {
+    background: rgba(157, 78, 221, 0.08);
+    border: 1px solid rgba(157, 78, 221, 0.2);
+    color: var(--accent-violet, #9D4EDD);
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 48px;
+}
+.voice-button:hover {
+    background: rgba(157, 78, 221, 0.15);
+    border-color: rgba(157, 78, 221, 0.4);
+    box-shadow: 0 0 12px rgba(157, 78, 221, 0.2);
+}
+.voice-button.listening {
+    background: rgba(255, 0, 122, 0.15);
+    border-color: rgba(255, 0, 122, 0.5);
+    color: var(--danger, #FF007A);
+    animation: mic-pulse 1s infinite;
+}
+@keyframes mic-pulse {
+    0%, 100% { box-shadow: 0 0 4px rgba(255, 0, 122, 0.3); }
+    50% { box-shadow: 0 0 16px rgba(255, 0, 122, 0.6); }
+}
+.mic-icon {
+    pointer-events: none;
+}
+.voice-status {
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 0.7rem;
+    color: var(--accent-cyan);
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    animation: fade-in 0.3s ease;
+}
+.voice-pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-cyan);
+    border-radius: 50%;
+    animation: pulse-dot 0.8s infinite;
+}
+@keyframes pulse-dot {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+}
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .send-button:hover:not(:disabled) {
     background: var(--accent-cyan);
     color: var(--text-dark);
@@ -1352,4 +1413,141 @@ input:checked + .slider:before {
         padding: 0 16px;
     }
 }
+
+/* --- DYNAMIC LOADING PULSE ANIMATION --- */
+@keyframes loading-pulse-anim {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.loading-pulse {
+    display: inline-block;
+    animation: loading-pulse-anim 1.2s ease-in-out infinite;
+    font-family: var(--font-cyber);
+    color: var(--accent-cyan);
+    letter-spacing: 2px;
+}
+
+/* Wallet connected state for cyber-button */
+.cyber-button.wallet-connected {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(6, 182, 212, 0.12));
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #10b981;
+    box-shadow: 0 0 18px rgba(16, 185, 129, 0.18), inset 0 0 10px rgba(16, 185, 129, 0.05);
+}
+
+/* Quest card variants */
+.quest-card {
+    background: rgba(10, 12, 18, 0.55);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    transition: all 0.25s ease;
+}
+
+.quest-card:hover {
+    border-color: rgba(168, 85, 247, 0.3);
+    background: rgba(168, 85, 247, 0.05);
+    transform: translateY(-1px);
+}
+
+.quest-card.completed {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.04);
+    opacity: 0.7;
+}
+
+.quest-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.quest-status-badge {
+    font-family: var(--font-cyber);
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+.quest-status-badge.active {
+    background: rgba(6,182,212,0.15);
+    border: 1px solid rgba(6,182,212,0.4);
+    color: var(--accent-cyan);
+}
+
+.quest-status-badge.completed {
+    background: rgba(16,185,129,0.12);
+    border: 1px solid rgba(16,185,129,0.35);
+    color: #10b981;
+}
+
+.quest-rewards {
+    font-size: 0.72rem;
+    color: var(--accent-violet);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.quest-title {
+    font-family: var(--font-cyber);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+
+.quest-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+/* Leaderboard row styles */
+.lb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(168,85,247,0.1);
+    background: rgba(0,0,0,0.18);
+    margin-bottom: 5px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.lb-row:hover {
+    background: rgba(168,85,247,0.07);
+}
+
+.lb-rank {
+    font-family: var(--font-cyber);
+    font-size: 1.1rem;
+    font-weight: 900;
+    min-width: 36px;
+}
+
+.lb-name {
+    flex: 1;
+    font-weight: 500;
+    padding: 0 12px;
+    font-size: 0.9rem;
+}
+
+.lb-xp {
+    font-family: monospace;
+    color: var(--accent-cyan);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* Tier badge colors */
+.tier-ultra { color: gold; }
+.tier-pro   { color: var(--accent-violet); }
+.tier-lite  { color: var(--accent-cyan); }
+.tier-free  { color: var(--text-muted); }
 

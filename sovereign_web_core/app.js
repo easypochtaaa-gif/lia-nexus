@@ -4,12 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initClockAndUptime();
     initNeuralCanvas();
-    initLoadSimulators();
+    initLoadSimulators(); loadStats();
     initAegisScanner();
     initChatInterface();
     initStorefrontToggles();
     initCoreTerminal();
     initAudioEffects();
+    initWeb3();
+    initQuests();
 });
 
 // --- 1. NAVIGATION TAB CONTROLLER ---
@@ -27,6 +29,13 @@ function initTabs() {
             
             btn.classList.add("active");
             document.getElementById(targetTab).classList.add("active");
+
+            if (targetTab === 'tab-quest-moderation') {
+                loadAdminQuests();
+                startStreamMonitor();
+            } else {
+                stopStreamMonitor();
+            }
         });
         
         btn.addEventListener("mouseenter", () => {
@@ -96,6 +105,33 @@ function initLoadSimulators() {
         }
     }, 4000);
 }
+
+// --- 5. LOAD STATS INTO DASHBOARD ---
+function loadStats() {
+    // Placeholder values (напуском) – replace with real API calls later
+    const uptimeElem = document.getElementById('uptime-counter');
+    const threatsElem = document.getElementById('threats-blocked');
+    const activeUsersElem = document.getElementById('active-users-stat');
+    const vipUsersElem = document.getElementById('vip-users-trend');
+
+    // Fetch real stats from server
+    fetch('/api/stats')
+      .then(r => r.json())
+      .then(data => {
+          if (uptimeElem) uptimeElem.textContent = data.uptime || '148ч';
+          if (threatsElem) threatsElem.textContent = `${data.threats_blocked || 0}`;
+          if (activeUsersElem) activeUsersElem.textContent = `${data.total_users || 0}`;
+          if (vipUsersElem) vipUsersElem.textContent = `${data.vip_users || 0}`;
+      })
+      .catch(() => {
+          // Fallback if API unavailable
+          if (uptimeElem) uptimeElem.textContent = '…';
+          if (threatsElem) threatsElem.textContent = '…';
+          if (activeUsersElem) activeUsersElem.textContent = '…';
+          if (vipUsersElem) vipUsersElem.textContent = '…';
+      });
+}
+
 
 // --- 4. INTERACTIVE BACKGROUND NEURAL CANVAS ---
 function initNeuralCanvas() {
@@ -302,23 +338,21 @@ function initChatInterface() {
 
     let chatHistory = [];
 
-    // Load saved API Key
+    // Chat is ALWAYS enabled now — backend handles API keys
+    // API key field is kept for backward compatibility (optional override)
     const savedKey = localStorage.getItem("sovereign_api_key");
     if (savedKey) {
         apiInput.value = savedKey;
-        enableChat(true);
     }
+    enableChat(true);  // Always enabled
 
     saveBtn.addEventListener("click", () => {
         const key = apiInput.value.trim();
         if (key) {
             localStorage.setItem("sovereign_api_key", key);
-            enableChat(true);
-            alert("🔑 Синхронизация успешна! Ключ безопасности сохранен локально.");
+            alert("🔑 Ключ сохранён локально (опционально).");
         } else {
             localStorage.removeItem("sovereign_api_key");
-            enableChat(false);
-            alert("❌ Ключ удален. Ввод заблокирован.");
         }
     });
 
@@ -326,27 +360,28 @@ function initChatInterface() {
         chatInput.disabled = !enable;
         sendBtn.disabled = !enable;
         if (enable) {
-            chatInput.placeholder = "Введите ваш аналитический запрос к Лие...";
-        } else {
-            chatInput.placeholder = "Введите ваш API ключ сверху для активации...";
+            chatInput.placeholder = "Введите ваш запрос к Лие... (или нажмите 🎤 для голоса)";
         }
+    }
+
+    // Get or create web user ID (stored in localStorage)
+    function getWebUserId() {
+        let uid = localStorage.getItem("lia_web_user_id");
+        if (!uid) {
+            uid = "web_" + Math.random().toString(36).substring(2, 10);
+            localStorage.setItem("lia_web_user_id", uid);
+        }
+        return uid;
     }
 
     async function sendPrompt() {
         const prompt = chatInput.value.trim();
-        const apiKey = localStorage.getItem("sovereign_api_key");
-        const model = chatModel.value;
-        const webSearch = webSearchToggle.checked;
 
-        if (!prompt || !apiKey) return;
+        if (!prompt) return;
 
         // Append user message to UI
         appendMessage(prompt, "user");
         chatInput.value = "";
-        
-        // Add to dialog context history
-        chatHistory.push({ role: "user", content: prompt });
-        if (chatHistory.length > 20) chatHistory.shift();
 
         // Disable inputs
         chatInput.disabled = true;
@@ -355,40 +390,36 @@ function initChatInterface() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
         try {
+            const webSearch = webSearchToggle ? webSearchToggle.checked : false;
             const response = await fetch("/api/chat", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    messages: chatHistory,
-                    api_key: apiKey,
-                    model: model,
+                    text: prompt,
+                    user_id: getWebUserId(),
                     web_search: webSearch
                 })
             });
 
             const data = await response.json();
-            
             typingIndicator.style.display = "none";
-            
-            if (response.ok && data.content && data.content[0]) {
+
+            if (response.ok && data.reply) {
+                appendMessage(data.reply, "bot");
+                // TTS: speak the response
+                speakResponse(data.reply);
+            } else if (response.ok && data.content && data.content[0]) {
+                // Fallback: raw Anthropic format (if server still in proxy mode)
                 const responseText = data.content[0].text;
                 appendMessage(responseText, "bot");
-                
-                // Add response to dialog context history
-                chatHistory.push({ role: "assistant", content: responseText });
-                if (chatHistory.length > 20) chatHistory.shift();
+                speakResponse(responseText);
             } else {
-                const errMsg = data.error || "Неизвестная ошибка связи с Opus 4.7.";
-                appendMessage(`❌ Ошибка сигнатуры API: ${errMsg}`, "bot");
-                // Remove the last message from history if call failed to avoid corrupted state
-                chatHistory.pop();
+                const errMsg = data.error || "Неизвестная ошибка нейро-ядра.";
+                appendMessage(`❌ ${errMsg}`, "bot");
             }
         } catch (error) {
             typingIndicator.style.display = "none";
-            appendMessage(`❌ Сбой сетевого моста прокси: ${error.message}`, "bot");
-            chatHistory.pop();
+            appendMessage(`❌ Сбой сетевого моста: ${error.message}`, "bot");
         } finally {
             chatInput.disabled = false;
             sendBtn.disabled = false;
@@ -429,6 +460,124 @@ function initChatInterface() {
     chatInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") sendPrompt();
     });
+
+    // ── Voice Input (Web Speech API) ──
+    initVoiceInput();
+}
+
+// --- VOICE INPUT + TTS ─────────────────────────────────────
+function initVoiceInput() {
+    const micBtn = document.getElementById("btn-voice-input");
+    const chatInput = document.getElementById("chat-prompt-input");
+    const voiceStatus = document.getElementById("voice-status-indicator");
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        if (micBtn) micBtn.style.display = "none";
+        console.log("[LIA] Web Speech API not available — voice input disabled.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "ru-RU";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    let isListening = false;
+
+    recognition.onstart = () => {
+        isListening = true;
+        if (voiceStatus) voiceStatus.style.display = "block";
+        if (micBtn) micBtn.innerHTML = '<span class="mic-icon">⏹️</span>';
+        if (micBtn) micBtn.classList.add("listening");
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (chatInput) chatInput.value = transcript;
+        if (voiceStatus) voiceStatus.style.display = "none";
+        if (micBtn) micBtn.innerHTML = '<span class="mic-icon">🎤</span>';
+        if (micBtn) micBtn.classList.remove("listening");
+        isListening = false;
+        // Auto-send after voice input
+        if (transcript.trim()) {
+            const sendBtn = document.getElementById("btn-send-chat");
+            if (sendBtn) sendBtn.click();
+        }
+    };
+
+    recognition.onerror = (event) => {
+        console.error("[LIA] Voice recognition error:", event.error);
+        if (voiceStatus) {
+            voiceStatus.textContent = "❌ Ошибка: " + event.error + ". Попробуйте ещё раз.";
+            voiceStatus.style.display = "block";
+            setTimeout(() => { if (voiceStatus) voiceStatus.style.display = "none"; }, 3000);
+        }
+        if (micBtn) micBtn.innerHTML = '<span class="mic-icon">🎤</span>';
+        if (micBtn) micBtn.classList.remove("listening");
+        isListening = false;
+    };
+
+    recognition.onend = () => {
+        if (micBtn) micBtn.innerHTML = '<span class="mic-icon">🎤</span>';
+        if (micBtn) micBtn.classList.remove("listening");
+        if (!isListening && voiceStatus) voiceStatus.style.display = "none";
+    };
+
+    if (micBtn) {
+        micBtn.addEventListener("click", () => {
+            if (isListening) {
+                recognition.stop();
+                isListening = false;
+            } else {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error("[LIA] Failed to start recognition:", e);
+                }
+            }
+        });
+    }
+
+    console.log("[LIA] Voice input initialized (ru-RU).");
+}
+
+function speakResponse(text) {
+    if (!window.speechSynthesis) return;
+
+    // Strip markdown-like formatting for cleaner speech
+    let cleanText = text
+        .replace(/\*\*/g, "")
+        .replace(/\*/g, "")
+        .replace(/`/g, "")
+        .replace(/\[/g, "")
+        .replace(/\]/g, "")
+        .replace(/\(/g, "")
+        .replace(/\)/g, "");
+
+    // Truncate long responses for speech
+    if (cleanText.length > 500) {
+        cleanText = cleanText.substring(0, 500) + "...";
+    }
+
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = "ru-RU";
+    utterance.rate = 1.05;
+    utterance.pitch = 1.1;
+    utterance.volume = 0.9;
+
+    // Try to find a female Russian voice
+    const voices = speechSynthesis.getVoices();
+    const ruVoices = voices.filter(v => v.lang.startsWith("ru"));
+    const femaleVoice = ruVoices.find(v => v.name.includes("Female") || v.name.includes("Katya") || v.name.includes("Milena"));
+    if (femaleVoice) {
+        utterance.voice = femaleVoice;
+    } else if (ruVoices.length > 0) {
+        utterance.voice = ruVoices[0];
+    }
+
+    speechSynthesis.speak(utterance);
 }
 
 // --- 7. KYIV RETAIL POINTS ON/OFF STATUS TOGGLES ---
@@ -682,4 +831,253 @@ function initCoreTerminal() {
     termInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") processCommand();
     });
+}
+
+// --- 10. WEB3 WALLET CONNECTION ---
+function initWeb3() {
+    const connectBtn = document.getElementById("btn-connect-wallet");
+    const addressDisplay = document.getElementById("wallet-address");
+
+    if (!connectBtn) return;
+
+    connectBtn.addEventListener("click", async () => {
+        playSynthSound('click');
+        try {
+            let account = null;
+            if (window.ethereum) {
+                // MetaMask or compatible EVM wallet
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                account = accounts[0];
+            } else if (window.solana && window.solana.isPhantom) {
+                // Phantom Wallet
+                const response = await window.solana.connect();
+                account = response.publicKey.toString();
+            } else {
+                alert("Web3 кошелек (MetaMask или Phantom) не обнаружен. Пожалуйста, установите расширение.");
+                return;
+            }
+
+            if (account) {
+                addressDisplay.textContent = account.slice(0, 12) + '...';
+                addressDisplay.style.display = "block";
+                connectBtn.textContent = "🔗 CONNECTED";
+                connectBtn.classList.add("wallet-connected");
+                playSynthSound('success');
+
+                // If running in Telegram WebApp, send data back to the bot
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.sendData(JSON.stringify({
+                        action: "wallet_connect",
+                        wallet: account
+                    }));
+                }
+
+                // Also save to server via API (works both in WebView and browser)
+                try {
+                    const uid = getWebUserId();
+                    await fetch('/api/connect-wallet', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ user_id: uid, wallet: account })
+                    });
+                    console.log('[WEB3] Wallet saved to server:', account.slice(0, 12) + '...');
+                } catch (apiErr) {
+                    console.error('[WEB3] Failed to save wallet to server:', apiErr);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Ошибка при подключении кошелька: " + error.message);
+        }
+    });
+}
+
+// --- 11. QUESTS & LEADERBOARD ---
+function initQuests() {
+    const questsList = document.getElementById("quests-list");
+    const leaderboardList = document.getElementById("leaderboard-list");
+
+    if (!questsList || !leaderboardList) return;
+
+    // Dummy Quests Data
+    const quests = [
+        { title: "Подключить Кошелек", desc: "Свяжите Web3 кошелек (MetaMask/Phantom) с профилем.", reward: "500 STAB", status: "Активно" },
+        { title: "Первый Контакт", desc: "Проведите первую диалоговую сессию с разумом LIA.", reward: "250 XP", status: "Выполнено" },
+        { title: "Пригласить Рекрута", desc: "Пригласите 1 друга в Империю по вашей реферальной ссылке.", reward: "1000 STAB", status: "Активно" }
+    ];
+
+    // Dummy Leaderboard Data
+    const leaderboard = [
+        { rank: 1, name: "Architect", score: "999,999 XP" },
+        { rank: 2, name: "CyberNinja", score: "45,230 XP" },
+        { rank: 3, name: "NeonPhantom", score: "38,100 XP" },
+        { rank: 4, name: "NullPointer", score: "12,050 XP" },
+        { rank: 5, name: "GhostProtocol", score: "8,900 XP" }
+    ];
+
+    // Render Quests
+    questsList.innerHTML = quests.map(q => `
+        <div class="store-card ${q.status === 'Выполнено' ? 'offline' : 'online'}" style="margin-bottom: 10px; padding: 15px;">
+            <div class="store-card-header">
+                <span class="store-status-badge">${q.status}</span>
+                <span class="store-location" style="color: var(--accent-cyan); font-weight: bold;">Награда: ${q.reward}</span>
+            </div>
+            <h2 class="store-title" style="font-size: 1.1rem; margin-bottom: 5px;">${q.title}</h2>
+            <div class="store-details" style="font-size: 0.85rem; color: #a1a1aa;">${q.desc}</div>
+        </div>
+    `).join('');
+
+    // Render Leaderboard
+    leaderboardList.innerHTML = leaderboard.map(l => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid rgba(168,85,247,0.2); background: rgba(0,0,0,0.2); margin-bottom: 5px; border-radius: 4px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-family: 'Orbitron'; font-size: 1.2rem; color: ${l.rank === 1 ? 'gold' : l.rank === 2 ? 'silver' : l.rank === 3 ? '#cd7f32' : 'var(--accent-violet)'}; font-weight: bold;">#${l.rank}</span>
+                <span style="font-weight: 500;">${l.name}</span>
+            </div>
+            <span style="font-family: monospace; color: var(--accent-cyan);">${l.score}</span>
+        </div>
+    `).join('');
+}
+
+// --- 12. ADMIN QUEST MODERATION & LIVE STREAM MONITOR ---
+let adminStreamUser = "";
+let adminStreamTimer = null;
+
+async function loadAdminQuests() {
+    const listDiv = document.getElementById("admin-quest-apps-list");
+    if (!listDiv) return;
+
+    try {
+        const res = await fetch("/api/quests/applications");
+        const data = await res.json();
+        
+        const select = document.getElementById("admin-stream-select");
+        const prevValue = select.value;
+        select.innerHTML = '<option value="">Нет активных стримов</option>';
+
+        let activeUsers = [];
+
+        listDiv.innerHTML = (data.applications || []).map(a => {
+            let statusText = 'На модерации';
+            let statusStyle = 'color: var(--accent-gold); font-weight: bold;';
+            let actionHTML = '';
+
+            if (a.status === 'completed') {
+                statusText = 'Выполнен';
+                statusStyle = 'color: var(--accent-green);';
+            } else if (a.status === 'active') {
+                statusText = 'Выполняется (LIVE)';
+                statusStyle = 'color: var(--accent-cyan); font-weight: bold; animation: blink 1.2s infinite;';
+                activeUsers.push({ id: a.user_id, name: a.user_name });
+            } else if (a.status === 'approved') {
+                statusText = 'Условия выставлены';
+                statusStyle = 'color: var(--accent-purple);';
+            } else if (a.status === 'pending') {
+                actionHTML = `
+                    <div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                        <label style="font-size: 11px; display: block; margin-bottom: 4px;">ВЫСТАВИТЬ УСЛОВИЯ КВЕСТА:</label>
+                        <textarea id="conditions-${a.id}" class="cyber-input" style="height: 60px; font-family: inherit; margin-bottom: 8px;" placeholder="Например: Сделать селфи на локации и стримить не менее 3 минут"></textarea>
+                        <button onclick="approveQuest(${a.id})" class="cyber-button" style="padding: 6px 12px; font-size: 11px;">ОДОБРИТЬ ЗАЯВКУ</button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="store-card online" style="margin-bottom: 12px; padding: 16px; border: 1px solid rgba(168,85,247,0.2);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 11px; color: var(--accent-cyan);">Игрок: <b>${a.user_name} (ID: ${a.user_id})</b></span>
+                        <span style="font-size: 11px; ${statusStyle}">${statusText}</span>
+                    </div>
+                    <h4 style="font-family: Orbitron, sans-serif; font-size: 1.1rem; margin-bottom: 6px;">${a.title}</h4>
+                    <p style="font-size: 12px; color: var(--text-dim); line-height: 1.4;">${a.description}</p>
+                    ${a.conditions ? `<p style="font-size: 12px; color: var(--accent-purple); margin-top: 6px;"><b>Условия LIA:</b> ${a.conditions}</p>` : ''}
+                    ${actionHTML}
+                </div>
+            `;
+        }).join('');
+
+        if (activeUsers.length > 0) {
+            activeUsers.forEach(u => {
+                select.innerHTML += `<option value="${u.id}">${u.name} (ID: ${u.id})</option>`;
+            });
+            if (prevValue && activeUsers.find(u => u.id == prevValue)) {
+                select.value = prevValue;
+            }
+        }
+    } catch (e) {
+        listDiv.innerHTML = `<div class="log-entry error">[ERROR]: Failed to load quest applications: ${e.message}</div>`;
+    }
+}
+
+async function approveQuest(appId) {
+    const textarea = document.getElementById(`conditions-${appId}`);
+    const conditions = textarea ? textarea.value.trim() : "";
+    
+    if (!conditions) {
+        alert("Пожалуйста, введите условия квеста для игрока.");
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/quests/approve", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ application_id: appId, conditions: conditions })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert("Заявка одобрена, условия отправлены игроку!");
+            loadAdminQuests();
+        }
+    } catch (e) {
+        alert("Ошибка одобрения: " + e.message);
+    }
+}
+
+function changeActiveStreamUser() {
+    const select = document.getElementById("admin-stream-select");
+    adminStreamUser = select ? select.value : "";
+    
+    const liveLabel = document.getElementById("admin-stream-live-label");
+    const streamImg = document.getElementById("admin-stream-img");
+    const placeholder = document.getElementById("admin-stream-placeholder");
+
+    if (!adminStreamUser) {
+        liveLabel.textContent = "OFFLINE";
+        liveLabel.style.background = "#ef4444";
+        streamImg.style.display = "none";
+        placeholder.style.display = "flex";
+    } else {
+        liveLabel.textContent = "LIVE";
+        liveLabel.style.background = "#10b981";
+        streamImg.style.display = "block";
+        placeholder.style.display = "none";
+    }
+}
+
+function startStreamMonitor() {
+    stopStreamMonitor();
+    
+    adminStreamTimer = setInterval(async () => {
+        if (!adminStreamUser) return;
+        
+        try {
+            const res = await fetch(`/api/quests/get-stream-frame?user_id=${adminStreamUser}`);
+            const data = await res.json();
+            
+            const img = document.getElementById("admin-stream-img");
+            if (data.frame && img) {
+                img.src = data.frame;
+            }
+        } catch (e) {
+            console.error("Failed to fetch stream frame:", e);
+        }
+    }, 1500);
+}
+
+function stopStreamMonitor() {
+    if (adminStreamTimer) {
+        clearInterval(adminStreamTimer);
+        adminStreamTimer = null;
+    }
 }

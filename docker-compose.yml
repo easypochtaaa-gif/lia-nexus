@@ -1,0 +1,113 @@
+# LIA // NEXUS v6.0 Р В Р’В Р В РІР‚В Р В Р’В Р Р†Р вЂљРЎв„ўР В Р вЂ Р В РІР‚С™Р РЋРЎС™ Full stack docker-compose
+# 24/7 deployment on VPS (80.89.237.50)
+#
+# Services:
+#   lia-bot      Р В Р’В Р В РІР‚В Р В Р’В Р Р†Р вЂљРЎв„ўР В Р вЂ Р В РІР‚С™Р РЋРЎС™ sovereign_bot (Telegram + Web API + Memory + Emotions)
+#   lia-web      Р В Р’В Р В РІР‚В Р В Р’В Р Р†Р вЂљРЎв„ўР В Р вЂ Р В РІР‚С™Р РЋРЎС™ sovereign_web_core (dashboard + proxy)
+#   lia-chromadb Р В Р’В Р В РІР‚В Р В Р’В Р Р†Р вЂљРЎв„ўР В Р вЂ Р В РІР‚С™Р РЋРЎС™ ChromaDB vector database (infinite memory)
+#   lia-redis    Р В Р’В Р В РІР‚В Р В Р’В Р Р†Р вЂљРЎв„ўР В Р вЂ Р В РІР‚С™Р РЋРЎС™ Redis (short-term context cache)
+#   n8n          Р В Р’В Р В РІР‚В Р В Р’В Р Р†Р вЂљРЎв„ўР В Р вЂ Р В РІР‚С™Р РЋРЎС™ Workflow automation engine (port 5678)
+#
+# Start:  docker compose up -d
+# Stop:   docker compose down
+# Logs:   docker compose logs -f lia-bot
+
+version: '3.8'
+
+services:
+  # Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў ChromaDB: Vector memory Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: lia-chromadb
+    restart: always
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    ports:
+      - "8000:8000"
+    networks:
+      - lia-network
+
+  # Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў Redis: Short-term conversation cache Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў
+  redis:
+    image: redis:7-alpine
+    container_name: lia-redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - lia-network
+
+  # Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў LIA SOVEREIGN BOT: Main AI engine Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў
+  lia-bot:
+    build:
+      context: .
+      dockerfile: sovereign_bot/Dockerfile
+    container_name: lia-sovereign-bot
+    restart: always
+    depends_on:
+      - redis
+      - chromadb
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+    volumes:
+      - bot_data:/data
+    ports:
+      - "8080:8080"
+    networks:
+      - lia-network
+
+  # Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў LIA WEB CORE: Dashboard + proxy Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў
+  lia-web:
+    build:
+      context: ./sovereign_web_core
+    container_name: lia-web-core
+    restart: always
+    depends_on:
+      - lia-bot
+    ports:
+      - "8081:8080"
+    volumes:
+      - bot_data:/database:ro
+    networks:
+      - lia-network
+
+  # Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў N8N: Workflow automation engine Р В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ўР В Р’В Р В РІР‚В Р В Р вЂ Р В РІР‚С™Р РЋРЎС™Р В Р’В Р Р†Р вЂљРЎв„ў
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: empire-n8n
+    restart: unless-stopped
+    networks:
+      - lia-network
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    environment:
+      - N8N_HOST=80.89.237.50
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://80.89.237.50:5678/
+      - N8N_METRICS=false
+      - N8N_SKIP_WEBHOOK_DEREGISTRATION_SHUTDOWN=true
+      - GENERIC_TIMEZONE=Europe/Kyiv
+      - N8N_ENCRYPTION_KEY=enc_key_stab_2026_permanent_42
+      - N8N_SECURE_COOKIE=false
+      - N8N_BOT_API_KEY=${N8N_API_KEY:-sk-4d42a054641a494e932f7dc1d3879641}
+      - TELEGRAM_CHANNEL_ID=-1003968872257
+
+networks:
+  lia-network:
+    driver: bridge
+
+volumes:
+  chroma_data:
+  redis_data:
+  bot_data:
+  n8n_data:

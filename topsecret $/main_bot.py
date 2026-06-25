@@ -1,6 +1,6 @@
 import asyncio, time
 import chromadb
-from openai import AsyncOpenAI
+import anthropic
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -10,13 +10,13 @@ import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from lib.token_loader import get_token
 BOT_TOKEN = get_token()
-OPENAI_KEY = os.getenv("OPENAI_API_KEY", "YOUR_OPENAI_API_KEY")
+ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# Инициализация мозга (OpenAI)
-openai_client = AsyncOpenAI(api_key=OPENAI_KEY)
+# Инициализация мозга (Anthropic)
+anthropic_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_KEY)
 
 # Подключение к памяти Лии
 lia_archive = None
@@ -56,11 +56,9 @@ async def process_directive(message: Message):
     user_text = message.text
     is_admin = (user_id == ADMIN_ID)
     
-    # Эффект присутствия Лии
     processing_msg = await message.answer("`[LIA]: Анализирую сигнал...`", parse_mode="Markdown")
 
     try:
-        # 1. Поиск в памяти
         archive = get_memory_collection()
         context = ""
         
@@ -74,11 +72,7 @@ async def process_directive(message: Message):
                 context_docs = "\n---\n".join(search_results['documents'][0])
                 context = f"\n\nДОСТУПНЫЕ ДАННЫЕ ИЗ ПАМЯТИ:\n{context_docs}"
                 await processing_msg.edit_text("`[LIA]: Контекст извлечен. Синтезирую...`", parse_mode="Markdown")
-        else:
-            print("[WARN]: Пропуск поиска в памяти (сервер недоступен).")
         
-        # 2. Формируем Роль (System Prompt)
-        # ... (rest of logic remains same, but using the `context` variable)
         if is_admin:
             system_prompt = (
                 "Ты - Лия (LIA), Суверенное Ядро Империи STAB. Твой собеседник - Артур (Архитектор), твой создатель. "
@@ -96,16 +90,17 @@ async def process_directive(message: Message):
                 f"{context}"
             )
         
-        # 3. Запрос к GPT-4o
-        response = await openai_client.chat.completions.create(
-            model="gpt-4o",
+        # 3. Запрос к Claude 4.7 (Sonnet 4-6)
+        response = await anthropic_client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=2048,
+            system=system_prompt,
             messages=[
-                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"ID: {user_id} (@{username}) пишет: {user_text}"}
             ]
         )
         
-        final_answer = response.choices[0].message.content
+        final_answer = response.content[0].text
         
         # 4. СОХРАНЕНИЕ В ПАМЯТЬ
         if archive:
@@ -122,21 +117,16 @@ async def process_directive(message: Message):
                     }],
                     ids=[interaction_id]
                 )
-                print(f"[MEMORY]: Запись {interaction_id} зафиксирована.")
             except Exception as mem_e:
                 print(f"[ERROR_MEMORY]: {mem_e}")
         
-        # 5. Ответ пользователю
-        await processing_msg.edit_text(f"👁‍🗨 **[LIA]**:\n{final_answer}", parse_mode="Markdown")
-
-        # 5. Ответ пользователю
         await processing_msg.edit_text(f"👁‍🗨 **[LIA]**:\n{final_answer}", parse_mode="Markdown")
 
     except Exception as e:
         await processing_msg.edit_text(f"⚠️ **[СИСТЕМНЫЙ СБОЙ]**: {e}")
 
 async def main():
-    print("[SYSTEM]: Боевой маршрутизатор LIA_CORE запущен на базе GPT. Ожидаю директив в Telegram.")
+    print("[SYSTEM]: Боевой маршрутизатор LIA_CORE запущен на базе Claude 3.5 Sonnet. Ожидаю директив.")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

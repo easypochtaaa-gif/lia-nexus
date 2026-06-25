@@ -45,7 +45,7 @@ bot.onText(/\/start/, (msg) => {
     const menu = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: '💎 OPEN IMPERIAL STORE', web_app: { url: 'https://lia-nexus.onrender.com/dashboard' } }],
+                [{ text: '💎 OPEN IMPERIAL STORE', web_app: { url: 'https://dark-stab.space' } }],
                 [{ text: '📱 НОМЕРА (5SIM)', callback_data: 'menu_buy' }, { text: '🌐 PROXY / VPN', callback_data: 'menu_proxy' }],
                 [{ text: '👤 ACCOUNT SHOP', callback_data: 'menu_accounts' }, { text: '📜 SCRIPTS (STAB)', callback_data: 'menu_scripts' }],
                 [{ text: '💰 БАЛАНС', callback_data: 'menu_balance' }, { text: '⚙️ SETTINGS', callback_data: 'menu_settings' }]
@@ -194,7 +194,7 @@ bot.on('callback_query', async (query) => {
         const balance = getBalance(chatId);
         const menu = {
             inline_keyboard: [
-                [{ text: '💎 ОТКРЫТЬ DASHBOARD', web_app: { url: 'https://lia-nexus.onrender.com/dashboard' } }],
+                [{ text: '💎 ОТКРЫТЬ DASHBOARD', web_app: { url: 'https://dark-stab.space' } }],
                 [{ text: '📱 КУПИТЬ НОМЕР', callback_data: 'menu_buy' }, { text: '🏪 МАГАЗИНЫ', callback_data: 'menu_shops' }],
                 [{ text: '💰 БАЛАНС', callback_data: 'menu_balance' }, { text: '📜 ИСТОРИЯ', callback_data: 'menu_history' }],
                 [{ text: '⚙️ НАСТРОЙКИ', callback_data: 'menu_settings' }]

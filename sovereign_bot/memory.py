@@ -23,9 +23,20 @@ class MemoryManager:
                 user_id INTEGER,
                 content TEXT,
                 embedding BLOB,
-                timestamp TEXT
+                timestamp TEXT,
+                importance REAL DEFAULT 0.5,
+                category TEXT DEFAULT 'general'
             )
         """)
+        # Migration: add columns if they don't exist (for existing DBs)
+        try:
+            cursor.execute("ALTER TABLE vector_memories ADD COLUMN importance REAL DEFAULT 0.5")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
+        try:
+            cursor.execute("ALTER TABLE vector_memories ADD COLUMN category TEXT DEFAULT 'general'")
+        except sqlite3.OperationalError:
+            pass  # Column already exists
         conn.commit()
         conn.close()
 
@@ -77,6 +88,40 @@ class MemoryManager:
 
     # --- SQLITE LIGHTWEIGHT VECTOR LONG-TERM MEMORY ---
     @staticmethod
+    async def clear_memory(user_id: int):
+        """Clears ALL memory for a user: Redis short-term + SQLite long-term + in-memory fallback.
+        Fixes the bug where main.py calls MemoryManager.clear_memory(user_id) but this method didn't exist."""
+        # Clear Redis short-term context
+        client = await MemoryManager.get_redis_client()
+        if client:
+            try:
+                key = f"chat:{user_id}"
+                await client.delete(key)
+                await client.close()
+            except Exception:
+                pass
+
+        # Clear in-memory fallback
+        IN_MEMORY_CONTEXTS.pop(user_id, None)
+
+        # Clear SQLite vector_memories
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM vector_memories WHERE user_id = ?", (user_id,))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            print(f"Error clearing SQLite memories: {e}")
+
+        # Also clear ChromaDB via LiaMemory
+        try:
+            from sovereign_bot.chroma_memory import LiaMemory
+            await LiaMemory.clear_user_memory(user_id)
+        except Exception as e:
+            print(f"Error clearing ChromaDB memories: {e}")
+
+    @staticmethod
     def pack_embedding(vectors: list) -> bytes:
         return struct.pack(f"{len(vectors)}f", *vectors)
 
@@ -98,11 +143,19 @@ class MemoryManager:
         return MemoryManager.dot_product(v1, v2) / (mag1 * mag2)
 
     @staticmethod
-    async def save_long_term_memory(user_id: int, content: str, openai_client):
-        """Generates OpenAI embedding for a fact or conversation snippet and stores it in SQLite."""
+    async def save_long_term_memory(user_id: int, content: str, openai_client, importance: float = 0.5, category: str = "general"):
+        """Generates OpenAI embedding for a fact or conversation snippet and stores it in SQLite.
+
+        Args:
+            user_id: Telegram user ID
+            content: Fact or memory text to store
+            openai_client: OpenAI client for embeddings
+            importance: 0.0-1.0 importance score (default 0.5)
+            category: Category tag: 'identity', 'preference', 'fact', 'event', 'general'
+        """
         if not content.strip():
             return
-        
+
         try:
             # Generate embedding using OpenAI API
             response = await openai_client.embeddings.create(
@@ -111,15 +164,15 @@ class MemoryManager:
             )
             embedding = response.data[0].embedding
             blob = MemoryManager.pack_embedding(embedding)
-            
+
             # Save to SQLite database
             conn = sqlite3.connect(DB_PATH)
             cursor = conn.cursor()
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor.execute("""
-                INSERT INTO vector_memories (user_id, content, embedding, timestamp)
-                VALUES (?, ?, ?, ?)
-            """, (user_id, content, blob, now))
+                INSERT INTO vector_memories (user_id, content, embedding, timestamp, importance, category)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (user_id, content, blob, now, importance, category))
             conn.commit()
             conn.close()
         except Exception as e:

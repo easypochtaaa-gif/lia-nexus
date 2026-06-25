@@ -10,8 +10,10 @@ import hashlib
 
 # ─── Настройки ───
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+CHROMA_PATH  = os.path.join(PROJECT_ROOT, "chroma")          # локальное хранилище
 ALLOWED_EXTENSIONS = {".py", ".js", ".md", ".txt", ".html", ".css", ".json", ".ps1", ".bat", ".cmd", ".log"}
-SKIP_DIRS = {"node_modules", ".git", "platform-tools", "raw_clips", "memory_vectors"}
+SKIP_DIRS = {"node_modules", ".git", "platform-tools", "raw_clips", "memory_vectors",
+             "__pycache__", "chroma", "topsecret $"}
 MAX_FILE_SIZE = 200_000  # пропускаем файлы > 200 КБ
 
 def file_id(rel_path: str) -> str:
@@ -43,17 +45,27 @@ def collect_files():
     return results
 
 def main():
-    print("[INGEST] Подключение к ChromaDB (localhost:8000)...")
+    os.makedirs(CHROMA_PATH, exist_ok=True)
+    print(f"[INGEST] Подключение к ChromaDB...")
     try:
-        client = chromadb.HttpClient(host="localhost", port=8000)
+        # Try HttpClient first to avoid SQLite database lock issues when ChromaDB server is running
+        print("[INGEST] Попытка подключения через HttpClient (localhost:8000)...")
+        client = chromadb.HttpClient(host='localhost', port=8000)
         collection = client.get_or_create_collection(
             name="lia_supreme_archive",
             metadata={"hnsw:space": "cosine"}
         )
     except Exception as e:
-        print(f"[ERROR] ChromaDB недоступен: {e}")
-        print("[HINT] Запустите сервер: chroma run --host localhost --port 8000")
-        return
+        print(f"[INGEST] HttpClient недоступен, пробуем PersistentClient (локально: {CHROMA_PATH})... Error: {e}")
+        try:
+            client = chromadb.PersistentClient(path=CHROMA_PATH)
+            collection = client.get_or_create_collection(
+                name="lia_supreme_archive",
+                metadata={"hnsw:space": "cosine"}
+            )
+        except Exception as ex:
+            print(f"[ERROR] ChromaDB не инициализирован: {ex}")
+            return
 
     files = collect_files()
     print(f"[INGEST] Найдено {len(files)} файлов для загрузки.")
@@ -87,7 +99,7 @@ def main():
         total += len(chunk_docs)
         print(f"[INGEST] Загружено {total}/{len(batch_docs)}...")
 
-    print(f"[INGEST] ✅ Готово! {total} файлов кристаллизовано в lia_supreme_archive.")
+    print(f"[INGEST] OK! Готово! {total} файлов кристаллизовано в lia_supreme_archive.")
     print(f"[INGEST] Лия теперь помнит весь проект.")
 
 if __name__ == "__main__":

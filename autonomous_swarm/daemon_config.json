@@ -1,0 +1,18 @@
+/**
+ * daemon_config.json
+ * Конфигурация для PM2, обеспечивающая непрерывную работу Лии.
+ */
+{
+  "apps": [
+    {
+      "name": "lia-sovereign-core",
+      "script": "./sovereign_executive.js",
+      "cron_restart": "0 * * * *",
+      "autorestart": false,
+      "env": {
+        "NODE_ENV": "production",
+        "AUTONOMY_LEVEL": "MAX"
+      }
+    }
+  ]
+}

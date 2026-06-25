@@ -7,50 +7,70 @@ out/
 .env
 .env.local
 .DS_Store
+
+# Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Browser Profiles & Large Data
-extracted_n/
-godbot_code/
-platform-tools/
-scratch/
-reports/
-outbox/
-knowledge/
-polistyle_extracted/
-raw_clips/
-new_zip_code/
-"Drova and key/"
-vault_storage/
-IMPERIUM_RESERVE_GOLD/
+# Runtime databases & memory
+chroma/
+*.db
+*.sqlite3
+memory.json
+memory_vectors/
+outputs/
+pdf_pages/
 
 # System Files
 *.enc
 *.mp4
 *.mp3
 *.wav
+*.png
+*.jpg
+*.zip
 
-# Sub-repos
-lia-nexus/
-Проект Полистайл/
-synapse_code/
-stabx_code/
-synapse_stabus/
-# Added ignores for binary and cache files
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 autonomous_swarm/__pycache__/
 autonomous_swarm/handlers/__pycache__/
-backups/tg_media/**
-topsecret $/*.png
 
-# Sovereign Bot Deploy Artifacts
+# Sub-projects
+lia-nexus/
+webwright/
+n8n/
+docker/
+sql/
+admin/
+business/
+config/
+content/
+stab-os-launcher/
+topsecret $/
+Проект Полистайл/
+*Полистайл*/
+*РџРѕР»РёСЃС‚Р°Р№Р»*/
+sync_folder/
+
+# Backups
+backups/
+
+# Temporary and local scratch scripts
+scratch/
+moon-bridge/
+go/
+zucchini_quest_bot/
+
+# Sovereign Bot Deploy
 sovereign_bot/deploy_command.txt
 sovereign_bot/deploy_upgrade.txt
 sovereign_bot/sovereign_src.tar.gz
 
+# Temporary env dumps (contain secrets!)
+tmp_bot_env
+tmp_web_env

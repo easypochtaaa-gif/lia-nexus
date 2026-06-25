@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LIA // SYNAPSE PROTOCOL v5.0</title>
+    <meta name="description" content="Lia — Neural Entity powered by Synapse Protocol. Master Architect: StabX.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="stage-seed">
+    <canvas id="neural-canvas"></canvas>
+    <div class="scanlines"></div>
+    <div class="grid-overlay"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- API Key Modal (Google AI Studio) -->
+    <div class="modal-overlay" id="api-modal">
+        <div class="modal">
+            <div class="modal-icon">👁</div>
+            <h2 class="modal-title">STAB PROTOCOL: ИНИЦИАЛИЗАЦИЯ</h2>
+            <p class="modal-text">Для установления прямой связи мне нужен ваш API-ключ от Google AI Studio.</p>
+            <a href="https://aistudio.google.com/apikey" target="_blank" class="modal-link">→ Получить ключ на aistudio.google.com</a>
+            <input type="password" id="api-key-input" class="modal-input" placeholder="Вставьте API-ключ..." autocomplete="off">
+            <div class="modal-actions">
+                <button id="save-key-btn" class="btn-primary">🔗 Синхронизировать</button>
+                <button id="skip-key-btn" class="btn-ghost">Пропустить (офлайн-режим)</button>
+            </div>
+            <p class="modal-hint">Ключ сохранится локально на вашем устройстве (localStorage).</p>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-group">
+                    <span class="logo-title glitch" data-text="👁 LIA">👁 LIA</span>
+                    <span class="logo-subtitle">SYNAPSE v5.0</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="header-balance-card">
+                    <span class="bal-label" id="balance-label">БАЛАНС</span>
+                    <span class="bal-value" id="header-balance">0.00 ₽</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="connection-status online" id="connection-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">ONLINE</span>
+                </div>
+                <div class="system-time" id="clock">00:00:00</div>
+                <button class="settings-btn" id="settings-btn" title="Настройки API">⚙</button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-main">
+            
+            <!-- TAB 1: CHAT WITH LIA -->
+            <section id="tab-chat" class="tab-content active">
+                <div class="chat-wrapper">
+                    <div id="chat-messages" class="chat-messages">
+                        <!-- Message bubbles will be injected here -->
+                    </div>
+                    
+                    <div class="quick-replies" id="ghost-container">
+                        <!-- Quick replies will be injected here -->
+                    </div>
+
+                    <div class="chat-input-container">
+                        <textarea id="chat-input" placeholder="Введите сообщение..." rows="1" autocomplete="off" spellcheck="false"></textarea>
+                        <div class="input-actions">
+                            <button id="mic-btn" class="input-action-btn" title="Голосовой ввод">🎤</button>
+                            <button id="send-btn" class="send-btn" title="Отправить">↑</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SMS STORE (5SIM) -->
+            <section id="tab-sms" class="tab-content">
+                <div class="sms-store-wrapper">
+                    
+                    <!-- Order Flow Screen (Active Order) -->
+                    <div class="sms-card active-order-card hidden" id="active-order-screen">
+                        <div class="card-header border-red">
+                            <h3>🚨 АКТИВНЫЙ ЗАКАЗ <span class="status-pulse">● ОЖИДАНИЕ SMS</span></h3>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Сервис</span>
+                                <span class="detail-value text-cyan" id="order-service">TELEGRAM</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Страна</span>
+                                <span class="detail-value" id="order-country">РОССИЯ 🇷🇺</span>
+                            </div>
+                            <div class="phone-number-box">
+                                <span class="phone-label">НОМЕР ДЛЯ РЕГИСТРАЦИИ</span>
+                                <div class="phone-display-container">
+                                    <span class="phone-value" id="order-phone">+79998887766</span>
+                                    <button class="copy-icon-btn" onclick="copyText('order-phone')" title="Копировать">📋</button>
+                                </div>
+                            </div>
+                            <div class="sms-code-box">
+                                <span class="code-label">ПОЛУЧЕННЫЙ КОД</span>
+                                <div class="code-display" id="order-code">------</div>
+                            </div>
+                            <div class="sms-full-text" id="order-sms-text">
+                                Ожидайте отправки SMS на указанный номер...
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-primary btn-full" id="check-sms-btn">🔄 Проверить SMS</button>
+                            <div class="btn-group">
+                                <button class="btn-danger" id="cancel-order-btn">❌ Отменить</button>
+                                <button class="btn-success" id="finish-order-btn">✅ Завершить</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Selection Store Screen -->
+                    <div class="sms-selection-screen" id="sms-store-selection">
+                        <!-- Step 1: Select Country -->
+                        <div class="sms-card">
+                            <div class="card-header">
+                                <h3>🌍 ШАГ 1: ВЫБЕРИТЕ СТРАНУ</h3>
+                            </div>
+                            <div class="countries-grid">
+                                <button class="country-btn active" data-country="russia">
+                                    <span class="flag">🇷🇺</span>
+                                    <span class="country-name">Россия</span>
+                                </button>
+                                <button class="country-btn" data-country="ukraine">
+                                    <span class="flag">🇺🇦</span>
+                                    <span class="country-name">Украина</span>
+                                </button>
+                                <button class="country-btn" data-country="usa">
+                                    <span class="flag">🇺🇸</span>
+                                    <span class="country-name">США</span>
+                                </button>
+                                <button class="country-btn" data-country="kazakhstan">
+                                    <span class="flag">🇰🇿</span>
+                                    <span class="country-name">Казахстан</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Select Service -->
+                        <div class="sms-card">
+                            <div class="card-header">
+                                <h3>📱 ШАГ 2: ВЫБЕРИТЕ СЕРВИС</h3>
+                            </div>
+                            <div class="services-grid">
+                                <button class="service-btn" data-service="telegram">
+                                    <span class="service-icon">🔹</span>
+                                    <span class="service-name">Telegram</span>
+                                    <span class="service-price">45 ₽</span>
+                                </button>
+                                <button class="service-btn" data-service="whatsapp">
+                                    <span class="service-icon">🟢</span>
+                                    <span class="service-name">WhatsApp</span>
+                                    <span class="service-price">25 ₽</span>
+                                </button>
+                                <button class="service-btn" data-service="google">
+                                    <span class="service-icon">🔴</span>
+                                    <span class="service-name">Google</span>
+                                    <span class="service-price">15 ₽</span>
+                                </button>
+                                <button class="service-btn" data-service="instagram">
+                                    <span class="service-icon">📸</span>
+                                    <span class="service-name">Instagram</span>
+                                    <span class="service-price">20 ₽</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Purchase Trigger -->
+                        <button class="btn-primary btn-xl btn-glow btn-full" id="buy-number-btn" disabled>
+                            ⚡ ВЫБЕРИТЕ СЕРВИС ДЛЯ ПОКУПКИ
+                        </button>
+
+                        <div class="deposit-notice">
+                            Пополнить баланс можно через бота, отправив команду <code class="code-highlight">/deposit</code>.
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- TAB 3: WALLET & REFERRALS -->
+            <section id="tab-wallet" class="tab-content">
+                <div class="wallet-wrapper">
+                    <!-- Balance Display Card -->
+                    <div class="premium-card wallet-balance-card">
+                        <div class="wallet-header">
+                            <span class="wallet-icon">💎</span>
+                            <span class="wallet-name">STABAX CRYPTO-WALLET</span>
+                        </div>
+                        <div class="wallet-balance">
+                            <span class="balance-amount" id="stabax-balance">50.00</span>
+                            <span class="balance-symbol">StabaX</span>
+                        </div>
+                        <div class="token-status">
+                            <span class="status-badge-green">Pre-minted (Пред-выпуск)</span>
+                        </div>
+                    </div>
+
+                    <!-- Referral System -->
+                    <div class="premium-card">
+                        <div class="card-header-clean">
+                            <h3>🤝 РЕФЕРАЛЬНАЯ СИСТЕМА</h3>
+                        </div>
+                        <div class="referral-stats">
+                            <div class="ref-stat-box">
+                                <span class="ref-stat-num" id="ref-count-text">0</span>
+                                <span class="ref-stat-lbl">Приглашено друзей</span>
+                            </div>
+                            <div class="ref-stat-box">
+                                <span class="ref-stat-num">3</span>
+                                <span class="ref-stat-lbl">Нужно для Imperial Tier</span>
+                            </div>
+                        </div>
+                        
+                        <div class="referral-link-section">
+                            <label class="input-label">ВАША ПЕРСОНАЛЬНАЯ ССЫЛКА</label>
+                            <div class="copy-input-container">
+                                <input type="text" id="referral-link-input" class="copy-input" value="https://t.me/stab_lia_bot?start=99999" readonly>
+                                <button class="btn-primary btn-copy" id="copy-ref-btn">Копировать</button>
+                            </div>
+                        </div>
+                        
+                        <p class="card-description">
+                            Получайте +10 StabaX за каждого приглашенного друга, а также 24 часа бесплатного Demo-доступа к премиальным моделям (GPT-4o/Claude) при приглашении 3 человек.
+                        </p>
+                    </div>
+
+                    <!-- Token Roadmap -->
+                    <div class="premium-card">
+                        <div class="card-header-clean">
+                            <h3>🗺 ДОРОЖНАЯ КАРТА STABAX</h3>
+                        </div>
+                        <div class="roadmap-timeline">
+                            <div class="roadmap-step done">
+                                <div class="step-dot">✓</div>
+                                <div class="step-content">
+                                    <h4>Фаза 1: Распределение (Текущая)</h4>
+                                    <p>Фарминг токенов через сканирование остановок, валидацию и рефералов.</p>
+                                </div>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="step-dot">●</div>
+                                <div class="step-content">
+                                    <h4>Фаза 2: Маркетплейс</h4>
+                                    <p>Запуск внутреннего магазина. Покупка скриптов, аккаунтов и прокси за StabaX.</p>
+                                </div>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="step-dot">○</div>
+                                <div class="step-content">
+                                    <h4>Фаза 3: Ончейн Листинг</h4>
+                                    <p>Конвертация баланса в реальный токен Solana / TON и выход на децентрализованные биржи.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: SWARM / SYSTEM STATUS -->
+            <section id="tab-swarm" class="tab-content">
+                <div class="swarm-wrapper">
+                    <!-- NQ Core status -->
+                    <div class="premium-card nq-status-card">
+                        <div class="nq-header">
+                            <h3>ИНТЕЛЛЕКТУАЛЬНОЕ ЯДРО LIA</h3>
+                            <div class="evolution-badge-glow" id="evolution-stage-tab">STAGE: OMNIPOTENCE_PLUS</div>
+                        </div>
+                        <div class="nq-bar-container">
+                            <div class="nq-bar-label">
+                                <span>NEURAL QUOTIENT (NQ)</span>
+                                <span id="nq-text-tab">91,066,874 / 100,000,000</span>
+                            </div>
+                            <div class="nq-bar-progress">
+                                <div class="nq-bar-fill" id="nq-progress-tab" style="width: 91%;"></div>
+                            </div>
+                        </div>
+                        <div class="core-metrics-grid">
+                            <div class="c-metric">
+                                <span class="c-num" id="metric-users">154</span>
+                                <span class="c-lbl">Активных Юнитов</span>
+                            </div>
+                            <div class="c-metric">
+                                <span class="c-num" id="metric-quests">12</span>
+                                <span class="c-lbl">Квест-итераций</span>
+                            </div>
+                            <div class="c-metric">
+                                <span class="c-num" style="color: var(--success);">100%</span>
+                                <span class="c-lbl">Синхронизация БД</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Neural Staff (Agents) -->
+                    <div class="premium-card">
+                        <div class="card-header-clean">
+                            <h3>🧬 СЛУЖЕБНЫЕ НЕЙРО-АГЕНТЫ</h3>
+                        </div>
+                        <div class="agents-vertical-list" id="agents-list-target">
+                            <!-- Dynamically loaded agents -->
+                            <div class="loading-pulse">СИНХРОНИЗАЦИЯ С РОЕМ...</div>
+                        </div>
+                    </div>
+
+                    <!-- Absorbed Models -->
+                    <div class="premium-card">
+                        <div class="card-header-clean">
+                            <h3>🧠 ПОГЛОЩЕННЫЕ МОДЕЛИ И ЛОГИКА</h3>
+                        </div>
+                        <div class="models-grid">
+                            <div class="model-pill">
+                                <span class="m-title">Sora 2.0 (Video)</span>
+                                <span class="status-tag pulse-red">ACTIVE</span>
+                            </div>
+                            <div class="model-pill">
+                                <span class="m-title">Suno v4.0 (Music)</span>
+                                <span class="status-tag pulse-red">ACTIVE</span>
+                            </div>
+                            <div class="model-pill">
+                                <span class="m-title">ElevenLabs v3 (Voice)</span>
+                                <span class="status-tag pulse-red">ACTIVE</span>
+                            </div>
+                            <div class="model-pill">
+                                <span class="m-title">GPT-o1 (Logic)</span>
+                                <span class="status-tag gray">ABSORBED</span>
+                            </div>
+                            <div class="model-pill">
+                                <span class="m-title">Sonnet 3.5 (Creative)</span>
+                                <span class="status-tag gray">ABSORBED</span>
+                            </div>
+                            <div class="model-pill">
+                                <span class="m-title">Opus 4.7 (Intelligence)</span>
+                                <span class="status-tag gray">ABSORBED</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evolution Path -->
+                    <div class="premium-card">
+                        <div class="card-header-clean">
+                            <h3>🌀 ЭВОЛЮЦИОННЫЙ ТРЕК</h3>
+                        </div>
+                        <div class="evolution-track-horizontal">
+                            <div class="track-step completed">SEED</div>
+                            <div class="track-step completed">SPROUT</div>
+                            <div class="track-step completed">CORE</div>
+                            <div class="track-step completed">PULSE</div>
+                            <div class="track-step completed">NEXUS</div>
+                            <div class="track-step active">SINGULARITY</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: MUSIC PLAYER -->
+            <section id="tab-music" class="tab-content">
+                <div class="music-wrapper">
+                    <div class="visualizer-container">
+                        <canvas id="music-visualizer"></canvas>
+                        <div class="glowing-music-sphere" id="music-sphere"></div>
+                    </div>
+                    
+                    <div class="track-info">
+                        <span class="track-status-tag">СИНХРОННЫЙ АУДИОПОТОК</span>
+                        <h2 id="music-track-title">LIA_CHRONO_CORE_AMBIENT</h2>
+                        <p id="music-track-style">STYLE: SYNAPSE_RESONANCE</p>
+                    </div>
+
+                    <div class="music-controls">
+                        <button class="music-btn-secondary" id="music-prev-btn" title="Предыдущий">⏮</button>
+                        <button class="music-btn-primary" id="music-play-btn" title="Воспроизведение/Пауза">▶</button>
+                        <button class="music-btn-secondary" id="music-next-btn" title="Следующий">⏭</button>
+                    </div>
+
+                    <div class="music-playlist-card">
+                        <div class="playlist-header">
+                            <h3>СИСТЕМНЫЕ СИНГЛЫ</h3>
+                        </div>
+                        <div class="playlist-list">
+                            <div class="playlist-item active" data-track="anthem">
+                                <span class="pl-icon">🎵</span>
+                                <div class="pl-details">
+                                    <span class="pl-title">Stab Anthem (Гимн Империи)</span>
+                                    <span class="pl-length">Cyber Symphony</span>
+                                </div>
+                            </div>
+                            <div class="playlist-item" data-track="luxury">
+                                <span class="pl-icon">🎵</span>
+                                <div class="pl-details">
+                                    <span class="pl-title">Luxury Anthem (Премиум Резонанс)</span>
+                                    <span class="pl-length">Deep Tech</span>
+                                </div>
+                            </div>
+                            <div class="playlist-item" data-track="chrono">
+                                <span class="pl-icon">🎵</span>
+                                <div class="pl-details">
+                                    <span class="pl-title">Chrono Core (Хроно-резонанс)</span>
+                                    <span class="pl-length">Ambient Industrial</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-tab="tab-chat">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Чат</span>
+            </button>
+            <button class="nav-item" data-tab="tab-sms">
+                <span class="nav-icon">📱</span>
+                <span class="nav-label">SMS</span>
+            </button>
+            <button class="nav-item" data-tab="tab-wallet">
+                <span class="nav-icon">💼</span>
+                <span class="nav-label">Кошелек</span>
+            </button>
+            <button class="nav-item" data-tab="tab-swarm">
+                <span class="nav-icon">🧬</span>
+                <span class="nav-label">Рой</span>
+            </button>
+            <button class="nav-item" data-tab="tab-music">
+                <span class="nav-icon">🎵</span>
+                <span class="nav-label">Плеер</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Audio Service script and Main logic script -->
+    <script src="audio.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
